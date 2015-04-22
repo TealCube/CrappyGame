@@ -8,7 +8,6 @@ import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
-import com.badlogic.gdx.graphics.g2d.freetype.FreeTypeFontGenerator;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Vector2;
@@ -26,7 +25,7 @@ public class CrappyGame extends ApplicationAdapter {
     private float LEFT_BOUNDS = MAX_LEFT_BOUNDS;
 
     private Texture colorShiftBkg;
-    private int shadowcreep = 5;
+    private int shadowcreep = -(((WORLD_WIDTH/4)-3838)/15);
     private int player_x;
     private int player_y;
     private int playerspeed;
@@ -47,16 +46,12 @@ public class CrappyGame extends ApplicationAdapter {
 
     Music music;
 
+
     @Override
     public void create() {
         camera = new OrthographicCamera();
         viewport = new StretchViewport(9000, 16000, camera);
         viewport.apply();
-
-        FreeTypeFontGenerator generator = new FreeTypeFontGenerator(Gdx.files.internal("fonts/myfont.ttf"));
-        FreeTypeFontGenerator.FreeTypeFontParameter parameter = new FreeTypeFontGenerator.FreeTypeFontParameter();
-        parameter.size = 12;
-        font = generator.generateFont(parameter);
 
         player_x = WORLD_WIDTH / 4;
         player_y = WORLD_HEIGHT / 6;
@@ -74,6 +69,7 @@ public class CrappyGame extends ApplicationAdapter {
         resetWorld();
     }
 
+
     // Resets the world when you hit retry or w/e
     private void resetWorld() {
         int tempRandom;
@@ -81,6 +77,7 @@ public class CrappyGame extends ApplicationAdapter {
 
         score = 0;
         player_x = WORLD_WIDTH / 4;
+        shadowcreep = -((player_x-3838)/15);
         RIGHT_BOUNDS = MAX_RIGHT_BOUNDS;
         LEFT_BOUNDS = MAX_LEFT_BOUNDS;
         barriers.clear();
@@ -154,7 +151,8 @@ public class CrappyGame extends ApplicationAdapter {
             }
 
             // Moves stuff
-            player_x = player_x + playerspeed;
+            player_x += playerspeed;
+            shadowcreep = -((player_x-3838)/15);
             moveBarriers();
             bkgShift++;
 
@@ -179,8 +177,6 @@ public class CrappyGame extends ApplicationAdapter {
 
     // Draw event for the renderer to use.
     private void drawWorld() {
-        Gdx.gl.glEnable(GL30.GL_BLEND);
-        Gdx.gl.glBlendFunc(GL30.GL_SRC_ALPHA, GL30.GL_ONE_MINUS_SRC_ALPHA);
         batch.setProjectionMatrix(camera.combined);
         batch.begin();
         batch.draw(colorShiftBkg, -bkgShift, -bkgShift, WORLD_WIDTH * 5, WORLD_HEIGHT * 5);
@@ -193,15 +189,17 @@ public class CrappyGame extends ApplicationAdapter {
         shapeRenderer = new ShapeRenderer();
         shapeRenderer.setProjectionMatrix(camera.combined);
         shapeRenderer.begin(ShapeRenderer.ShapeType.Filled);
+        Gdx.gl.glEnable(GL30.GL_BLEND);
+        Gdx.gl.glBlendFunc(GL30.GL_SRC_ALPHA, GL30.GL_ONE_MINUS_SRC_ALPHA);
 
         // Shadow of shapes
         shapeRenderer.setColor(0, 0, 0, 0.3F);
-        shapeRenderer.rect(player_x + shadowcreep, player_y - shadowcreep, 1350, 1350);
-        shapeRenderer.rect(shadowcreep, -shadowcreep, 900, 16000);
-        shapeRenderer.rect(900 + shadowcreep, -shadowcreep, -900, 16000);
+        shapeRenderer.rect(player_x + shadowcreep, player_y - 100, 1350, 1350);
+        shapeRenderer.rect(shadowcreep, 0, 900, 16000);
+        shapeRenderer.rect(9000 + shadowcreep, 0, -900, 16000);
         for (Barrier barrier : barriers) {
-            shapeRenderer.rect(barrier.position.x + shadowcreep - 9300, barrier.position.y - shadowcreep, 6000, 1350);
-            shapeRenderer.rect(barrier.position.x + shadowcreep, barrier.position.y - shadowcreep, 6000, 1350);
+            shapeRenderer.rect(barrier.position.x + shadowcreep - 9300, barrier.position.y - 100, 6000, 1350);
+            shapeRenderer.rect(barrier.position.x + shadowcreep, barrier.position.y - 100, 6000, 1350);
         }
 
         //Main Shapes
