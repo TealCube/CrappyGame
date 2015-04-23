@@ -8,6 +8,7 @@ import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.badlogic.gdx.graphics.g2d.freetype.FreeTypeFontGenerator;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Vector2;
@@ -53,11 +54,16 @@ public class CrappyGame extends ApplicationAdapter {
         viewport = new StretchViewport(9000, 16000, camera);
         viewport.apply();
 
+        FreeTypeFontGenerator generator = new FreeTypeFontGenerator(Gdx.files.internal("impact.ttf"));
+        FreeTypeFontGenerator.FreeTypeFontParameter parameter = new FreeTypeFontGenerator.FreeTypeFontParameter();
+        parameter.size = 256;
+        parameter.characters = "1234567890";
+        font = generator.generateFont(parameter);
+
         player_x = WORLD_WIDTH / 4;
         player_y = WORLD_HEIGHT / 6;
 
         scoreMessage = "" + score;
-        font = new BitmapFont();
 
         colorShiftBkg = new Texture("shifter.png");
 
@@ -154,7 +160,7 @@ public class CrappyGame extends ApplicationAdapter {
             player_x += playerspeed;
             shadowcreep = -((player_x-3838)/15);
             moveBarriers();
-            bkgShift++;
+            bkgShift += 6;
 
             // Collision detection. Rather than using squares to detect, the
             // simplicity of the game allows me to merely compare three numbers
@@ -179,12 +185,16 @@ public class CrappyGame extends ApplicationAdapter {
     private void drawWorld() {
         batch.setProjectionMatrix(camera.combined);
         batch.begin();
+        Gdx.gl.glEnable(GL30.GL_BLEND);
+        Gdx.gl.glBlendFunc(GL30.GL_SRC_ALPHA, GL30.GL_ONE_MINUS_SRC_ALPHA);
         batch.draw(colorShiftBkg, -bkgShift, -bkgShift, WORLD_WIDTH * 5, WORLD_HEIGHT * 5);
-        font.setColor(0, 0, 0, 0.3f);
-        font.draw(batch, scoreMessage, 3000 + shadowcreep, 3000 - shadowcreep, 300, 300);
+        font.setScale(12, 12);
+        font.setColor(0, 0, 0, 0.3F);
+        font.drawMultiLine(batch, "" + score, 4500 + shadowcreep, 12900, 0, BitmapFont.HAlignment.CENTER);
         font.setColor(1, 1, 1, 1);
-        font.draw(batch, scoreMessage, 3000, 3000, 300, 300);
+        font.drawMultiLine(batch, "" + score, 4500, 13000, 0, BitmapFont.HAlignment.CENTER);
         batch.end();
+        Gdx.gl.glDisable(GL30.GL_BLEND);
 
         shapeRenderer = new ShapeRenderer();
         shapeRenderer.setProjectionMatrix(camera.combined);
