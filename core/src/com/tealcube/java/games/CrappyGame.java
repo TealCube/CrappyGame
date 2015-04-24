@@ -32,6 +32,7 @@ public class CrappyGame extends ApplicationAdapter {
     private int playerspeed;
     private int bkgShift;
     private int lastRandom;
+    private float faderShaderTimer;
     String scoreMessage;
     int score = 0;
 
@@ -81,6 +82,7 @@ public class CrappyGame extends ApplicationAdapter {
         int tempRandom;
         int barrierLoc;
 
+        faderShaderTimer = 0;
         score = 0;
         player_x = WORLD_WIDTH / 4;
         shadowcreep = -((player_x-3838)/15);
@@ -167,19 +169,26 @@ public class CrappyGame extends ApplicationAdapter {
             // for psudo collisions.
             if (player_x < LEFT_BOUNDS || player_x > RIGHT_BOUNDS) {
                 gameState = GameState.GameOver;
+                Gdx.app.log("LOGGGG", "ENTERED GAMEOVERSTATE");
                 return;
             }
         }
 
         if (gameState == GameState.GameOver) {
             // Placeholder until a gameover screen with buttons is completed.
-            if (Gdx.input.justTouched()) {
-                gameState = GameState.Start;
-                resetWorld();
+            if (faderShaderTimer >= 1.0F) {
+                if (Gdx.input.justTouched()) {
+                    gameState = GameState.Start;
+                    resetWorld();
+                    return;
+                }
+            }
+            if (faderShaderTimer < 1.0F) {
+                Gdx.app.log("LOGGGG", "FADER IS NOW AT:" + faderShaderTimer);
+                faderShaderTimer += 0.1F;
             }
         }
     }
-
 
     // Draw event for the renderer to use.
     private void drawWorld() {
@@ -220,6 +229,10 @@ public class CrappyGame extends ApplicationAdapter {
         for (Barrier barrier : barriers) {
             shapeRenderer.rect(barrier.position.x - 9300, barrier.position.y, 6000, 1350);
             shapeRenderer.rect(barrier.position.x, barrier.position.y, 6000, 1350);
+        }
+        if (gameState == GameState.GameOver) {
+            shapeRenderer.setColor(0, 0, 0, faderShaderTimer / 3);
+            shapeRenderer.rect(0, 0, 9000, 16000);
         }
         shapeRenderer.end();
         Gdx.gl.glDisable(GL30.GL_BLEND);
