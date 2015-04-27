@@ -21,13 +21,14 @@ public class CrappyGame extends ApplicationAdapter {
     static final int WORLD_HEIGHT = 16000;
     static final int MAX_RIGHT_BOUNDS = 6800;
     static final int MAX_LEFT_BOUNDS = 800;
+    static final int PLAYER_SCALE = 1350;
 
     private float RIGHT_BOUNDS = MAX_RIGHT_BOUNDS;
     private float LEFT_BOUNDS = MAX_LEFT_BOUNDS;
 
     private Texture colorShiftBkg;
     private Texture TClogo;
-    private int shadowcreep = -(((WORLD_WIDTH/4)-3838)/15);
+    private int shadowcreep;
     private int player_x;
     private int player_y;
     private int playerspeed;
@@ -88,8 +89,8 @@ public class CrappyGame extends ApplicationAdapter {
 
         faderShaderTimer = 0;
         score = 0;
-        player_x = WORLD_WIDTH / 4;
-        shadowcreep = -((player_x-3838)/15);
+        player_x = WORLD_WIDTH/2 - PLAYER_SCALE/2;
+        shadowcreep = 0;
         RIGHT_BOUNDS = MAX_RIGHT_BOUNDS;
         LEFT_BOUNDS = MAX_LEFT_BOUNDS;
         barriers.clear();
@@ -137,7 +138,7 @@ public class CrappyGame extends ApplicationAdapter {
     // World update. Makes stuff happen.
     private void updateWorld() {
         if (gameState == GameState.TCSplash) {
-            if (splashTimer < 80) {
+            if (splashTimer < 100) {
                 splashTimer++;
             } else {
                 gameState = GameState.Start;
@@ -172,7 +173,7 @@ public class CrappyGame extends ApplicationAdapter {
 
             // Moves stuff
             player_x += playerspeed;
-            shadowcreep = -((player_x-3838)/15);
+            shadowcreep += -(playerspeed/15);
             moveBarriers();
             bkgShift += 6;
 
@@ -226,19 +227,25 @@ public class CrappyGame extends ApplicationAdapter {
 
 
     private void drawGameplay() {
+        // Set up batch
         batch.setProjectionMatrix(camera.combined);
         batch.begin();
         Gdx.gl.glEnable(GL30.GL_BLEND);
         Gdx.gl.glBlendFunc(GL30.GL_SRC_ALPHA, GL30.GL_ONE_MINUS_SRC_ALPHA);
+
+        // Draw background (includes text)
         batch.draw(colorShiftBkg, -bkgShift, -bkgShift, WORLD_WIDTH * 5, WORLD_HEIGHT * 5);
         font.setScale(12, 12);
         font.setColor(0, 0, 0, 0.3F);
-        font.drawMultiLine(batch, "" + score, 4500 + shadowcreep, 12900, 0, BitmapFont.HAlignment.CENTER);
+        font.drawMultiLine(batch, "" + score, 4500 + shadowcreep/2, 12940, 0, BitmapFont.HAlignment.CENTER);
         font.setColor(1, 1, 1, 1);
         font.drawMultiLine(batch, "" + score, 4500, 13000, 0, BitmapFont.HAlignment.CENTER);
+
+        // End batch. Disable Blend.
         batch.end();
         Gdx.gl.glDisable(GL30.GL_BLEND);
 
+        //Setup ShapeRenderer
         shapeRenderer = new ShapeRenderer();
         shapeRenderer.setProjectionMatrix(camera.combined);
         shapeRenderer.begin(ShapeRenderer.ShapeType.Filled);
@@ -247,27 +254,29 @@ public class CrappyGame extends ApplicationAdapter {
 
         // Shadow of shapes
         shapeRenderer.setColor(0, 0, 0, 0.3F);
-        shapeRenderer.rect(player_x + shadowcreep, player_y - 100, 1350, 1350);
+        shapeRenderer.rect(player_x + shadowcreep, player_y - 100, PLAYER_SCALE, PLAYER_SCALE);
         shapeRenderer.rect(shadowcreep, 0, 900, 16000);
         shapeRenderer.rect(9000 + shadowcreep, 0, -900, 16000);
         for (Barrier barrier : barriers) {
-            shapeRenderer.rect(barrier.position.x + shadowcreep - 9300, barrier.position.y - 100, 6000, 1350);
-            shapeRenderer.rect(barrier.position.x + shadowcreep, barrier.position.y - 100, 6000, 1350);
+            shapeRenderer.rect(barrier.position.x + shadowcreep - 9300, barrier.position.y - 100, 6000, PLAYER_SCALE);
+            shapeRenderer.rect(barrier.position.x + shadowcreep, barrier.position.y - 100, 6000, PLAYER_SCALE);
         }
 
         //Main Shapes
         shapeRenderer.setColor(1, 1, 1, 1);
-        shapeRenderer.rect(player_x, player_y, 1350, 1350);
+        shapeRenderer.rect(player_x, player_y, PLAYER_SCALE, PLAYER_SCALE);
         shapeRenderer.rect(0, 0, 900, 16000);
         shapeRenderer.rect(9000, 0, -900, 16000);
         for (Barrier barrier : barriers) {
-            shapeRenderer.rect(barrier.position.x - 9300, barrier.position.y, 6000, 1350);
-            shapeRenderer.rect(barrier.position.x, barrier.position.y, 6000, 1350);
+            shapeRenderer.rect(barrier.position.x - 9300, barrier.position.y, 6000, PLAYER_SCALE);
+            shapeRenderer.rect(barrier.position.x, barrier.position.y, 6000, PLAYER_SCALE);
         }
         if (gameState == GameState.GameOver) {
             shapeRenderer.setColor(0, 0, 0, faderShaderTimer / 3);
             shapeRenderer.rect(0, 0, 9000, 16000);
         }
+
+        // End ShapeRenderer. Disable Blend.
         shapeRenderer.end();
         Gdx.gl.glDisable(GL30.GL_BLEND);
     }
