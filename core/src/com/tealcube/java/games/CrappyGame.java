@@ -26,16 +26,19 @@ public class CrappyGame extends ApplicationAdapter {
     private float LEFT_BOUNDS = MAX_LEFT_BOUNDS;
 
     private Texture colorShiftBkg;
+    private Texture TClogo;
     private int shadowcreep = -(((WORLD_WIDTH/4)-3838)/15);
     private int player_x;
     private int player_y;
     private int playerspeed;
     private int bkgShift;
     private int lastRandom;
+    private int splashTimer;
     private float faderShaderTimer;
     String scoreMessage;
     int score = 0;
 
+    GameState gameState;
     ShapeRenderer shapeRenderer;
     SpriteBatch batch;
     Viewport viewport;
@@ -44,13 +47,13 @@ public class CrappyGame extends ApplicationAdapter {
 
     Array<Barrier> barriers = new Array<Barrier>();
 
-    GameState gameState = GameState.Start;
-
     Music music;
 
 
     @Override
     public void create() {
+        gameState = GameState.TCSplash;
+        splashTimer = 1;
         camera = new OrthographicCamera();
         viewport = new StretchViewport(9000, 16000, camera);
         viewport.apply();
@@ -67,6 +70,7 @@ public class CrappyGame extends ApplicationAdapter {
         scoreMessage = "" + score;
 
         colorShiftBkg = new Texture("shifter.png");
+        TClogo = new Texture("TClogo.png");
 
         music = Gdx.audio.newMusic(Gdx.files.internal("music.mp3"));
         music.setLooping(true);
@@ -132,6 +136,14 @@ public class CrappyGame extends ApplicationAdapter {
 
     // World update. Makes stuff happen.
     private void updateWorld() {
+        if (gameState == GameState.TCSplash) {
+            if (splashTimer < 80) {
+                splashTimer++;
+            } else {
+                gameState = GameState.Start;
+            }
+        }
+
         if (gameState == GameState.MainMenu) {
             playerspeed = 5;
         }
@@ -169,7 +181,7 @@ public class CrappyGame extends ApplicationAdapter {
             // for psudo collisions.
             if (player_x < LEFT_BOUNDS || player_x > RIGHT_BOUNDS) {
                 gameState = GameState.GameOver;
-                Gdx.app.log("LOGGGG", "ENTERED GAMEOVERSTATE");
+                Gdx.app.log("[INFO]", "ENTERED GAMEOVERSTATE");
                 return;
             }
         }
@@ -184,14 +196,36 @@ public class CrappyGame extends ApplicationAdapter {
                 }
             }
             if (faderShaderTimer < 1.0F) {
-                Gdx.app.log("LOGGGG", "FADER IS NOW AT:" + faderShaderTimer);
+                Gdx.app.log("[INFO]", "FADER IS NOW AT:" + faderShaderTimer);
                 faderShaderTimer += 0.1F;
             }
         }
     }
 
-    // Draw event for the renderer to use.
-    private void drawWorld() {
+
+    private void drawSplash() {
+        shapeRenderer = new ShapeRenderer();
+        shapeRenderer.setProjectionMatrix(camera.combined);
+        shapeRenderer.begin(ShapeRenderer.ShapeType.Filled);
+        shapeRenderer.setColor(0, 0, 0, 1);
+        shapeRenderer.rect(0, 0, 9000, 16000);
+        shapeRenderer.end();
+        batch.setProjectionMatrix(camera.combined);
+        batch.begin();
+        Gdx.gl.glEnable(GL30.GL_BLEND);
+        Gdx.gl.glBlendFunc(GL30.GL_SRC_ALPHA, GL30.GL_ONE_MINUS_SRC_ALPHA);
+        batch.draw(TClogo, 3000, 6500, 3000, 3000);
+        batch.end();
+        Gdx.gl.glDisable(GL30.GL_BLEND);
+    }
+
+
+    private void drawMainMenu() {
+
+    }
+
+
+    private void drawGameplay() {
         batch.setProjectionMatrix(camera.combined);
         batch.begin();
         Gdx.gl.glEnable(GL30.GL_BLEND);
@@ -239,6 +273,22 @@ public class CrappyGame extends ApplicationAdapter {
     }
 
 
+    // Draw event for the renderer to use.
+    private void mainDraw() {
+        if (gameState == GameState.TCSplash) {
+            drawSplash();
+        }
+
+        if (gameState == GameState.MainMenu) {
+
+        }
+
+        if (gameState == GameState.GameOver || gameState == GameState.Running || gameState == GameState.Start) {
+            drawGameplay();
+        }
+    }
+
+
     @Override
     public void render() {
         camera.update();
@@ -247,7 +297,7 @@ public class CrappyGame extends ApplicationAdapter {
         Gdx.gl.glClear(GL30.GL_COLOR_BUFFER_BIT);
 
         updateWorld();
-        drawWorld();
+        mainDraw();
     }
 
 
@@ -269,6 +319,6 @@ public class CrappyGame extends ApplicationAdapter {
     }
 
     enum GameState {
-        MainMenu, Options, Unlocks, Start, Running, GameOver
+        TCSplash, MainMenu, Options, Unlocks, Start, Running, GameOver
     }
 }
