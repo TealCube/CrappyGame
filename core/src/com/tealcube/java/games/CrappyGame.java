@@ -374,6 +374,7 @@ public class CrappyGame extends ApplicationAdapter {
         music.dispose();
         TCload.dispose();
         TClogo.dispose();
+        effects.dispose();
         colorShiftBkg.dispose();
         font.dispose();
         batch.dispose();
