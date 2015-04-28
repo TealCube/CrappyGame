@@ -38,6 +38,7 @@ public class CrappyGame extends ApplicationAdapter {
     private int player_x;
     private int player_y;
     private int playerspeed;
+    private int barrierspeed;
     private int bkgShift;
     private int lastRandom;
     private float splashTimer;
@@ -68,7 +69,6 @@ public class CrappyGame extends ApplicationAdapter {
         parameter.characters = "1234567890";
         font = generator.generateFont(parameter);
 
-        player_x = WORLD_WIDTH / 4;
         player_y = WORLD_HEIGHT / 6;
 
         colorShiftBkg = new Texture("shifter.png");
@@ -90,6 +90,8 @@ public class CrappyGame extends ApplicationAdapter {
 
         faderShaderTimer = 0;
         score = 0;
+        playerspeed = 50;
+        barrierspeed = 50;
         player_x = WORLD_WIDTH/2 - PLAYER_SCALE/2;
         shadowcreep = 0;
         RIGHT_BOUNDS = MAX_RIGHT_BOUNDS;
@@ -111,20 +113,20 @@ public class CrappyGame extends ApplicationAdapter {
     // Moves Barriers and sets colision bounds
     private void moveBarriers() {
         for (Barrier r : barriers) {
-            r.position.y = r.position.y - 50;
+            r.position.y = r.position.y - barrierspeed;
             if (!r.counted) {
                 // Sets the max X bounding to the current position of the barrier
                 // that should be in range of the player now. If the player is
                 // 'collided' with the texture, it is because its X value is too
                 // high or too low
-                if (r.position.y < 4000) {
-                    RIGHT_BOUNDS = r.position.x - 140;
-                    LEFT_BOUNDS = r.position.x - 3300;
+                if (r.position.y <= player_y+1350) {
+                    RIGHT_BOUNDS = r.position.x - 1400;
+                    LEFT_BOUNDS = r.position.x - 3250;
                     // Once it is past the player, it should add one to the score, and
                     // change the counted value. It also resets the bounds to the sides
                     // of the screen. After this step, the barrier does literally
                     // nothing but move downwards until it is cleared.
-                    if (r.position.y < 1800) {
+                    if (r.position.y <= (player_y-1350)) {
                         RIGHT_BOUNDS = MAX_RIGHT_BOUNDS;
                         LEFT_BOUNDS = MAX_LEFT_BOUNDS;
                         r.counted = true;
@@ -165,7 +167,6 @@ public class CrappyGame extends ApplicationAdapter {
             // Touch to start the game
             if (Gdx.input.justTouched()) {
                 gameState = GameState.Running;
-                playerspeed = 50;
                 return;
             }
         }
@@ -186,6 +187,7 @@ public class CrappyGame extends ApplicationAdapter {
             // simplicity of the game allows me to merely compare three numbers
             // for psudo collisions.
             if (player_x < LEFT_BOUNDS || player_x > RIGHT_BOUNDS) {
+                music.stop();
                 gameState = GameState.GameOver;
                 Gdx.app.log("[INFO]", "ENTERED GAMEOVERSTATE");
                 return;
@@ -197,6 +199,7 @@ public class CrappyGame extends ApplicationAdapter {
             if (faderShaderTimer >= 1.0F) {
                 if (Gdx.input.justTouched()) {
                     gameState = GameState.Start;
+                    music.play();
                     resetWorld();
                     return;
                 }
@@ -320,6 +323,18 @@ public class CrappyGame extends ApplicationAdapter {
 
         updateWorld();
         mainDraw();
+    }
+
+
+    @Override
+    public void dispose() {
+        music.dispose();
+        TCload.dispose();
+        TClogo.dispose();
+        colorShiftBkg.dispose();
+        font.dispose();
+        batch.dispose();
+        shapeRenderer.dispose();
     }
 
 
