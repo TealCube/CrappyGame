@@ -19,6 +19,8 @@ import com.badlogic.gdx.utils.viewport.StretchViewport;
 import com.badlogic.gdx.utils.viewport.Viewport;
 
 public class CrappyGame extends ApplicationAdapter {
+    static final int BASE_PLAYER_SPEED = 50;
+    static final int BASE_BARRIER_SPEED = 50;
     static final int WORLD_WIDTH = 9000;
     static final int WORLD_HEIGHT = 16000;
     static final int MAX_RIGHT_BOUNDS = 6800;
@@ -98,8 +100,8 @@ public class CrappyGame extends ApplicationAdapter {
 
         faderShaderTimer = 0;
         score = 0;
-        playerspeed = 50;
-        barrierspeed = 50;
+        playerspeed = BASE_PLAYER_SPEED;
+        barrierspeed = BASE_PLAYER_SPEED;
         player_x = WORLD_WIDTH/2 - PLAYER_SCALE/2;
         shadowcreep = 0;
         RIGHT_BOUNDS = MAX_RIGHT_BOUNDS;
@@ -141,6 +143,7 @@ public class CrappyGame extends ApplicationAdapter {
                         LEFT_BOUNDS = MAX_LEFT_BOUNDS;
                         r.counted = true;
                         score++;
+                        barrierspeed = (score % 3 == 0 ? barrierspeed + 1 : barrierspeed);
                     }
                 }
             } else {
@@ -374,7 +377,6 @@ public class CrappyGame extends ApplicationAdapter {
         music.dispose();
         TCload.dispose();
         TClogo.dispose();
-        effects.dispose();
         colorShiftBkg.dispose();
         font.dispose();
         batch.dispose();
