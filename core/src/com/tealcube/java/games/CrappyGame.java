@@ -3,6 +3,8 @@ package com.tealcube.java.games;
 import com.badlogic.gdx.ApplicationAdapter;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.audio.Music;
+import com.badlogic.gdx.audio.Sound;
+import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.GL30;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.Texture;
@@ -28,15 +30,18 @@ public class CrappyGame extends ApplicationAdapter {
 
     private Texture colorShiftBkg;
     private Texture TClogo;
+    private Sound TCload;
+    private Music music;
+
+
     private int shadowcreep;
     private int player_x;
     private int player_y;
     private int playerspeed;
     private int bkgShift;
     private int lastRandom;
-    private int splashTimer;
+    private float splashTimer;
     private float faderShaderTimer;
-    String scoreMessage;
     int score = 0;
 
     GameState gameState;
@@ -47,8 +52,6 @@ public class CrappyGame extends ApplicationAdapter {
     BitmapFont font;
 
     Array<Barrier> barriers = new Array<Barrier>();
-
-    Music music;
 
 
     @Override
@@ -68,14 +71,12 @@ public class CrappyGame extends ApplicationAdapter {
         player_x = WORLD_WIDTH / 4;
         player_y = WORLD_HEIGHT / 6;
 
-        scoreMessage = "" + score;
-
         colorShiftBkg = new Texture("shifter.png");
         TClogo = new Texture("TClogo.png");
 
+        TCload = Gdx.audio.newSound(Gdx.files.internal("TCload.wav"));
         music = Gdx.audio.newMusic(Gdx.files.internal("music.mp3"));
         music.setLooping(true);
-        music.play();
 
         batch = new SpriteBatch();
         resetWorld();
@@ -138,10 +139,14 @@ public class CrappyGame extends ApplicationAdapter {
     // World update. Makes stuff happen.
     private void updateWorld() {
         if (gameState == GameState.TCSplash) {
-            if (splashTimer < 100) {
+            if (splashTimer < 90) {
                 splashTimer++;
+                if (splashTimer == 10) {
+                    TCload.play();
+                }
             } else {
                 gameState = GameState.Start;
+                music.play();
             }
         }
 
@@ -197,8 +202,8 @@ public class CrappyGame extends ApplicationAdapter {
                 }
             }
             if (faderShaderTimer < 1.0F) {
-                Gdx.app.log("[INFO]", "FADER IS NOW AT:" + faderShaderTimer);
                 faderShaderTimer += 0.1F;
+                Gdx.app.log("[INFO]", "FADER IS NOW AT:" + faderShaderTimer);
             }
         }
     }
@@ -211,10 +216,16 @@ public class CrappyGame extends ApplicationAdapter {
         shapeRenderer.setColor(0, 0, 0, 1);
         shapeRenderer.rect(0, 0, 9000, 16000);
         shapeRenderer.end();
+
         batch.setProjectionMatrix(camera.combined);
         batch.begin();
         Gdx.gl.glEnable(GL30.GL_BLEND);
         Gdx.gl.glBlendFunc(GL30.GL_SRC_ALPHA, GL30.GL_ONE_MINUS_SRC_ALPHA);
+        Color c = batch.getColor();
+        batch.setColor(c.r, c.g, c.b, 1f);
+        if (splashTimer < 10) {
+            batch.setColor(c.r, c.g, c.b, splashTimer/10);
+        }
         batch.draw(TClogo, 3000, 6500, 3000, 3000);
         batch.end();
         Gdx.gl.glDisable(GL30.GL_BLEND);
@@ -284,16 +295,18 @@ public class CrappyGame extends ApplicationAdapter {
 
     // Draw event for the renderer to use.
     private void mainDraw() {
+        if (gameState == GameState.GameOver || gameState == GameState.Running || gameState == GameState.Start) {
+            drawGameplay();
+            return;
+        }
+
         if (gameState == GameState.TCSplash) {
             drawSplash();
+            return;
         }
 
         if (gameState == GameState.MainMenu) {
 
-        }
-
-        if (gameState == GameState.GameOver || gameState == GameState.Running || gameState == GameState.Start) {
-            drawGameplay();
         }
     }
 
