@@ -30,6 +30,7 @@ public class CrappyGame extends ApplicationAdapter {
 
     private Texture colorShiftBkg;
     private Texture TClogo;
+    private Texture effects;
     private Sound TCload;
     private Music music;
 
@@ -41,6 +42,7 @@ public class CrappyGame extends ApplicationAdapter {
     private int barrierspeed;
     private int bkgShift;
     private int lastRandom;
+    private int lastBarrier;
     private float splashTimer;
     private float faderShaderTimer;
     int score = 0;
@@ -53,6 +55,7 @@ public class CrappyGame extends ApplicationAdapter {
     BitmapFont font;
 
     Array<Barrier> barriers = new Array<Barrier>();
+    Array<Circlez> circles = new Array<Circlez>();
 
 
     @Override
@@ -73,10 +76,15 @@ public class CrappyGame extends ApplicationAdapter {
 
         colorShiftBkg = new Texture("shifter.png");
         TClogo = new Texture("TClogo.png");
+        effects = new Texture("bkgcircle.png");
 
         TCload = Gdx.audio.newSound(Gdx.files.internal("TCload.wav"));
         music = Gdx.audio.newMusic(Gdx.files.internal("music.mp3"));
         music.setLooping(true);
+
+        for (int i = 0; i < 25; i++) {
+            circles.add(new Circlez(MathUtils.random(-2000,8400), MathUtils.random(0, 18000), MathUtils.random(5,30), MathUtils.random(800,3000)));
+        }
 
         batch = new SpriteBatch();
         resetWorld();
@@ -98,7 +106,7 @@ public class CrappyGame extends ApplicationAdapter {
         LEFT_BOUNDS = MAX_LEFT_BOUNDS;
         barriers.clear();
 
-        for (int i = 0; i < 25; i++) {
+        for (int i = 0; i < 10; i++) {
             tempRandom = lastRandom + MathUtils.random(1, 5);
             if (tempRandom > 5) {
                 tempRandom -= 6;
@@ -106,14 +114,16 @@ public class CrappyGame extends ApplicationAdapter {
             lastRandom = tempRandom;
             barrierLoc = 8300 + tempRandom * -850;
             barriers.add(new Barrier(barrierLoc, 16000 + i * 5500));
+            lastBarrier = 16000 + i * 5500;
         }
     }
 
 
     // Moves Barriers and sets colision bounds
     private void moveBarriers() {
+        lastBarrier -= barrierspeed;
         for (Barrier r : barriers) {
-            r.position.y = r.position.y - barrierspeed;
+            r.position.y -= barrierspeed;
             if (!r.counted) {
                 // Sets the max X bounding to the current position of the barrier
                 // that should be in range of the player now. If the player is
@@ -133,8 +143,37 @@ public class CrappyGame extends ApplicationAdapter {
                         score++;
                     }
                 }
+            } else {
+                if (r.position.y <= -1350) {
+                    Gdx.app.log("[INFO]", "LAST BARRIER WAS AT: " + lastBarrier);
+                    r.position.y = lastBarrier + 5500;
+                    lastBarrier += 5500;
+                    Gdx.app.log("[INFO]", "MOVED LOWEST BARRIER TO: " + lastBarrier);
+                    int tempRandom = lastRandom + MathUtils.random(1, 5);
+                    if (tempRandom > 5) {
+                        tempRandom -= 6;
+                    }
+                    lastRandom = tempRandom;
+                    r.position.x = 8300 + tempRandom * -850;
+                    r.counted = false;
+                }
             }
         }
+    }
+
+
+    // Moves Barriers and sets colision bounds
+    private void moveCircles() {
+        for (Circlez r : circles) {
+            r.position.y = r.position.y - r.speed;
+            if (r.position.y < -3000) {
+                r.position.y = 19000;
+                r.position.x = -2000 + MathUtils.random(0, 8400);
+                r.scale = MathUtils.random(800,3000);
+                r.speed = MathUtils.random(5,30);
+            }
+        }
+
     }
 
 
@@ -181,6 +220,7 @@ public class CrappyGame extends ApplicationAdapter {
             player_x += playerspeed;
             shadowcreep += -(playerspeed/15);
             moveBarriers();
+            moveCircles();
             bkgShift += 6;
 
             // Collision detection. Rather than using squares to detect, the
@@ -236,7 +276,7 @@ public class CrappyGame extends ApplicationAdapter {
 
 
     private void drawMainMenu() {
-
+        Gdx.app.log("[INFO]", "ENTERED MAIN MENU LWEODLSWERF");
     }
 
 
@@ -249,6 +289,9 @@ public class CrappyGame extends ApplicationAdapter {
 
         // Draw background (includes text)
         batch.draw(colorShiftBkg, -bkgShift, -bkgShift, WORLD_WIDTH * 5, WORLD_HEIGHT * 5);
+        for (Circlez circle : circles) {
+            batch.draw(effects, circle.position.x, circle.position.y, circle.scale, circle.scale);
+        }
         font.setScale(12, 12);
         font.setColor(0, 0, 0, 0.3F);
         font.drawMultiLine(batch, "" + score, 4500 + shadowcreep/2, 12940, 0, BitmapFont.HAlignment.CENTER);
@@ -309,7 +352,7 @@ public class CrappyGame extends ApplicationAdapter {
         }
 
         if (gameState == GameState.MainMenu) {
-
+            drawMainMenu();
         }
     }
 
@@ -352,6 +395,20 @@ public class CrappyGame extends ApplicationAdapter {
         public Barrier(int x, int y) {
             this.position.x = x;
             this.position.y = y;
+        }
+    }
+
+
+    static class Circlez {
+        Vector2 position = new Vector2();
+        int speed;
+        float scale;
+
+        public Circlez(int x, int y, int z, int a) {
+            this.position.x = x;
+            this.position.y = y;
+            this.speed = z;
+            this.scale = a;
         }
     }
 
