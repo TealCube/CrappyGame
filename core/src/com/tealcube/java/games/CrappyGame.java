@@ -120,6 +120,24 @@ public class CrappyGame extends ApplicationAdapter {
         }
     }
 
+    // Grab screen adjusted X value
+    public float grabX() {
+        int width = Gdx.graphics.getWidth();
+        float x = Gdx.input.getX();
+        x = 9000 * (x / (float) width);
+        Gdx.app.log("[INFO]", "CLICKED X: " + x);
+        return x;
+    }
+
+    // Grab screen adjusted Y value
+    public float grabY() {
+        int height = Gdx.graphics.getHeight();
+        float y = Gdx.input.getY();
+        y = 16000-(16000 * (y / (float) height));
+        Gdx.app.log("[INFO]", "CLICKED Y: " + y);
+        return y;
+    }
+
 
     // Moves Barriers and sets colision bounds
     private void moveBarriers() {
@@ -242,10 +260,15 @@ public class CrappyGame extends ApplicationAdapter {
             // Placeholder until a gameover screen with buttons is completed.
             if (faderShaderTimer >= 1.0F) {
                 if (Gdx.input.justTouched()) {
-                    gameState = GameState.Start;
-                    music.play();
-                    resetWorld();
-                    return;
+                    float x = grabX();
+                    float y = grabY();
+                    if (x > 3000 && x < 6000 && y > 9000 && y < 13000) {
+                        gameState = GameState.Start;
+                        music.play();
+                        resetWorld();
+                        return;
+                    }
+
                 }
             }
             if (faderShaderTimer < 1.0F) {
@@ -280,6 +303,12 @@ public class CrappyGame extends ApplicationAdapter {
 
 
     private void drawMainMenu() {
+        shapeRenderer = new ShapeRenderer();
+        shapeRenderer.setProjectionMatrix(camera.combined);
+        shapeRenderer.begin(ShapeRenderer.ShapeType.Filled);
+        shapeRenderer.setColor(0, 0, 0, 1);
+        shapeRenderer.rect(0, 0, 9000, 16000);
+        shapeRenderer.end();
         Gdx.app.log("[INFO]", "ENTERED MAIN MENU LWEODLSWERF");
     }
 
@@ -343,10 +372,23 @@ public class CrappyGame extends ApplicationAdapter {
     }
 
 
+    private void drawGameOver() {
+        shapeRenderer = new ShapeRenderer();
+        shapeRenderer.setProjectionMatrix(camera.combined);
+        shapeRenderer.begin(ShapeRenderer.ShapeType.Filled);
+        shapeRenderer.setColor(1, 1, 1, 1);
+        shapeRenderer.rect(1500, 7000, 6000, 3000);
+        shapeRenderer.end();
+    }
+
+
     // Draw event for the renderer to use.
     private void mainDraw() {
         if (gameState == GameState.GameOver || gameState == GameState.Running || gameState == GameState.Start) {
             drawGameplay();
+            if (gameState == GameState.GameOver) {
+                drawGameOver();
+            }
             return;
         }
 
