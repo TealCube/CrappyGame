@@ -32,6 +32,7 @@ public class CrappyGame extends ApplicationAdapter {
 
     private Texture colorShiftBkg;
     private Texture TClogo;
+    private Texture retry;
     private Texture effects;
     private Sound TCload;
     private Music music;
@@ -79,6 +80,7 @@ public class CrappyGame extends ApplicationAdapter {
         colorShiftBkg = new Texture("shifter.png");
         TClogo = new Texture("TClogo.png");
         effects = new Texture("bkgcircle.png");
+        retry = new Texture("retry.png");
 
         TCload = Gdx.audio.newSound(Gdx.files.internal("TCload.wav"));
         music = Gdx.audio.newMusic(Gdx.files.internal("music.mp3"));
@@ -121,7 +123,7 @@ public class CrappyGame extends ApplicationAdapter {
     }
 
     // Grab screen adjusted X value
-    public float grabX() {
+    private float grabX() {
         int width = Gdx.graphics.getWidth();
         float x = Gdx.input.getX();
         x = 9000 * (x / (float) width);
@@ -130,7 +132,7 @@ public class CrappyGame extends ApplicationAdapter {
     }
 
     // Grab screen adjusted Y value
-    public float grabY() {
+    private float grabY() {
         int height = Gdx.graphics.getHeight();
         float y = Gdx.input.getY();
         y = 16000-(16000 * (y / (float) height));
@@ -213,17 +215,6 @@ public class CrappyGame extends ApplicationAdapter {
             }
         }
 
-        if (gameState == GameState.MainMenu) {
-            playerspeed = 5;
-        }
-
-        if (gameState == GameState.Options) {
-            playerspeed = 5;
-        }
-
-        if (gameState == GameState.Unlocks) {
-            playerspeed = 5;
-        }
         if (gameState == GameState.Start) {
             // Touch to start the game
             if (Gdx.input.justTouched()) {
@@ -262,7 +253,7 @@ public class CrappyGame extends ApplicationAdapter {
                 if (Gdx.input.justTouched()) {
                     float x = grabX();
                     float y = grabY();
-                    if (x > 3000 && x < 6000 && y > 9000 && y < 13000) {
+                    if (x > 1500 && x < 7500 && y > 7000 && y < 10000) {
                         gameState = GameState.Start;
                         music.play();
                         resetWorld();
@@ -309,7 +300,6 @@ public class CrappyGame extends ApplicationAdapter {
         shapeRenderer.setColor(0, 0, 0, 1);
         shapeRenderer.rect(0, 0, 9000, 16000);
         shapeRenderer.end();
-        Gdx.app.log("[INFO]", "ENTERED MAIN MENU LWEODLSWERF");
     }
 
 
@@ -374,11 +364,24 @@ public class CrappyGame extends ApplicationAdapter {
 
     private void drawGameOver() {
         shapeRenderer = new ShapeRenderer();
+
         shapeRenderer.setProjectionMatrix(camera.combined);
         shapeRenderer.begin(ShapeRenderer.ShapeType.Filled);
         shapeRenderer.setColor(1, 1, 1, 1);
-        shapeRenderer.rect(1500, 7000, 6000, 3000);
+        shapeRenderer.rect(1500, 7000, 6000, 2200);
+
         shapeRenderer.end();
+
+        batch.setProjectionMatrix(camera.combined);
+        batch.begin();
+        Gdx.gl.glEnable(GL30.GL_BLEND);
+        Gdx.gl.glBlendFunc(GL30.GL_SRC_ALPHA, GL30.GL_ONE_MINUS_SRC_ALPHA);
+
+        // Draw background (includes text)
+        batch.draw(retry, 3300, 7200, 4000, 1700);
+
+        batch.end();
+        Gdx.gl.glDisable(GL30.GL_BLEND);
     }
 
 
