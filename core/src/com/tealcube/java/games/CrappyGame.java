@@ -36,6 +36,7 @@ public class CrappyGame extends ApplicationAdapter {
     private Texture TClogo;
     private Texture retry;
     private Texture effects;
+    private Texture sshade;
     private Sound TCload;
     private Music music;
 
@@ -84,6 +85,7 @@ public class CrappyGame extends ApplicationAdapter {
         TClogo = new Texture("TClogo.png");
         effects = new Texture("bkgcircle.png");
         retry = new Texture("retry.png");
+        sshade = new Texture("scoreshade.png");
 
         TCload = Gdx.audio.newSound(Gdx.files.internal("TCload.wav"));
         music = Gdx.audio.newMusic(Gdx.files.internal("music.mp3"));
@@ -286,7 +288,7 @@ public class CrappyGame extends ApplicationAdapter {
                     float y = grabY();
 
                     // Replay Button
-                    if (x > 1500 && x < 7500 && y > 7000 && y < 10000) {
+                    if (x > 1500 && x < 7500 && y > 7000 && y < 9200) {
                         gameState = GameState.Start;
                         //music.play();
                         resetWorld();
@@ -298,11 +300,11 @@ public class CrappyGame extends ApplicationAdapter {
                     // Tweet button
 
                     // Main Menu Button
-                    if (x > 1500 && x < 7500 && y > 3000 && y < 5000) {
-                        resetWorld();
-                        gameState = GameState.MainMenu;
-                        return;
-                    }
+                    //if (x > 1500 && x < 7500 && y > 3000 && y < 5000) {
+                    //    resetWorld();
+                    //    gameState = GameState.MainMenu;
+                    //    return;
+                    //}
                 }
             }
             if (faderShaderTimer < 1.0F) {
@@ -416,8 +418,14 @@ public class CrappyGame extends ApplicationAdapter {
 
         shapeRenderer.setProjectionMatrix(camera.combined);
         shapeRenderer.begin(ShapeRenderer.ShapeType.Filled);
+
+        // Scoring feild background
         shapeRenderer.setColor(1, 1, 1, 1);
-        shapeRenderer.rect(1500, 7000-(10000*(1-faderShaderTimer)), 6000, 2200);
+        shapeRenderer.rect(1500, 10000 - (14000 * (1 - faderShaderTimer)), 6000, 4000);
+
+        // Retry button background
+        shapeRenderer.setColor(1, 1, 1, 1);
+        shapeRenderer.rect(1500, 7000 - (14000 * (1 - faderShaderTimer)), 6000, 2200);
 
         shapeRenderer.end();
 
@@ -426,13 +434,15 @@ public class CrappyGame extends ApplicationAdapter {
         Gdx.gl.glEnable(GL30.GL_BLEND);
         Gdx.gl.glBlendFunc(GL30.GL_SRC_ALPHA, GL30.GL_ONE_MINUS_SRC_ALPHA);
 
+        batch.draw(sshade, 1500, 10000 - (14000 * (1 - faderShaderTimer)), 6000, 4000);
+
         if (faderShaderTimer > 0) {
             font.setScale(12, 12);
             font.setColor(1, 1, 1, 1);
-            font.drawMultiLine(batch, "" + score, 4500,13000-(10000*(1-faderShaderTimer)), 0, BitmapFont.HAlignment.CENTER);
+            font.drawMultiLine(batch, "" + score, 4500,13000-(14000*(1-faderShaderTimer)), 0, BitmapFont.HAlignment.CENTER);
         }
 
-        batch.draw(retry, 2400, 7200-(10000*(1-faderShaderTimer)), 4000, 1700);
+        batch.draw(retry, 2400, 7200-(14000*(1-faderShaderTimer)), 4000, 1700);
 
         batch.end();
         Gdx.gl.glDisable(GL30.GL_BLEND);
