@@ -36,12 +36,11 @@ public class CrappyGame extends ApplicationAdapter {
     private Texture TClogo;
     private Texture retry;
     private Texture effects;
-    private Texture sshade;
     private Sound TCload;
     private Music music;
 
 
-    private int shadowcreep;
+    private float shadowcreep;
     private int player_x;
     private int player_y;
     private int playerspeed;
@@ -85,7 +84,6 @@ public class CrappyGame extends ApplicationAdapter {
         TClogo = new Texture("TClogo.png");
         effects = new Texture("bkgcircle.png");
         retry = new Texture("retry.png");
-        sshade = new Texture("scoreshade.png");
 
         TCload = Gdx.audio.newSound(Gdx.files.internal("TCload.wav"));
         music = Gdx.audio.newMusic(Gdx.files.internal("music.mp3"));
@@ -142,11 +140,12 @@ public class CrappyGame extends ApplicationAdapter {
         int tempRandom;
         int barrierLoc;
 
+        highscore = getHighScore();
         score = 0;
         playerspeed = BASE_PLAYER_SPEED;
         barrierspeed = BASE_BARRIER_SPEED;
         player_x = WORLD_WIDTH/2 - PLAYER_SCALE/2;
-        shadowcreep = 0;
+        shadowcreep = -150 + (((float) score/(Math.max((float) highscore, 25F)))*300);
         RIGHT_BOUNDS = MAX_RIGHT_BOUNDS;
         LEFT_BOUNDS = MAX_LEFT_BOUNDS;
         barriers.clear();
@@ -186,6 +185,7 @@ public class CrappyGame extends ApplicationAdapter {
                         LEFT_BOUNDS = MAX_LEFT_BOUNDS;
                         r.counted = true;
                         score++;
+                        shadowcreep = -150 + (((float) score/(Math.max((float) highscore, 25F)))*300);
                         //barrierspeed = (score % 3 == 0 ? barrierspeed + 5 : barrierspeed);
                         //playerspeed = (score % 4 == 0 ? playerspeed + 5 : playerspeed);
                     }
@@ -258,7 +258,6 @@ public class CrappyGame extends ApplicationAdapter {
 
             // Moves stuff
             player_x += playerspeed;
-            shadowcreep += -(playerspeed/15);
             moveBarriers();
             moveCircles();
             bkgShift += 6;
@@ -268,7 +267,6 @@ public class CrappyGame extends ApplicationAdapter {
             // for psudo collisions.
             if (player_x < LEFT_BOUNDS || player_x > RIGHT_BOUNDS) {
                 //music.stop();
-                highscore = getHighScore();
                 Gdx.app.log("[INFO]", "SCORE: " + score);
                 Gdx.app.log("[INFO]", "HIGHSCORE: " + highscore);
                 if (score > highscore) {
@@ -421,11 +419,14 @@ public class CrappyGame extends ApplicationAdapter {
 
         // Scoring feild background
         shapeRenderer.setColor(1, 1, 1, 1);
-        shapeRenderer.rect(1500, 10000 - (14000 * (1 - faderShaderTimer)), 6000, 4000);
+        shapeRenderer.rect(1500, 9300 - (14300 * (1 - faderShaderTimer)), 6000, 4900);
+        shapeRenderer.setColor(0.8F, 0.8F, 0.8F, 1);
+        shapeRenderer.rect(1800, 10600 - (14300 * (1 - faderShaderTimer)), 5400, 3300);
+        shapeRenderer.rect(2200, 9700 - (14300 * (1 - faderShaderTimer)), 5000, 500);
 
         // Retry button background
         shapeRenderer.setColor(1, 1, 1, 1);
-        shapeRenderer.rect(1500, 7000 - (14000 * (1 - faderShaderTimer)), 6000, 2200);
+        shapeRenderer.rect(1500, 6700 - (14300 * (1 - faderShaderTimer)), 6000, 2200);
 
         shapeRenderer.end();
 
@@ -434,15 +435,14 @@ public class CrappyGame extends ApplicationAdapter {
         Gdx.gl.glEnable(GL30.GL_BLEND);
         Gdx.gl.glBlendFunc(GL30.GL_SRC_ALPHA, GL30.GL_ONE_MINUS_SRC_ALPHA);
 
-        batch.draw(sshade, 1500, 10000 - (14000 * (1 - faderShaderTimer)), 6000, 4000);
-
         if (faderShaderTimer > 0) {
             font.setScale(12, 12);
             font.setColor(1, 1, 1, 1);
-            font.drawMultiLine(batch, "" + score, 4500,13000-(14000*(1-faderShaderTimer)), 0, BitmapFont.HAlignment.CENTER);
+            font.drawMultiLine(batch, "" + score, 4500,14300-(14000*(1-faderShaderTimer)), 0, BitmapFont.HAlignment
+                .CENTER);
         }
 
-        batch.draw(retry, 2400, 7200-(14000*(1-faderShaderTimer)), 4000, 1700);
+        batch.draw(retry, 2400, 6900-(14300*(1-faderShaderTimer)), 4000, 1700);
 
         batch.end();
         Gdx.gl.glDisable(GL30.GL_BLEND);
