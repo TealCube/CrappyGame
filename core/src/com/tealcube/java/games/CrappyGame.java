@@ -140,7 +140,6 @@ public class CrappyGame extends ApplicationAdapter {
         int tempRandom;
         int barrierLoc;
 
-        faderShaderTimer = 0;
         score = 0;
         playerspeed = BASE_PLAYER_SPEED;
         barrierspeed = BASE_BARRIER_SPEED;
@@ -233,13 +232,17 @@ public class CrappyGame extends ApplicationAdapter {
                 }
             } else {
                 gameState = GameState.Start;
-                music.play();
+                //music.play();
             }
         }
 
         if (gameState == GameState.Start) {
-            // Touch to start the game
-            if (Gdx.input.justTouched()) {
+            if (faderShaderTimer > 0.0F) {
+                faderShaderTimer -= 0.1F;
+                if (faderShaderTimer < 0.0F) {
+                    faderShaderTimer = 0.0F;
+                }
+            } else if (Gdx.input.justTouched()) {
                 gameState = GameState.Running;
                 return;
             }
@@ -262,7 +265,7 @@ public class CrappyGame extends ApplicationAdapter {
             // simplicity of the game allows me to merely compare three numbers
             // for psudo collisions.
             if (player_x < LEFT_BOUNDS || player_x > RIGHT_BOUNDS) {
-                music.stop();
+                //music.stop();
                 highscore = getHighScore();
                 Gdx.app.log("[INFO]", "SCORE: " + score);
                 Gdx.app.log("[INFO]", "HIGHSCORE: " + highscore);
@@ -285,7 +288,7 @@ public class CrappyGame extends ApplicationAdapter {
                     // Replay Button
                     if (x > 1500 && x < 7500 && y > 7000 && y < 10000) {
                         gameState = GameState.Start;
-                        music.play();
+                        //music.play();
                         resetWorld();
                         return;
                     }
@@ -304,6 +307,9 @@ public class CrappyGame extends ApplicationAdapter {
             }
             if (faderShaderTimer < 1.0F) {
                 faderShaderTimer += 0.1F;
+                if (faderShaderTimer > 1.0F) {
+                    faderShaderTimer = 1.0F;
+                }
             }
         }
     }
@@ -354,11 +360,15 @@ public class CrappyGame extends ApplicationAdapter {
         for (Circlez circle : circles) {
             batch.draw(effects, circle.position.x, circle.position.y, circle.scale, circle.scale);
         }
-        font.setScale(12, 12);
-        font.setColor(0, 0, 0, 0.3F);
-        font.drawMultiLine(batch, "" + score, 4500 + shadowcreep/2, 12940, 0, BitmapFont.HAlignment.CENTER);
-        font.setColor(1, 1, 1, 1);
-        font.drawMultiLine(batch, "" + score, 4500, 13000, 0, BitmapFont.HAlignment.CENTER);
+
+        // Draws score text that's part of the background
+        if (faderShaderTimer < 1) {
+            font.setScale(12, 12);
+            font.setColor(0, 0, 0, 0.3F);
+            font.drawMultiLine(batch, "" + score, 4500 + shadowcreep / 2, 12940, 0, BitmapFont.HAlignment.CENTER);
+            font.setColor(1, 1, 1, 1);
+            font.drawMultiLine(batch, "" + score, 4500, 13000, 0, BitmapFont.HAlignment.CENTER);
+        }
 
         // End batch. Disable Blend.
         batch.end();
@@ -407,7 +417,7 @@ public class CrappyGame extends ApplicationAdapter {
         shapeRenderer.setProjectionMatrix(camera.combined);
         shapeRenderer.begin(ShapeRenderer.ShapeType.Filled);
         shapeRenderer.setColor(1, 1, 1, 1);
-        shapeRenderer.rect(1500, 7000, 6000, 2200);
+        shapeRenderer.rect(1500, 7000-(10000*(1-faderShaderTimer)), 6000, 2200);
 
         shapeRenderer.end();
 
@@ -416,8 +426,13 @@ public class CrappyGame extends ApplicationAdapter {
         Gdx.gl.glEnable(GL30.GL_BLEND);
         Gdx.gl.glBlendFunc(GL30.GL_SRC_ALPHA, GL30.GL_ONE_MINUS_SRC_ALPHA);
 
-        // Draw background (includes text)
-        batch.draw(retry, 2400, 7200, 4000, 1700);
+        if (faderShaderTimer > 0) {
+            font.setScale(12, 12);
+            font.setColor(1, 1, 1, 1);
+            font.drawMultiLine(batch, "" + score, 4500,13000-(10000*(1-faderShaderTimer)), 0, BitmapFont.HAlignment.CENTER);
+        }
+
+        batch.draw(retry, 2400, 7200-(10000*(1-faderShaderTimer)), 4000, 1700);
 
         batch.end();
         Gdx.gl.glDisable(GL30.GL_BLEND);
@@ -428,7 +443,7 @@ public class CrappyGame extends ApplicationAdapter {
     private void mainDraw() {
         if (gameState == GameState.GameOver || gameState == GameState.Running || gameState == GameState.Start) {
             drawGameplay();
-            if (gameState == GameState.GameOver) {
+            if (gameState != GameState.Running) {
                 drawGameOver();
             }
             return;
