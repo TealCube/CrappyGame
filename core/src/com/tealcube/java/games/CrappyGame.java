@@ -2,6 +2,7 @@ package com.tealcube.java.games;
 
 import com.badlogic.gdx.ApplicationAdapter;
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.Preferences;
 import com.badlogic.gdx.audio.Music;
 import com.badlogic.gdx.audio.Sound;
 import com.badlogic.gdx.graphics.Color;
@@ -26,6 +27,7 @@ public class CrappyGame extends ApplicationAdapter {
     static final int MAX_RIGHT_BOUNDS = 6800;
     static final int MAX_LEFT_BOUNDS = 800;
     static final int PLAYER_SCALE = 1350;
+    static Preferences preferences;
 
     private float RIGHT_BOUNDS = MAX_RIGHT_BOUNDS;
     private float LEFT_BOUNDS = MAX_LEFT_BOUNDS;
@@ -48,6 +50,7 @@ public class CrappyGame extends ApplicationAdapter {
     private int lastBarrier;
     private float splashTimer;
     private float faderShaderTimer;
+    int highscore = 0;
     int score = 0;
 
     GameState gameState;
@@ -90,8 +93,45 @@ public class CrappyGame extends ApplicationAdapter {
             circles.add(new Circlez(MathUtils.random(-2000,8400), MathUtils.random(0, 18000), MathUtils.random(5,30), MathUtils.random(800,3000)));
         }
 
+        preferences = Gdx.app.getPreferences("ChromaDodge");
+
+        if (!preferences.contains("highScore")) {
+            preferences.putInteger("highScore", 0);
+        }
+
         batch = new SpriteBatch();
         resetWorld();
+    }
+
+
+    // Grab screen adjusted X value
+    private float grabX() {
+        int width = Gdx.graphics.getWidth();
+        float x = Gdx.input.getX();
+        x = 9000 * (x / (float) width);
+        Gdx.app.log("[INFO]", "CLICKED X: " + x);
+        return x;
+    }
+
+    // Grab screen adjusted Y value
+    private float grabY() {
+        int height = Gdx.graphics.getHeight();
+        float y = Gdx.input.getY();
+        y = 16000-(16000 * (y / (float) height));
+        Gdx.app.log("[INFO]", "CLICKED Y: " + y);
+        return y;
+    }
+
+
+    // Changes the saved highscore.
+    public static void setHighScore(int val) {
+        preferences.putInteger("highScore", val);
+        preferences.flush();
+    }
+
+    // Gets the highscore, if you hadn't figured that out.
+    public static int getHighScore() {
+        return preferences.getInteger("highScore");
     }
 
 
@@ -120,24 +160,6 @@ public class CrappyGame extends ApplicationAdapter {
             barriers.add(new Barrier(barrierLoc, 16000 + i * 5500));
             lastBarrier = 16000 + i * 5500;
         }
-    }
-
-    // Grab screen adjusted X value
-    private float grabX() {
-        int width = Gdx.graphics.getWidth();
-        float x = Gdx.input.getX();
-        x = 9000 * (x / (float) width);
-        Gdx.app.log("[INFO]", "CLICKED X: " + x);
-        return x;
-    }
-
-    // Grab screen adjusted Y value
-    private float grabY() {
-        int height = Gdx.graphics.getHeight();
-        float y = Gdx.input.getY();
-        y = 16000-(16000 * (y / (float) height));
-        Gdx.app.log("[INFO]", "CLICKED Y: " + y);
-        return y;
     }
 
 
@@ -241,8 +263,14 @@ public class CrappyGame extends ApplicationAdapter {
             // for psudo collisions.
             if (player_x < LEFT_BOUNDS || player_x > RIGHT_BOUNDS) {
                 music.stop();
+                highscore = getHighScore();
+                Gdx.app.log("[INFO]", "SCORE: " + score);
+                Gdx.app.log("[INFO]", "HIGHSCORE: " + highscore);
+                if (score > highscore) {
+                    Gdx.app.log("[INFO]", "NEW HIGHSCORE: " + highscore + "-> " + score);
+                    setHighScore(score);
+                }
                 gameState = GameState.GameOver;
-                Gdx.app.log("[INFO]", "ENTERED GAMEOVERSTATE");
                 return;
             }
         }
@@ -253,6 +281,8 @@ public class CrappyGame extends ApplicationAdapter {
                 if (Gdx.input.justTouched()) {
                     float x = grabX();
                     float y = grabY();
+
+                    // Replay Button
                     if (x > 1500 && x < 7500 && y > 7000 && y < 10000) {
                         gameState = GameState.Start;
                         music.play();
@@ -260,11 +290,20 @@ public class CrappyGame extends ApplicationAdapter {
                         return;
                     }
 
+                    // Facebook share button
+
+                    // Tweet button
+
+                    // Main Menu Button
+                    if (x > 1500 && x < 7500 && y > 3000 && y < 5000) {
+                        resetWorld();
+                        gameState = GameState.MainMenu;
+                        return;
+                    }
                 }
             }
             if (faderShaderTimer < 1.0F) {
                 faderShaderTimer += 0.1F;
-                Gdx.app.log("[INFO]", "FADER IS NOW AT:" + faderShaderTimer);
             }
         }
     }
@@ -378,7 +417,7 @@ public class CrappyGame extends ApplicationAdapter {
         Gdx.gl.glBlendFunc(GL30.GL_SRC_ALPHA, GL30.GL_ONE_MINUS_SRC_ALPHA);
 
         // Draw background (includes text)
-        batch.draw(retry, 3300, 7200, 4000, 1700);
+        batch.draw(retry, 2400, 7200, 4000, 1700);
 
         batch.end();
         Gdx.gl.glDisable(GL30.GL_BLEND);
