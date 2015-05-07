@@ -423,6 +423,7 @@ public class CrappyGame extends ApplicationAdapter {
         shapeRenderer.setColor(0.8F, 0.8F, 0.8F, 1);
         shapeRenderer.rect(1800, 10600 - (14300 * (1 - faderShaderTimer)), 5400, 3300);
         shapeRenderer.rect(2200, 9700 - (14300 * (1 - faderShaderTimer)), 5000, 500);
+        shapeRenderer.circle(2150, 9950 - (14300 * (1 - faderShaderTimer)), 450);
 
         // Retry button background
         shapeRenderer.setColor(1, 1, 1, 1);
@@ -447,7 +448,7 @@ public class CrappyGame extends ApplicationAdapter {
         if (faderShaderTimer > 0) {
             font.setScale(12, 12);
             font.setColor(1, 1, 1, 1);
-            font.drawMultiLine(batch, "" + score, 4500,14300-(14000*(1-faderShaderTimer)), 0, BitmapFont.HAlignment
+            font.drawMultiLine(batch, "" + score, 4500,13500-(14000*(1-faderShaderTimer)), 0, BitmapFont.HAlignment
                 .CENTER);
         }
 
