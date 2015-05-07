@@ -428,6 +428,15 @@ public class CrappyGame extends ApplicationAdapter {
         shapeRenderer.setColor(1, 1, 1, 1);
         shapeRenderer.rect(1500, 6700 - (14300 * (1 - faderShaderTimer)), 6000, 2200);
 
+        // Facebook button background
+        shapeRenderer.setColor(0.5F, 0.5F, 1F, 1);
+        shapeRenderer.rect(1500, 4200 - (14300 * (1 - faderShaderTimer)), 3000, 2050);
+
+        // Twitter button background
+        shapeRenderer.setColor(0.3F, 0.3F, 1F, 1);
+        shapeRenderer.rect(4650, 4200 - (14300 * (1 - faderShaderTimer)), 3000, 2050);
+
+
         shapeRenderer.end();
 
         batch.setProjectionMatrix(camera.combined);
