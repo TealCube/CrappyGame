@@ -144,8 +144,11 @@ public class CrappyGame extends ApplicationAdapter {
         score = 0;
         playerspeed = BASE_PLAYER_SPEED;
         barrierspeed = BASE_BARRIER_SPEED;
+
         player_x = WORLD_WIDTH/2 - PLAYER_SCALE/2;
-        shadowcreep = -150 + (((float) score/(Math.max((float) highscore, 25F)))*300);
+        player_y = WORLD_HEIGHT / 6;
+
+        shadowcreep = -100 + (((float) score/(Math.max((float) highscore, 25F)))*200);
         RIGHT_BOUNDS = MAX_RIGHT_BOUNDS;
         LEFT_BOUNDS = MAX_LEFT_BOUNDS;
         barriers.clear();
@@ -156,8 +159,8 @@ public class CrappyGame extends ApplicationAdapter {
                 tempRandom -= 6;
             }
             lastRandom = tempRandom;
-            barrierLoc = 8300 + tempRandom * -850;
-            barriers.add(new Barrier(barrierLoc, 16000 + i * 5500));
+            barrierLoc = 8400 + tempRandom * -850;
+            barriers.add(new Barrier(barrierLoc, 16100 + i * 5500));
             lastBarrier = 16000 + i * 5500;
         }
     }
@@ -185,7 +188,7 @@ public class CrappyGame extends ApplicationAdapter {
                         LEFT_BOUNDS = MAX_LEFT_BOUNDS;
                         r.counted = true;
                         score++;
-                        shadowcreep = -150 + (((float) score/(Math.max((float) highscore, 25F)))*300);
+                        shadowcreep = -100 + (((float) score/(Math.max((float) highscore, 25F)))*200);
                         //barrierspeed = (score % 3 == 0 ? barrierspeed + 5 : barrierspeed);
                         //playerspeed = (score % 4 == 0 ? playerspeed + 5 : playerspeed);
                     }
@@ -212,7 +215,11 @@ public class CrappyGame extends ApplicationAdapter {
     // Moves Barriers and sets colision bounds
     private void moveCircles() {
         for (Circlez r : circles) {
-            r.position.y = r.position.y - r.speed;
+            if (gameState == GameState.Start) {
+                r.position.y = r.position.y - (r.speed/2);
+            } else {
+                r.position.y = r.position.y - r.speed;
+            }
             if (r.position.y < -3000) {
                 r.position.y = 19000;
                 r.position.x = -2000 + MathUtils.random(0, 8400);
@@ -234,11 +241,14 @@ public class CrappyGame extends ApplicationAdapter {
                 }
             } else {
                 gameState = GameState.Start;
+                TClogo.dispose();
+                TCload.dispose();
                 //music.play();
             }
         }
 
         if (gameState == GameState.Start) {
+            moveCircles();
             if (faderShaderTimer > 0.0F) {
                 faderShaderTimer -= 0.1F;
                 if (faderShaderTimer < 0.0F) {
@@ -279,7 +289,9 @@ public class CrappyGame extends ApplicationAdapter {
         }
 
         if (gameState == GameState.GameOver) {
-            // Placeholder until a gameover screen with buttons is completed.
+            moveBarriers();
+            moveCircles();
+            player_y -= BASE_BARRIER_SPEED;
             if (faderShaderTimer >= 1.0F) {
                 if (Gdx.input.justTouched()) {
                     float x = grabX();
@@ -419,23 +431,27 @@ public class CrappyGame extends ApplicationAdapter {
 
         // Scoring feild background
         shapeRenderer.setColor(1, 1, 1, 1);
-        shapeRenderer.rect(1500, 9300 - (14300 * (1 - faderShaderTimer)), 6000, 4900);
+        shapeRenderer.rect(1500, 9400 - (14300 * (1 - faderShaderTimer)), 6000, 4900);
         shapeRenderer.setColor(0.8F, 0.8F, 0.8F, 1);
-        shapeRenderer.rect(1800, 10600 - (14300 * (1 - faderShaderTimer)), 5400, 3300);
-        shapeRenderer.rect(2200, 9700 - (14300 * (1 - faderShaderTimer)), 5000, 500);
-        shapeRenderer.circle(2150, 9950 - (14300 * (1 - faderShaderTimer)), 450);
+        shapeRenderer.rect(1800, 10700 - (14300 * (1 - faderShaderTimer)), 5400, 3300);
+        shapeRenderer.rect(2200, 9800 - (14300 * (1 - faderShaderTimer)), 5000, 500);
+        shapeRenderer.circle(2150, 10050 - (14300 * (1 - faderShaderTimer)), 450);
 
         // Retry button background
         shapeRenderer.setColor(1, 1, 1, 1);
-        shapeRenderer.rect(1500, 6700 - (14300 * (1 - faderShaderTimer)), 6000, 2200);
-
-        // Facebook button background
-        shapeRenderer.setColor(0.5F, 0.5F, 1F, 1);
-        shapeRenderer.rect(1500, 4200 - (14300 * (1 - faderShaderTimer)), 3000, 2050);
+        shapeRenderer.rect(1500, 7050 - (14300 * (1 - faderShaderTimer)), 6000, 2200);
 
         // Twitter button background
-        shapeRenderer.setColor(0.3F, 0.3F, 1F, 1);
-        shapeRenderer.rect(4650, 4200 - (14300 * (1 - faderShaderTimer)), 3000, 2050);
+        shapeRenderer.setColor(0.9F, 0.9F, 1F, 1);
+        shapeRenderer.rect(1500, 4700 - (14300 * (1 - faderShaderTimer)), 2850, 2200);
+
+        // Facebook button background
+        shapeRenderer.setColor(0.7F, 0.7F, 1F, 1);
+        shapeRenderer.rect(4650, 4700 - (14300 * (1 - faderShaderTimer)), 2850, 2200);
+
+        // Main Menu Button
+        shapeRenderer.setColor(1, 1, 1, 1);
+        shapeRenderer.rect(1500, 2350 - (14300 * (1 - faderShaderTimer)), 6000, 2200);
 
 
         shapeRenderer.end();
@@ -452,7 +468,7 @@ public class CrappyGame extends ApplicationAdapter {
                 .CENTER);
         }
 
-        batch.draw(retry, 2400, 6900-(14300*(1-faderShaderTimer)), 4000, 1700);
+        batch.draw(retry, 2400, 7200-(14300*(1-faderShaderTimer)), 4000, 1700);
 
         batch.end();
         Gdx.gl.glDisable(GL30.GL_BLEND);
@@ -494,11 +510,14 @@ public class CrappyGame extends ApplicationAdapter {
 
     @Override
     public void dispose() {
-        music.dispose();
-        TCload.dispose();
         TClogo.dispose();
         effects.dispose();
+        retry.dispose();
         colorShiftBkg.dispose();
+
+        music.dispose();
+        TCload.dispose();
+
         font.dispose();
         batch.dispose();
         shapeRenderer.dispose();
