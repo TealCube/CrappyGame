@@ -148,7 +148,12 @@ public class CrappyGame extends ApplicationAdapter {
         player_x = WORLD_WIDTH/2 - PLAYER_SCALE/2;
         player_y = WORLD_HEIGHT / 6;
 
-        shadowcreep = -100 + (((float) score/(Math.max((float) highscore, 25F)))*200);
+        if (score < highscore) {
+            shadowcreep = -100 + (((float) score / (Math.max((float) highscore, 25F))) * 200);
+        } else {
+            shadowcreep = 100;
+        }
+
         RIGHT_BOUNDS = MAX_RIGHT_BOUNDS;
         LEFT_BOUNDS = MAX_LEFT_BOUNDS;
         barriers.clear();
@@ -443,11 +448,11 @@ public class CrappyGame extends ApplicationAdapter {
 
         // Twitter button background
         shapeRenderer.setColor(0.9F, 0.9F, 1F, 1);
-        shapeRenderer.rect(1500, 4700 - (14300 * (1 - faderShaderTimer)), 2850, 2200);
+        shapeRenderer.rect(1500, 4700 - (14300 * (1 - faderShaderTimer)), 2925, 2200);
 
         // Facebook button background
         shapeRenderer.setColor(0.7F, 0.7F, 1F, 1);
-        shapeRenderer.rect(4650, 4700 - (14300 * (1 - faderShaderTimer)), 2850, 2200);
+        shapeRenderer.rect(4575, 4700 - (14300 * (1 - faderShaderTimer)), 2925, 2200);
 
         // Main Menu Button
         shapeRenderer.setColor(1, 1, 1, 1);
