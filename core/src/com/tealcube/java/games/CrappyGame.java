@@ -34,6 +34,7 @@ public class CrappyGame extends ApplicationAdapter {
 
     private Texture colorShiftBkg;
     private Texture TClogo;
+    private Texture title;
     private Texture retry;
     private Texture effects;
     private Sound TCload;
@@ -72,7 +73,7 @@ public class CrappyGame extends ApplicationAdapter {
         viewport = new StretchViewport(9000, 16000, camera);
         viewport.apply();
 
-        FreeTypeFontGenerator generator = new FreeTypeFontGenerator(Gdx.files.internal("impact.ttf"));
+        FreeTypeFontGenerator generator = new FreeTypeFontGenerator(Gdx.files.internal("fjallaOne-Regular.ttf"));
         FreeTypeFontGenerator.FreeTypeFontParameter parameter = new FreeTypeFontGenerator.FreeTypeFontParameter();
         parameter.size = 256;
         parameter.characters = "1234567890";
@@ -80,12 +81,19 @@ public class CrappyGame extends ApplicationAdapter {
 
         player_y = WORLD_HEIGHT / 6;
 
-        colorShiftBkg = new Texture("shifter.png");
+        // Splash Assets
         TClogo = new Texture("TClogo.png");
+        TCload = Gdx.audio.newSound(Gdx.files.internal("TCload.wav"));
+
+        // Gameplay Assets
+        colorShiftBkg = new Texture("shifter.png");
         effects = new Texture("bkgcircle.png");
+
+        // Menu Assets
+        title = new Texture("title.png");
         retry = new Texture("retry.png");
 
-        TCload = Gdx.audio.newSound(Gdx.files.internal("TCload.wav"));
+
         music = Gdx.audio.newMusic(Gdx.files.internal("music.mp3"));
         music.setLooping(true);
 
@@ -102,7 +110,6 @@ public class CrappyGame extends ApplicationAdapter {
         batch = new SpriteBatch();
         resetWorld();
     }
-
 
     // Grab screen adjusted X value
     private float grabX() {
@@ -122,7 +129,6 @@ public class CrappyGame extends ApplicationAdapter {
         return y;
     }
 
-
     // Changes the saved highscore.
     public static void setHighScore(int val) {
         preferences.putInteger("highScore", val);
@@ -133,7 +139,6 @@ public class CrappyGame extends ApplicationAdapter {
     public static int getHighScore() {
         return preferences.getInteger("highScore");
     }
-
 
     // Resets the world when you hit retry or w/e
     private void resetWorld() {
@@ -170,6 +175,13 @@ public class CrappyGame extends ApplicationAdapter {
         }
     }
 
+    // DANCE, PLAYER, DANCE!!
+    private void movePlayer() {
+        if (Gdx.input.justTouched()) {
+            playerspeed = playerspeed * -1;
+        }
+        player_x += playerspeed;
+    }
 
     // Moves Barriers and sets colision bounds
     private void moveBarriers() {
@@ -183,7 +195,7 @@ public class CrappyGame extends ApplicationAdapter {
                 // high or too low
                 if (r.position.y <= player_y+1350) {
                     RIGHT_BOUNDS = r.position.x - 1320;
-                    LEFT_BOUNDS = r.position.x - 3250;
+                    LEFT_BOUNDS = r.position.x - 3300;
                     // Once it is past the player, it should add one to the score, and
                     // change the counted value. It also resets the bounds to the sides
                     // of the screen. After this step, the barrier does literally
@@ -215,7 +227,6 @@ public class CrappyGame extends ApplicationAdapter {
         }
     }
 
-
     // Moves Barriers and sets colision bounds
     private void moveCircles() {
         for (Circlez r : circles) {
@@ -234,20 +245,48 @@ public class CrappyGame extends ApplicationAdapter {
 
     }
 
+    // Handles the splash opening
+    private void doSplash() {
+        if (splashTimer < 90) {
+            splashTimer++;
+            if (splashTimer == 10) {
+                TCload.play();
+            }
+        } else {
+            gameState = GameState.Start;
+            TClogo.dispose();
+            TCload.dispose();
+            //music.play();
+        }
+    }
+
+    // Check to see if you lose/set highscore
+    private void checkGameOver() {
+        // Left and right bounds are editedby barriers - this checks and sets highscore if collision
+        if (player_x < LEFT_BOUNDS || player_x > RIGHT_BOUNDS) {
+            //music.stop();
+            Gdx.app.log("[INFO]", "SCORE: " + score);
+            Gdx.app.log("[INFO]", "HIGHSCORE: " + highscore);
+            if (score > highscore) {
+                Gdx.app.log("[INFO]", "NEW HIGHSCORE: " + highscore + "-> " + score);
+                setHighScore(score);
+            }
+            gameState = GameState.GameOver;
+        }
+    }
 
     // World update. Makes stuff happen.
     private void updateWorld() {
         if (gameState == GameState.TCSplash) {
-            if (splashTimer < 90) {
-                splashTimer++;
-                if (splashTimer == 10) {
-                    TCload.play();
-                }
-            } else {
+            doSplash();
+            return;
+        }
+
+        if (gameState == GameState.MainMenu) {
+            moveCircles();
+            if (Gdx.input.justTouched()) {
                 gameState = GameState.Start;
-                TClogo.dispose();
-                TCload.dispose();
-                //music.play();
+                return;
             }
         }
 
@@ -265,37 +304,17 @@ public class CrappyGame extends ApplicationAdapter {
         }
 
         if (gameState == GameState.Running) {
-            //Reverses Player's movement direction
-            if (Gdx.input.justTouched()) {
-                playerspeed = playerspeed * -1;
-            }
-
-            // Moves stuff
-            player_x += playerspeed;
+            movePlayer();
             moveBarriers();
             moveCircles();
             bkgShift += 6;
-
-            // Collision detection. Rather than using squares to detect, the
-            // simplicity of the game allows me to merely compare three numbers
-            // for psudo collisions.
-            if (player_x < LEFT_BOUNDS || player_x > RIGHT_BOUNDS) {
-                //music.stop();
-                Gdx.app.log("[INFO]", "SCORE: " + score);
-                Gdx.app.log("[INFO]", "HIGHSCORE: " + highscore);
-                if (score > highscore) {
-                    Gdx.app.log("[INFO]", "NEW HIGHSCORE: " + highscore + "-> " + score);
-                    setHighScore(score);
-                }
-                gameState = GameState.GameOver;
-                return;
-            }
+            checkGameOver();
         }
 
         if (gameState == GameState.GameOver) {
             moveBarriers();
             moveCircles();
-            player_y -= BASE_BARRIER_SPEED;
+            player_y -= barrierspeed;
             if (faderShaderTimer >= 1.0F) {
                 if (Gdx.input.justTouched()) {
                     float x = grabX();
@@ -308,17 +327,11 @@ public class CrappyGame extends ApplicationAdapter {
                         resetWorld();
                         return;
                     }
-
                     // Facebook share button
 
                     // Tweet button
 
                     // Main Menu Button
-                    //if (x > 1500 && x < 7500 && y > 3000 && y < 5000) {
-                    //    resetWorld();
-                    //    gameState = GameState.MainMenu;
-                    //    return;
-                    //}
                 }
             }
             if (faderShaderTimer < 1.0F) {
@@ -329,7 +342,6 @@ public class CrappyGame extends ApplicationAdapter {
             }
         }
     }
-
 
     private void drawSplash() {
         shapeRenderer = new ShapeRenderer();
@@ -353,7 +365,6 @@ public class CrappyGame extends ApplicationAdapter {
         Gdx.gl.glDisable(GL30.GL_BLEND);
     }
 
-
     private void drawMainMenu() {
         shapeRenderer = new ShapeRenderer();
         shapeRenderer.setProjectionMatrix(camera.combined);
@@ -362,7 +373,6 @@ public class CrappyGame extends ApplicationAdapter {
         shapeRenderer.rect(0, 0, 9000, 16000);
         shapeRenderer.end();
     }
-
 
     private void drawGameplay() {
         // Set up batch
@@ -381,7 +391,7 @@ public class CrappyGame extends ApplicationAdapter {
         if (faderShaderTimer < 1) {
             font.setScale(12, 12);
             font.setColor(0, 0, 0, 0.3F);
-            font.drawMultiLine(batch, "" + score, 4500 + shadowcreep / 2, 12940, 0, BitmapFont.HAlignment.CENTER);
+            font.drawMultiLine(batch, "" + score, 4500 + shadowcreep, 12900, 0, BitmapFont.HAlignment.CENTER);
             font.setColor(1, 1, 1, 1);
             font.drawMultiLine(batch, "" + score, 4500, 13000, 0, BitmapFont.HAlignment.CENTER);
         }
@@ -426,7 +436,6 @@ public class CrappyGame extends ApplicationAdapter {
         Gdx.gl.glDisable(GL30.GL_BLEND);
     }
 
-
     private void drawGameOver() {
         shapeRenderer = new ShapeRenderer();
 
@@ -468,7 +477,7 @@ public class CrappyGame extends ApplicationAdapter {
         if (faderShaderTimer > 0) {
             font.setScale(12, 12);
             font.setColor(1, 1, 1, 1);
-            font.drawMultiLine(batch, "" + score, 4500,13500-(14000*(1-faderShaderTimer)), 0, BitmapFont.HAlignment
+            font.drawMultiLine(batch, "" + score, 4500,13600-(14000*(1-faderShaderTimer)), 0, BitmapFont.HAlignment
                 .CENTER);
         }
 
@@ -477,7 +486,6 @@ public class CrappyGame extends ApplicationAdapter {
         batch.end();
         Gdx.gl.glDisable(GL30.GL_BLEND);
     }
-
 
     // Draw event for the renderer to use.
     private void mainDraw() {
@@ -499,7 +507,6 @@ public class CrappyGame extends ApplicationAdapter {
         }
     }
 
-
     @Override
     public void render() {
         camera.update();
@@ -510,7 +517,6 @@ public class CrappyGame extends ApplicationAdapter {
         updateWorld();
         mainDraw();
     }
-
 
     @Override
     public void dispose() {
@@ -527,13 +533,11 @@ public class CrappyGame extends ApplicationAdapter {
         shapeRenderer.dispose();
     }
 
-
     @Override
     public void resize(int width, int height) {
         viewport.update(width, height);
         camera.position.set(camera.viewportWidth / 2, camera.viewportHeight / 2, 0);
     }
-
 
     static class Barrier {
         Vector2 position = new Vector2();
@@ -544,7 +548,6 @@ public class CrappyGame extends ApplicationAdapter {
             this.position.y = y;
         }
     }
-
 
     static class Circlez {
         Vector2 position = new Vector2();
