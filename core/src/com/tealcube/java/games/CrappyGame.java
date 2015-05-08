@@ -73,7 +73,7 @@ public class CrappyGame extends ApplicationAdapter {
         viewport = new StretchViewport(9000, 16000, camera);
         viewport.apply();
 
-        FreeTypeFontGenerator generator = new FreeTypeFontGenerator(Gdx.files.internal("fjallaOne-Regular.ttf"));
+        FreeTypeFontGenerator generator = new FreeTypeFontGenerator(Gdx.files.internal("Fjalla.ttf"));
         FreeTypeFontGenerator.FreeTypeFontParameter parameter = new FreeTypeFontGenerator.FreeTypeFontParameter();
         parameter.size = 256;
         parameter.characters = "1234567890";
