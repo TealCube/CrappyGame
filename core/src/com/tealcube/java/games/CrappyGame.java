@@ -198,20 +198,19 @@ public class CrappyGame extends ApplicationAdapter {
                         //playerspeed = (score % 4 == 0 ? playerspeed + 5 : playerspeed);
                     }
                 }
-            } else {
-                if (r.position.y <= -1350) {
-                    Gdx.app.log("[INFO]", "LAST BARRIER WAS AT: " + lastBarrier);
-                    r.position.y = lastBarrier + 5500;
-                    lastBarrier += 5500;
-                    Gdx.app.log("[INFO]", "MOVED LOWEST BARRIER TO: " + lastBarrier);
-                    int tempRandom = lastRandom + MathUtils.random(1, 5);
-                    if (tempRandom > 5) {
-                        tempRandom -= 6;
-                    }
-                    lastRandom = tempRandom;
-                    r.position.x = 8300 + tempRandom * -850;
-                    r.counted = false;
+            }
+            if (r.position.y <= -1350) {
+                Gdx.app.log("[INFO]", "LAST BARRIER WAS AT: " + lastBarrier);
+                r.position.y = lastBarrier + 5500;
+                lastBarrier += 5500;
+                Gdx.app.log("[INFO]", "MOVED LOWEST BARRIER TO: " + lastBarrier);
+                int tempRandom = lastRandom + MathUtils.random(1, 5);
+                if (tempRandom > 5) {
+                    tempRandom -= 6;
                 }
+                lastRandom = tempRandom;
+                r.position.x = 8300 + tempRandom * -850;
+                r.counted = false;
             }
         }
     }
