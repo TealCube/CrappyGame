@@ -228,7 +228,7 @@ public class CrappyGame extends ApplicationAdapter {
     // Moves Barriers and sets colision bounds
     private void moveCircles() {
         for (Circlez r : circles) {
-            if (gameState == GameState.Start) {
+            if (gameState == GameState.Start || gameState == GameState.MainMenu) {
                 r.position.y = r.position.y - (r.speed/2);
             } else {
                 r.position.y = r.position.y - r.speed;
@@ -390,7 +390,7 @@ public class CrappyGame extends ApplicationAdapter {
         Gdx.gl.glEnable(GL30.GL_BLEND);
         Gdx.gl.glBlendFunc(GL30.GL_SRC_ALPHA, GL30.GL_ONE_MINUS_SRC_ALPHA);
 
-        batch.draw(title, 3000, 6500, 3000, 3000);
+        batch.draw(title, 1000, 9000, 6884, 4095);
         batch.end();
 
         Gdx.gl.glDisable(GL30.GL_BLEND);
@@ -413,12 +413,14 @@ public class CrappyGame extends ApplicationAdapter {
         }
 
         // Draws score text that's part of the background
-        if (faderShaderTimer < 1) {
-            font.setScale(12, 12);
-            font.setColor(0, 0, 0, 0.3F);
-            font.drawMultiLine(batch, "" + score, 4500 + shadowcreep, 12900, 0, BitmapFont.HAlignment.CENTER);
-            font.setColor(1, 1, 1, 1);
-            font.drawMultiLine(batch, "" + score, 4500, 13000, 0, BitmapFont.HAlignment.CENTER);
+        if (gameState != GameState.MainMenu) {
+            if (faderShaderTimer < 1) {
+                font.setScale(12, 12);
+                font.setColor(0, 0, 0, 0.3F);
+                font.drawMultiLine(batch, "" + score, 4500 + shadowcreep, 12900, 0, BitmapFont.HAlignment.CENTER);
+                font.setColor(1, 1, 1, 1);
+                font.drawMultiLine(batch, "" + score, 4500, 13000, 0, BitmapFont.HAlignment.CENTER);
+            }
         }
 
         // End batch. Disable Blend.
@@ -437,7 +439,9 @@ public class CrappyGame extends ApplicationAdapter {
 
         // Shadow of shapes
         shapeRenderer.setColor(0, 0, 0, 0.3F);
-        shapeRenderer.rect(player_x + shadowcreep, player_y - 100, PLAYER_SCALE, PLAYER_SCALE);
+        if (gameState != GameState.MainMenu) {
+            shapeRenderer.rect(player_x + shadowcreep, player_y - 100, PLAYER_SCALE, PLAYER_SCALE);
+        }
         shapeRenderer.rect(shadowcreep, 0, 900, 16000);
         shapeRenderer.rect(9000 + shadowcreep, 0, -900, 16000);
         for (Barrier barrier : barriers) {
@@ -447,7 +451,9 @@ public class CrappyGame extends ApplicationAdapter {
 
         //Main Shapes
         shapeRenderer.setColor(1, 1, 1, 1);
-        shapeRenderer.rect(player_x, player_y, PLAYER_SCALE, PLAYER_SCALE);
+        if (gameState != GameState.MainMenu) {
+            shapeRenderer.rect(player_x, player_y, PLAYER_SCALE, PLAYER_SCALE);
+        }
         shapeRenderer.rect(0, 0, 900, 16000);
         shapeRenderer.rect(9000, 0, -900, 16000);
         for (Barrier barrier : barriers) {
@@ -535,6 +541,7 @@ public class CrappyGame extends ApplicationAdapter {
         }
 
         if (gameState == GameState.MainMenu) {
+            drawGameplay();
             drawMainMenu();
         }
     }
