@@ -106,8 +106,6 @@ public class CrappyGame extends ApplicationAdapter {
         if (!preferences.contains("highScore")) {
             preferences.putInteger("highScore", 0);
         }
-
-        batch = new SpriteBatch();
         resetWorld();
     }
 
@@ -253,7 +251,7 @@ public class CrappyGame extends ApplicationAdapter {
                 TCload.play();
             }
         } else {
-            gameState = GameState.Start;
+            gameState = GameState.MainMenu;
             TClogo.dispose();
             TCload.dispose();
             //music.play();
@@ -345,16 +343,22 @@ public class CrappyGame extends ApplicationAdapter {
 
     private void drawSplash() {
         shapeRenderer = new ShapeRenderer();
+
         shapeRenderer.setProjectionMatrix(camera.combined);
         shapeRenderer.begin(ShapeRenderer.ShapeType.Filled);
+
         shapeRenderer.setColor(0, 0, 0, 1);
         shapeRenderer.rect(0, 0, 9000, 16000);
         shapeRenderer.end();
 
+        batch = new SpriteBatch();
+
         batch.setProjectionMatrix(camera.combined);
         batch.begin();
+
         Gdx.gl.glEnable(GL30.GL_BLEND);
         Gdx.gl.glBlendFunc(GL30.GL_SRC_ALPHA, GL30.GL_ONE_MINUS_SRC_ALPHA);
+
         Color c = batch.getColor();
         batch.setColor(c.r, c.g, c.b, 1f);
         if (splashTimer < 10) {
@@ -366,18 +370,39 @@ public class CrappyGame extends ApplicationAdapter {
     }
 
     private void drawMainMenu() {
+        shapeRenderer.dispose();
         shapeRenderer = new ShapeRenderer();
+
         shapeRenderer.setProjectionMatrix(camera.combined);
         shapeRenderer.begin(ShapeRenderer.ShapeType.Filled);
-        shapeRenderer.setColor(0, 0, 0, 1);
-        shapeRenderer.rect(0, 0, 9000, 16000);
+
+        shapeRenderer.setColor(1, 1, 1, 1);
+        shapeRenderer.rect(1500, 7050 - (14300 * (1 - faderShaderTimer)), 6000, 2200);
+
         shapeRenderer.end();
+
+        batch.dispose();
+        batch = new SpriteBatch();
+
+        batch.setProjectionMatrix(camera.combined);
+        batch.begin();
+
+        Gdx.gl.glEnable(GL30.GL_BLEND);
+        Gdx.gl.glBlendFunc(GL30.GL_SRC_ALPHA, GL30.GL_ONE_MINUS_SRC_ALPHA);
+
+        batch.draw(title, 3000, 6500, 3000, 3000);
+        batch.end();
+
+        Gdx.gl.glDisable(GL30.GL_BLEND);
     }
 
     private void drawGameplay() {
-        // Set up batch
+        batch.dispose();
+        batch = new SpriteBatch();
+
         batch.setProjectionMatrix(camera.combined);
         batch.begin();
+
         Gdx.gl.glEnable(GL30.GL_BLEND);
         Gdx.gl.glBlendFunc(GL30.GL_SRC_ALPHA, GL30.GL_ONE_MINUS_SRC_ALPHA);
 
@@ -401,9 +426,12 @@ public class CrappyGame extends ApplicationAdapter {
         Gdx.gl.glDisable(GL30.GL_BLEND);
 
         //Setup ShapeRenderer
+        shapeRenderer.dispose();
         shapeRenderer = new ShapeRenderer();
+
         shapeRenderer.setProjectionMatrix(camera.combined);
         shapeRenderer.begin(ShapeRenderer.ShapeType.Filled);
+
         Gdx.gl.glEnable(GL30.GL_BLEND);
         Gdx.gl.glBlendFunc(GL30.GL_SRC_ALPHA, GL30.GL_ONE_MINUS_SRC_ALPHA);
 
@@ -437,6 +465,7 @@ public class CrappyGame extends ApplicationAdapter {
     }
 
     private void drawGameOver() {
+        shapeRenderer.dispose();
         shapeRenderer = new ShapeRenderer();
 
         shapeRenderer.setProjectionMatrix(camera.combined);
@@ -447,7 +476,7 @@ public class CrappyGame extends ApplicationAdapter {
         shapeRenderer.rect(1500, 9400 - (14300 * (1 - faderShaderTimer)), 6000, 4900);
         shapeRenderer.setColor(0.8F, 0.8F, 0.8F, 1);
         shapeRenderer.rect(1800, 10700 - (14300 * (1 - faderShaderTimer)), 5400, 3300);
-        shapeRenderer.rect(2200, 9800 - (14300 * (1 - faderShaderTimer)), 5000, 500);
+        shapeRenderer.rect(2200, 9730 - (14300 * (1 - faderShaderTimer)), 5000, 630);
         shapeRenderer.circle(2150, 10050 - (14300 * (1 - faderShaderTimer)), 450);
 
         // Retry button background
@@ -466,11 +495,14 @@ public class CrappyGame extends ApplicationAdapter {
         shapeRenderer.setColor(1, 1, 1, 1);
         shapeRenderer.rect(1500, 2350 - (14300 * (1 - faderShaderTimer)), 6000, 2200);
 
-
         shapeRenderer.end();
+
+        batch.dispose();
+        batch = new SpriteBatch();
 
         batch.setProjectionMatrix(camera.combined);
         batch.begin();
+
         Gdx.gl.glEnable(GL30.GL_BLEND);
         Gdx.gl.glBlendFunc(GL30.GL_SRC_ALPHA, GL30.GL_ONE_MINUS_SRC_ALPHA);
 
