@@ -38,8 +38,11 @@ public class CrappyGame extends ApplicationAdapter {
     private Texture retry;
     private Texture effects;
     private Sound TCload;
-    private Music music;
-
+    private Music music1;
+    private Music music2;
+    private Music music3;
+    private Music menumusic;
+    private Music gameovermusic;
 
     private float shadowcreep;
     private int player_x;
@@ -63,7 +66,6 @@ public class CrappyGame extends ApplicationAdapter {
 
     Array<Barrier> barriers = new Array<Barrier>();
     Array<Circlez> circles = new Array<Circlez>();
-
 
     @Override
     public void create() {
@@ -94,8 +96,8 @@ public class CrappyGame extends ApplicationAdapter {
         retry = new Texture("retry.png");
 
 
-        music = Gdx.audio.newMusic(Gdx.files.internal("music.mp3"));
-        music.setLooping(true);
+        menumusic = Gdx.audio.newMusic(Gdx.files.internal("odyssey.mp3"));
+        menumusic.setLooping(true);
 
         for (int i = 0; i < 25; i++) {
             circles.add(new Circlez(MathUtils.random(-2000,8400), MathUtils.random(0, 18000), MathUtils.random(5,30), MathUtils.random(800,3000)));
@@ -254,7 +256,7 @@ public class CrappyGame extends ApplicationAdapter {
             gameState = GameState.MainMenu;
             TClogo.dispose();
             TCload.dispose();
-            //music.play();
+            menumusic.play();
         }
     }
 
@@ -283,8 +285,26 @@ public class CrappyGame extends ApplicationAdapter {
         if (gameState == GameState.MainMenu) {
             moveCircles();
             if (Gdx.input.justTouched()) {
-                gameState = GameState.Start;
-                return;
+                float x = grabX();
+                float y = grabY();
+
+                // Play Button
+                if (x > 1500 && x < 7500 && y > 7000 && y < 9200) {
+                    gameState = GameState.Start;
+                    menumusic.stop();
+                    resetWorld();
+                    return;
+                }
+                // Options button
+
+                // Remove Ads Button
+
+            }
+            if (faderShaderTimer > 0.0F) {
+                faderShaderTimer -= 0.1F;
+                if (faderShaderTimer < 0.0F) {
+                    faderShaderTimer = 0.0F;
+                }
             }
         }
 
@@ -330,6 +350,12 @@ public class CrappyGame extends ApplicationAdapter {
                     // Tweet button
 
                     // Main Menu Button
+                    if (x > 1500 && x < 7500 && y > 2350 && y < 4550) {
+                        gameState = GameState.MainMenu;
+                        menumusic.play();
+                        resetWorld();
+                        return;
+                    }
                 }
             }
             if (faderShaderTimer < 1.0F) {
@@ -377,7 +403,7 @@ public class CrappyGame extends ApplicationAdapter {
         shapeRenderer.begin(ShapeRenderer.ShapeType.Filled);
 
         shapeRenderer.setColor(1, 1, 1, 1);
-        shapeRenderer.rect(1500, 7050 - (14300 * (1 - faderShaderTimer)), 6000, 2200);
+        shapeRenderer.rect(1500, 5000, 6000, 2200);
 
         shapeRenderer.end();
 
@@ -527,22 +553,19 @@ public class CrappyGame extends ApplicationAdapter {
 
     // Draw event for the renderer to use.
     private void mainDraw() {
-        if (gameState == GameState.GameOver || gameState == GameState.Running || gameState == GameState.Start) {
+        if (gameState != GameState.TCSplash) {
             drawGameplay();
-            if (gameState != GameState.Running) {
-                drawGameOver();
-            }
-            return;
-        }
-
-        if (gameState == GameState.TCSplash) {
+        } else {
             drawSplash();
             return;
         }
 
         if (gameState == GameState.MainMenu) {
-            drawGameplay();
             drawMainMenu();
+        }
+
+        if (faderShaderTimer != 0.0F) {
+            drawGameOver();
         }
     }
 
@@ -564,7 +587,7 @@ public class CrappyGame extends ApplicationAdapter {
         retry.dispose();
         colorShiftBkg.dispose();
 
-        music.dispose();
+        menumusic.dispose();
         TCload.dispose();
 
         font.dispose();
