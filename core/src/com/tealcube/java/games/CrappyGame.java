@@ -52,6 +52,7 @@ public class CrappyGame extends ApplicationAdapter {
     private int bkgShift;
     private int lastRandom;
     private int lastBarrier;
+    private float rotator;
     private float splashTimer;
     private float faderShaderTimer;
     int highscore = 0;
@@ -325,11 +326,17 @@ public class CrappyGame extends ApplicationAdapter {
             movePlayer();
             moveBarriers();
             moveCircles();
-            bkgShift += 6;
+            bkgShift += 7;
+            if (bkgShift > 150000) {
+                bkgShift = -15000;
+            }
             checkGameOver();
         }
 
         if (gameState == GameState.GameOver) {
+            if (bkgShift > 1) {
+                bkgShift-= 150+(bkgShift/25);
+            }
             moveBarriers();
             moveCircles();
             player_y -= barrierspeed;
@@ -433,7 +440,7 @@ public class CrappyGame extends ApplicationAdapter {
         Gdx.gl.glBlendFunc(GL30.GL_SRC_ALPHA, GL30.GL_ONE_MINUS_SRC_ALPHA);
 
         // Draw background (includes text)
-        batch.draw(colorShiftBkg, -bkgShift, -bkgShift, WORLD_WIDTH * 5, WORLD_HEIGHT * 5);
+        batch.draw(colorShiftBkg, 0, -bkgShift, WORLD_WIDTH, WORLD_HEIGHT * 10);
         for (Circlez circle : circles) {
             batch.draw(effects, circle.position.x, circle.position.y, circle.scale, circle.scale);
         }
@@ -486,10 +493,6 @@ public class CrappyGame extends ApplicationAdapter {
             shapeRenderer.rect(barrier.position.x - 9300, barrier.position.y, 6000, PLAYER_SCALE);
             shapeRenderer.rect(barrier.position.x, barrier.position.y, 6000, PLAYER_SCALE);
         }
-        if (gameState == GameState.GameOver) {
-            shapeRenderer.setColor(0, 0, 0, faderShaderTimer / 3);
-            shapeRenderer.rect(0, 0, 9000, 16000);
-        }
 
         // End ShapeRenderer. Disable Blend.
         shapeRenderer.end();
@@ -500,8 +503,15 @@ public class CrappyGame extends ApplicationAdapter {
         shapeRenderer.dispose();
         shapeRenderer = new ShapeRenderer();
 
+        Gdx.gl.glEnable(GL30.GL_BLEND);
+        Gdx.gl.glBlendFunc(GL30.GL_SRC_ALPHA, GL30.GL_ONE_MINUS_SRC_ALPHA);
+
         shapeRenderer.setProjectionMatrix(camera.combined);
         shapeRenderer.begin(ShapeRenderer.ShapeType.Filled);
+
+        // Shadow when in gameover
+        shapeRenderer.setColor(0, 0, 0, faderShaderTimer / 3);
+        shapeRenderer.rect(0, 0, 9000, 16000);
 
         // Scoring feild background
         shapeRenderer.setColor(1, 1, 1, 1);
@@ -528,6 +538,7 @@ public class CrappyGame extends ApplicationAdapter {
         shapeRenderer.rect(1500, 2350 - (14300 * (1 - faderShaderTimer)), 6000, 2200);
 
         shapeRenderer.end();
+        Gdx.gl.glDisable(GL30.GL_BLEND);
 
         batch.dispose();
         batch = new SpriteBatch();
@@ -573,7 +584,7 @@ public class CrappyGame extends ApplicationAdapter {
     public void render() {
         camera.update();
 
-        Gdx.gl.glClearColor(1, 0, 0, 1);
+        Gdx.gl.glClearColor(0.273F, 0.602F, 0.906F, 0.91F);
         Gdx.gl.glClear(GL30.GL_COLOR_BUFFER_BIT);
 
         updateWorld();
