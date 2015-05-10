@@ -34,8 +34,8 @@ public class CrappyGame extends ApplicationAdapter {
 
     private Texture colorShiftBkg;
     private Texture TClogo;
-    private Texture title;
-    private Texture retry;
+    private Texture square;
+    private Texture shadow;
     private Texture effects;
     private Sound TCload;
     private Music music1;
@@ -52,7 +52,7 @@ public class CrappyGame extends ApplicationAdapter {
     private int bkgShift;
     private int lastRandom;
     private int lastBarrier;
-    private float rotator;
+    private int rotator;
     private float splashTimer;
     private float faderShaderTimer;
     int highscore = 0;
@@ -79,7 +79,7 @@ public class CrappyGame extends ApplicationAdapter {
         FreeTypeFontGenerator generator = new FreeTypeFontGenerator(Gdx.files.internal("Fjalla.ttf"));
         FreeTypeFontGenerator.FreeTypeFontParameter parameter = new FreeTypeFontGenerator.FreeTypeFontParameter();
         parameter.size = 256;
-        parameter.characters = "1234567890";
+        parameter.characters = "abcCdDefghijklmMnopqrRstuvwxyz1234567890";
         font = generator.generateFont(parameter);
 
         player_y = WORLD_HEIGHT / 6;
@@ -93,8 +93,8 @@ public class CrappyGame extends ApplicationAdapter {
         effects = new Texture("bkgcircle.png");
 
         // Menu Assets
-        title = new Texture("title.png");
-        retry = new Texture("retry.png");
+        square = new Texture("square.png");
+        shadow = new Texture("shadow.png");
 
 
         menumusic = Gdx.audio.newMusic(Gdx.files.internal("odyssey.mp3"));
@@ -154,11 +154,7 @@ public class CrappyGame extends ApplicationAdapter {
         player_x = WORLD_WIDTH/2 - PLAYER_SCALE/2;
         player_y = WORLD_HEIGHT / 6;
 
-        if (score < highscore) {
-            shadowcreep = -100 + (((float) score / (Math.max((float) highscore, 25F))) * 200);
-        } else {
-            shadowcreep = 100;
-        }
+        shadowcreep = -100;
 
         RIGHT_BOUNDS = MAX_RIGHT_BOUNDS;
         LEFT_BOUNDS = MAX_LEFT_BOUNDS;
@@ -206,7 +202,11 @@ public class CrappyGame extends ApplicationAdapter {
                         LEFT_BOUNDS = MAX_LEFT_BOUNDS;
                         r.counted = true;
                         score++;
-                        shadowcreep = -100 + (((float) score/(Math.max((float) highscore, 25F)))*200);
+                        if (score < highscore) {
+                            shadowcreep = -100 + (((float) score / (Math.max((float) highscore, 25F))) * 200);
+                        } else {
+                            shadowcreep = 100;
+                        }
                         //barrierspeed = (score % 3 == 0 ? barrierspeed + 5 : barrierspeed);
                         //playerspeed = (score % 4 == 0 ? playerspeed + 5 : playerspeed);
                     }
@@ -284,13 +284,14 @@ public class CrappyGame extends ApplicationAdapter {
         }
 
         if (gameState == GameState.MainMenu) {
+            shadowcreep = 100;
             moveCircles();
             if (Gdx.input.justTouched()) {
                 float x = grabX();
                 float y = grabY();
 
-                // Play Button
-                if (x > 1500 && x < 7500 && y > 7000 && y < 9200) {
+                // Play Button 1500, 5000, 6000, 2200
+                if (x > 1500 && x < 7500 && y > 5000 && y < 7200) {
                     gameState = GameState.Start;
                     menumusic.stop();
                     resetWorld();
@@ -423,7 +424,21 @@ public class CrappyGame extends ApplicationAdapter {
         Gdx.gl.glEnable(GL30.GL_BLEND);
         Gdx.gl.glBlendFunc(GL30.GL_SRC_ALPHA, GL30.GL_ONE_MINUS_SRC_ALPHA);
 
-        batch.draw(title, 1000, 9000, 6884, 4095);
+        font.setScale(8, 8);
+        font.setColor(0, 0, 0, 0.3F);
+        font.draw(batch, "Chroma", 1190, 13300);
+        font.draw(batch, "Dodge", 3130, 11400);
+        font.setColor(1, 1, 1, 1);
+        font.draw(batch, "Chroma", 1090, 13400);
+        font.draw(batch, "Dodge", 3030, 11500);
+
+        rotator++;
+        if (rotator == 360) {
+            rotator = 0;
+        }
+        batch.draw(shadow, 2030+100, 10570-100, 2, 2, 4, 4, 300, 300, rotator, 0, 0, 4, 4, false, false);
+        batch.draw(square, 2030, 10570, 2, 2, 4, 4, 300, 300, rotator, 0, 0, 4, 4, false, false);
+
         batch.end();
 
         Gdx.gl.glDisable(GL30.GL_BLEND);
@@ -556,8 +571,6 @@ public class CrappyGame extends ApplicationAdapter {
                 .CENTER);
         }
 
-        batch.draw(retry, 2400, 7200-(14300*(1-faderShaderTimer)), 4000, 1700);
-
         batch.end();
         Gdx.gl.glDisable(GL30.GL_BLEND);
     }
@@ -595,7 +608,8 @@ public class CrappyGame extends ApplicationAdapter {
     public void dispose() {
         TClogo.dispose();
         effects.dispose();
-        retry.dispose();
+        square.dispose();
+        shadow.dispose();
         colorShiftBkg.dispose();
 
         menumusic.dispose();
