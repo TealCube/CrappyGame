@@ -71,7 +71,7 @@ public class CrappyGame extends ApplicationAdapter {
 
     @Override
     public void create() {
-        gameState = GameState.TCSplash;
+        gameState = GameState.SPLASH;
         splashTimer = 1;
         camera = new OrthographicCamera();
         viewport = new StretchViewport(9000, 16000, camera);
@@ -264,7 +264,7 @@ public class CrappyGame extends ApplicationAdapter {
     // Moves Barriers and sets colision bounds
     private void moveCircles() {
         for (Circlez r : circles) {
-            if (gameState == GameState.Start || gameState == GameState.MainMenu) {
+            if (gameState == GameState.START || gameState == GameState.MAIN_MENU) {
                 r.position.y = r.position.y - (r.speed/2);
             } else {
                 r.position.y = r.position.y - r.speed;
@@ -287,7 +287,7 @@ public class CrappyGame extends ApplicationAdapter {
                 TCload.play();
             }
         } else {
-            gameState = GameState.MainMenu;
+            gameState = GameState.MAIN_MENU;
             TClogo.dispose();
             TCload.dispose();
             menumusic.play();
@@ -314,7 +314,7 @@ public class CrappyGame extends ApplicationAdapter {
                     break;
             }
             gameovermusic.play();
-            gameState = GameState.GameOver;
+            gameState = GameState.GAME_OVER;
 
         }
     }
@@ -325,12 +325,12 @@ public class CrappyGame extends ApplicationAdapter {
         if (rotator == 360) {
             rotator = 0;
         }
-        if (gameState == GameState.TCSplash) {
+        if (gameState == GameState.SPLASH) {
             doSplash();
             return;
         }
 
-        if (gameState == GameState.MainMenu) {
+        if (gameState == GameState.MAIN_MENU) {
             shadowcreep = 100;
             moveCircles();
             if (Gdx.input.justTouched()) {
@@ -339,7 +339,7 @@ public class CrappyGame extends ApplicationAdapter {
 
                 // Play Button 1500, 5000, 6000, 2200
                 if (x > 1500 && x < 7500 && y > 6900 && y < 8700) {
-                    gameState = GameState.Start;
+                    gameState = GameState.START;
                     menumusic.stop();
                     resetWorld();
                     return;
@@ -357,7 +357,7 @@ public class CrappyGame extends ApplicationAdapter {
             }
         }
 
-        if (gameState == GameState.Start) {
+        if (gameState == GameState.START) {
             moveCircles();
             if (faderShaderTimer > 0.0F) {
                 faderShaderTimer -= 0.1F;
@@ -365,7 +365,7 @@ public class CrappyGame extends ApplicationAdapter {
                     faderShaderTimer = 0.0F;
                 }
             } else if (Gdx.input.justTouched()) {
-                gameState = GameState.Running;
+                gameState = GameState.RUNNING;
                 switch (track) {
                     case 0: music1.play();
                         break;
@@ -378,7 +378,7 @@ public class CrappyGame extends ApplicationAdapter {
             }
         }
 
-        if (gameState == GameState.Running) {
+        if (gameState == GameState.RUNNING) {
             movePlayer();
             moveBarriers();
             moveCircles();
@@ -389,7 +389,7 @@ public class CrappyGame extends ApplicationAdapter {
             checkGameOver();
         }
 
-        if (gameState == GameState.GameOver) {
+        if (gameState == GameState.GAME_OVER) {
             if (bkgShift > 1) {
                 bkgShift-= 150+(bkgShift/25);
             }
@@ -403,7 +403,7 @@ public class CrappyGame extends ApplicationAdapter {
 
                     // Replay Button
                     if (x > 1500 && x < 7500 && y > 7000 && y < 9200) {
-                        gameState = GameState.Start;
+                        gameState = GameState.START;
                         gameovermusic.stop();
                         resetWorld();
                         return;
@@ -414,7 +414,7 @@ public class CrappyGame extends ApplicationAdapter {
 
                     // Main Menu Button
                     if (x > 1500 && x < 7500 && y > 2350 && y < 4550) {
-                        gameState = GameState.MainMenu;
+                        gameState = GameState.MAIN_MENU;
                         menumusic.play();
                         gameovermusic.stop();
                         resetWorld();
@@ -533,7 +533,7 @@ public class CrappyGame extends ApplicationAdapter {
         }
 
         // Draws score text that's part of the background
-        if (gameState != GameState.MainMenu) {
+        if (gameState != GameState.MAIN_MENU) {
             if (faderShaderTimer < 1) {
                 font.setScale(12, 12);
                 font.setColor(0, 0, 0, 0.3F);
@@ -559,7 +559,7 @@ public class CrappyGame extends ApplicationAdapter {
 
         // Shadow of shapes
         shapeRenderer.setColor(0, 0, 0, 0.3F);
-        if (gameState != GameState.MainMenu) {
+        if (gameState != GameState.MAIN_MENU) {
             shapeRenderer.rect(player_x + shadowcreep, player_y - 100, PLAYER_SCALE, PLAYER_SCALE);
         }
         shapeRenderer.rect(shadowcreep, 0, 900, 16000);
@@ -571,7 +571,7 @@ public class CrappyGame extends ApplicationAdapter {
 
         //Main Shapes
         shapeRenderer.setColor(1, 1, 1, 1);
-        if (gameState != GameState.MainMenu) {
+        if (gameState != GameState.MAIN_MENU) {
             shapeRenderer.rect(player_x, player_y, PLAYER_SCALE, PLAYER_SCALE);
         }
         shapeRenderer.rect(0, 0, 900, 16000);
@@ -649,8 +649,7 @@ public class CrappyGame extends ApplicationAdapter {
             font.draw(batch, "NEW HIGHSCORE!", 2780, 10310 - (14000 * (1 - faderShaderTimer)));
         }
 
-        batch.draw(square,2130,10050-(14000*(1-faderShaderTimer)), 2, 2, 4, 4, 130, 130, rotator, 0, 0, 4, 4, false,
-                   false);
+        batch.draw(square, 2130, 10050 - (14000 * (1 - faderShaderTimer)), 2, 2, 4, 4, 130, 130, rotator, 0, 0, 4, 4, false, false);
 
         if (faderShaderTimer > 0) {
             font.setScale(12, 12);
@@ -665,14 +664,14 @@ public class CrappyGame extends ApplicationAdapter {
 
     // Draw event for the renderer to use.
     private void mainDraw() {
-        if (gameState != GameState.TCSplash) {
+        if (gameState != GameState.SPLASH) {
             drawGameplay();
         } else {
             drawSplash();
             return;
         }
 
-        if (gameState == GameState.MainMenu) {
+        if (gameState == GameState.MAIN_MENU) {
             drawMainMenu();
         }
 
@@ -738,6 +737,6 @@ public class CrappyGame extends ApplicationAdapter {
     }
 
     enum GameState {
-        TCSplash, MainMenu, Start, Running, GameOver
+        SPLASH, MAIN_MENU, START, RUNNING, GAME_OVER
     }
 }
