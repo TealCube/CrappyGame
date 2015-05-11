@@ -20,14 +20,14 @@ import com.badlogic.gdx.utils.viewport.StretchViewport;
 import com.badlogic.gdx.utils.viewport.Viewport;
 
 public class CrappyGame extends ApplicationAdapter {
-    static final int BASE_PLAYER_SPEED = 48;
-    static final int BASE_BARRIER_SPEED = 48;
-    static final int WORLD_WIDTH = 9000;
-    static final int WORLD_HEIGHT = 16000;
-    static final int MAX_RIGHT_BOUNDS = 6800;
-    static final int MAX_LEFT_BOUNDS = 800;
-    static final int PLAYER_SCALE = 1350;
-    static Preferences preferences;
+    private static final int BASE_PLAYER_SPEED = 48;
+    private static final int BASE_BARRIER_SPEED = 48;
+    private static final int WORLD_WIDTH = 9000;
+    private static final int WORLD_HEIGHT = 16000;
+    private static final int MAX_RIGHT_BOUNDS = 6800;
+    private static final int MAX_LEFT_BOUNDS = 800;
+    private static final int PLAYER_SCALE = 1350;
+    private static Preferences preferences;
 
     private float RIGHT_BOUNDS = MAX_RIGHT_BOUNDS;
     private float LEFT_BOUNDS = MAX_LEFT_BOUNDS;
@@ -56,18 +56,18 @@ public class CrappyGame extends ApplicationAdapter {
     private int track;
     private float splashTimer;
     private float faderShaderTimer;
-    int highscore = 0;
-    int score = 0;
+    private int highscore = 0;
+    private int score = 0;
 
-    GameState gameState;
-    ShapeRenderer shapeRenderer;
-    SpriteBatch batch;
-    Viewport viewport;
-    OrthographicCamera camera;
-    BitmapFont font;
+    private GameState gameState;
+    private ShapeRenderer shapeRenderer;
+    private SpriteBatch batch;
+    private Viewport viewport;
+    private OrthographicCamera camera;
+    private BitmapFont font;
 
-    Array<Barrier> barriers = new Array<Barrier>();
-    Array<Circlez> circles = new Array<Circlez>();
+    private Array<Barrier> barriers = new Array<Barrier>();
+    private Array<Circlez> circles = new Array<Circlez>();
 
     @Override
     public void create() {
@@ -713,22 +713,22 @@ public class CrappyGame extends ApplicationAdapter {
         camera.position.set(camera.viewportWidth / 2, camera.viewportHeight / 2, 0);
     }
 
-    static class Barrier {
+    class Barrier {
         Vector2 position = new Vector2();
         boolean counted;
 
-        public Barrier(int x, int y) {
+        Barrier(int x, int y) {
             this.position.x = x;
             this.position.y = y;
         }
     }
 
-    static class Circlez {
+    class Circlez {
         Vector2 position = new Vector2();
         int speed;
         float scale;
 
-        public Circlez(int x, int y, int z, int a) {
+        Circlez(int x, int y, int z, int a) {
             this.position.x = x;
             this.position.y = y;
             this.speed = z;
