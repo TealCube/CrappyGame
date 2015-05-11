@@ -238,7 +238,7 @@ public class CrappyGame extends ApplicationAdapter {
                         if (score < (Math.max(highscore, 25F))) {
                             shadowcreep = -100 + (((float) score / (Math.max((float) highscore, 25F))) * 200);
                         } else {
-                            shadowcreep = -100;
+                            shadowcreep = 100;
                         }
                         //barrierspeed = (score % 3 == 0 ? barrierspeed + 5 : barrierspeed);
                         //playerspeed = (score % 4 == 0 ? playerspeed + 5 : playerspeed);
