@@ -36,7 +36,6 @@ public class CrappyGame extends ApplicationAdapter {
     private Texture TClogo;
     private Texture square;
     private Texture shadow;
-    private Texture star;
     private Texture effects;
     private Sound TCload;
     private Music music1;
@@ -81,7 +80,7 @@ public class CrappyGame extends ApplicationAdapter {
         FreeTypeFontGenerator generator = new FreeTypeFontGenerator(Gdx.files.internal("Fjalla.ttf"));
         FreeTypeFontGenerator.FreeTypeFontParameter parameter = new FreeTypeFontGenerator.FreeTypeFontParameter();
         parameter.size = 256;
-        parameter.characters = "abcCdDefghijklmMnOoPpqrRstuvwxyz1234567890";
+        parameter.characters = "abcCdDEefGgHhIijklmMNnOoPpqrRSstWuvy1234567890:!";
         font = generator.generateFont(parameter);
 
         player_y = WORLD_HEIGHT / 6;
@@ -98,7 +97,6 @@ public class CrappyGame extends ApplicationAdapter {
         // Menu Assets
         square = new Texture("square.png");
         shadow = new Texture("shadow.png");
-        star = new Texture("star.png");
 
         menumusic = Gdx.audio.newMusic(Gdx.files.internal("odyssey.mp3"));
         music1 = Gdx.audio.newMusic(Gdx.files.internal("bensound-memories.mp3"));
@@ -110,7 +108,7 @@ public class CrappyGame extends ApplicationAdapter {
         music1.setVolume(0.7F);
         music1.setVolume(0.7F);
         music1.setVolume(0.7F);
-        gameovermusic.setVolume(0.7F);
+        gameovermusic.setVolume(0.9F);
 
         menumusic.setLooping(true);
         music1.setLooping(true);
@@ -129,6 +127,8 @@ public class CrappyGame extends ApplicationAdapter {
         if (!preferences.contains("music")) {
             preferences.putInteger("music", 0);
         }
+        setHighScore(0);
+        setMusic(0);
         resetWorld();
     }
 
@@ -235,10 +235,10 @@ public class CrappyGame extends ApplicationAdapter {
                         LEFT_BOUNDS = MAX_LEFT_BOUNDS;
                         r.counted = true;
                         score++;
-                        if (score < highscore) {
+                        if (score < (Math.max(highscore, 25F))) {
                             shadowcreep = -100 + (((float) score / (Math.max((float) highscore, 25F))) * 200);
                         } else {
-                            shadowcreep = 100;
+                            shadowcreep = -100;
                         }
                         //barrierspeed = (score % 3 == 0 ? barrierspeed + 5 : barrierspeed);
                         //playerspeed = (score % 4 == 0 ? playerspeed + 5 : playerspeed);
@@ -321,6 +321,10 @@ public class CrappyGame extends ApplicationAdapter {
 
     // World update. Makes stuff happen.
     private void updateWorld() {
+        rotator++;
+        if (rotator == 360) {
+            rotator = 0;
+        }
         if (gameState == GameState.TCSplash) {
             doSplash();
             return;
@@ -505,11 +509,7 @@ public class CrappyGame extends ApplicationAdapter {
         font.draw(batch, "Play", 3530, 8380);
         font.draw(batch, "Options", 2710, 6250);
 
-        rotator++;
-        if (rotator == 360) {
-            rotator = 0;
-        }
-        batch.draw(shadow, 2040+100, 10570-100, 2, 2, 4, 4, 300, 300, rotator, 0, 0, 4, 4, false, false);
+        batch.draw(shadow, 2040 + 100, 10570 - 100, 2, 2, 4, 4, 300, 300, rotator, 0, 0, 4, 4, false, false);
         batch.draw(square, 2040, 10570, 2, 2, 4, 4, 300, 300, rotator, 0, 0, 4, 4, false, false);
 
         batch.end();
@@ -605,7 +605,7 @@ public class CrappyGame extends ApplicationAdapter {
         shapeRenderer.rect(1500, 9400 - (14300 * (1 - faderShaderTimer)), 6000, 4900);
         shapeRenderer.setColor(0.8F, 0.8F, 0.8F, 1);
         shapeRenderer.rect(1800, 10700 - (14300 * (1 - faderShaderTimer)), 5400, 3300);
-        shapeRenderer.rect(2200, 9730 - (14300 * (1 - faderShaderTimer)), 5000, 630);
+        shapeRenderer.rect(2200, 9660 - (14300 * (1 - faderShaderTimer)), 5000, 780);
         shapeRenderer.circle(2150, 10050 - (14300 * (1 - faderShaderTimer)), 450);
 
         // Retry button background
@@ -635,6 +635,22 @@ public class CrappyGame extends ApplicationAdapter {
 
         Gdx.gl.glEnable(GL30.GL_BLEND);
         Gdx.gl.glBlendFunc(GL30.GL_SRC_ALPHA, GL30.GL_ONE_MINUS_SRC_ALPHA);
+
+        font.setScale(6, 6);
+        font.setColor(0, 0, 0, 0.4F);
+        font.draw(batch, "Retry", 2970, 8850 - (14000 * (1 - faderShaderTimer)));
+        font.setScale(5, 5);
+        font.draw(batch, "Main Menu", 1800, 4000 - (14000 * (1 - faderShaderTimer)));
+        font.setScale(2.3F, 2.3F);
+        font.setColor(1, 1, 1, 1);
+        if (score <= highscore){
+            font.draw(batch, "Highscore: " + highscore, 2780, 10310 - (14000 * (1 - faderShaderTimer)));
+        } else {
+            font.draw(batch, "NEW HIGHSCORE!", 2780, 10310 - (14000 * (1 - faderShaderTimer)));
+        }
+
+        batch.draw(square,2130,10050-(14000*(1-faderShaderTimer)), 2, 2, 4, 4, 130, 130, rotator, 0, 0, 4, 4, false,
+                   false);
 
         if (faderShaderTimer > 0) {
             font.setScale(12, 12);
