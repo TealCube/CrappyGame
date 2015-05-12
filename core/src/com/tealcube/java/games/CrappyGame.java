@@ -645,7 +645,7 @@ public class CrappyGame extends ApplicationAdapter {
         font.draw(batch, "Track 1", 2850, 8200);
         font.draw(batch, "Track 2", 2850, 6550);
         font.draw(batch, "Track 3", 2850, 4900);
-        font.draw(batch, "Back", 3500, 3250);
+        font.draw(batch, "Back", 3430, 3250);
 
         batch.draw(shadow, 2040 + 100, 10570 - 100, 2, 2, 4, 4, 300, 300, rotator, 0, 0, 4, 4, false, false);
         batch.draw(square, 2040, 10570, 2, 2, 4, 4, 300, 300, rotator, 0, 0, 4, 4, false, false);
