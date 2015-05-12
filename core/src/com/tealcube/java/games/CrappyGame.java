@@ -37,6 +37,8 @@ public class CrappyGame extends ApplicationAdapter {
     private Texture square;
     private Texture shadow;
     private Texture effects;
+    private Texture twit;
+    private Texture twat;
     private Sound TCload;
     private Music music1;
     private Music music2;
@@ -97,6 +99,10 @@ public class CrappyGame extends ApplicationAdapter {
         // Menu Assets
         square = new Texture("square.png");
         shadow = new Texture("shadow.png");
+
+        // Sharing Assets
+        twat = new Texture("twat.png");
+        twit = new Texture("twit.png");
 
         menumusic = Gdx.audio.newMusic(Gdx.files.internal("odyssey.mp3"));
         music1 = Gdx.audio.newMusic(Gdx.files.internal("bensound-memories.mp3"));
@@ -264,7 +270,7 @@ public class CrappyGame extends ApplicationAdapter {
     // Moves Barriers and sets colision bounds
     private void moveCircles() {
         for (Circlez r : circles) {
-            if (gameState == GameState.START || gameState == GameState.MAIN_MENU) {
+            if (gameState == GameState.START || gameState == GameState.MAIN_MENU || gameState == GameState.OPTIONS) {
                 r.position.y = r.position.y - (r.speed/2);
             } else {
                 r.position.y = r.position.y - r.speed;
@@ -336,7 +342,6 @@ public class CrappyGame extends ApplicationAdapter {
             if (Gdx.input.justTouched()) {
                 float x = grabX();
                 float y = grabY();
-
                 // Play Button 1500, 5000, 6000, 2200
                 if (x > 1500 && x < 7500 && y > 6900 && y < 8700) {
                     gameState = GameState.START;
@@ -344,8 +349,11 @@ public class CrappyGame extends ApplicationAdapter {
                     resetWorld();
                     return;
                 }
-                // Options button
-
+                // Options button 1500, 4750, 6000, 1800
+                if (x > 1500 && x < 7500 && y > 4750 && y < 6550) {
+                    gameState = GameState.OPTIONS;
+                    return;
+                }
                 // Remove Ads Button
 
             }
@@ -355,6 +363,11 @@ public class CrappyGame extends ApplicationAdapter {
                     faderShaderTimer = 0.0F;
                 }
             }
+        }
+
+        if (gameState == GameState.OPTIONS) {
+            shadowcreep = 100;
+            moveCircles();
         }
 
         if (gameState == GameState.START) {
@@ -452,7 +465,7 @@ public class CrappyGame extends ApplicationAdapter {
         Color c = batch.getColor();
         batch.setColor(c.r, c.g, c.b, 1f);
         if (splashTimer < 10) {
-            batch.setColor(c.r, c.g, c.b, splashTimer/10);
+            batch.setColor(c.r, c.g, c.b, splashTimer / 10);
         }
         batch.draw(TClogo, 3000, 6500, 3000, 3000);
         batch.end();
@@ -516,6 +529,71 @@ public class CrappyGame extends ApplicationAdapter {
         Gdx.gl.glDisable(GL30.GL_BLEND);
     }
 
+    private void drawOptions() {
+        shapeRenderer.dispose();
+        shapeRenderer = new ShapeRenderer();
+
+        Gdx.gl.glEnable(GL30.GL_BLEND);
+        Gdx.gl.glBlendFunc(GL30.GL_SRC_ALPHA, GL30.GL_ONE_MINUS_SRC_ALPHA);
+
+        shapeRenderer.setProjectionMatrix(camera.combined);
+        shapeRenderer.begin(ShapeRenderer.ShapeType.Filled);
+
+        // sound1
+        shapeRenderer.setColor(0, 0, 0, 0.3F);
+        shapeRenderer.rect(1500 + shadowcreep, 6900 - shadowcreep, 6000, 1800);
+        shapeRenderer.setColor(1, 1, 1, 1);
+        shapeRenderer.rect(1500, 6900, 6000, 1800);
+
+        // sound2
+        shapeRenderer.setColor(0, 0, 0, 0.3F);
+        shapeRenderer.rect(1500 + shadowcreep, 4750 - shadowcreep, 6000, 1800);
+        shapeRenderer.setColor(1, 1, 1, 1);
+        shapeRenderer.rect(1500, 4750, 6000, 1800);
+
+        // sound3
+        shapeRenderer.setColor(0, 0, 0, 0.3F);
+        shapeRenderer.rect(1500 + shadowcreep, 4750 - shadowcreep, 6000, 1800);
+        shapeRenderer.setColor(1, 1, 1, 1);
+        shapeRenderer.rect(1500, 2700, 6000, 1800);
+
+        //main menu button
+        shapeRenderer.setColor(0, 0, 0, 0.3F);
+        shapeRenderer.rect(1500 + shadowcreep, 4750 - shadowcreep, 6000, 1800);
+        shapeRenderer.setColor(1, 1, 1, 1);
+        shapeRenderer.rect(1500, 650, 6000, 1800);
+
+        shapeRenderer.end();
+        Gdx.gl.glDisable(GL30.GL_BLEND);
+
+        batch.dispose();
+        batch = new SpriteBatch();
+
+        batch.setProjectionMatrix(camera.combined);
+        batch.begin();
+
+        Gdx.gl.glEnable(GL30.GL_BLEND);
+        Gdx.gl.glBlendFunc(GL30.GL_SRC_ALPHA, GL30.GL_ONE_MINUS_SRC_ALPHA);
+
+        font.setScale(8, 8);
+        font.setColor(0, 0, 0, 0.3F);
+        font.draw(batch, "Chroma", 1190, 13300);
+        font.draw(batch, "Dodge", 3120, 11400);
+        font.setColor(1, 1, 1, 1);
+        font.draw(batch, "Chroma", 1090, 13400);
+        font.draw(batch, "Dodge", 3020, 11500);
+
+        font.setScale(5, 5);
+        font.setColor(0, 0, 0, 0.4F);
+        font.draw(batch, "Track 1", 3530, 8380);
+        font.draw(batch, "Track 2", 2710, 6250);
+        font.draw(batch, "Track 3", 2710, 6250);
+        font.draw(batch, "Main Menu", 2710, 6250);
+
+        batch.end();
+        Gdx.gl.glDisable(GL30.GL_BLEND);
+    }
+
     private void drawGameplay() {
         batch.dispose();
         batch = new SpriteBatch();
@@ -533,7 +611,7 @@ public class CrappyGame extends ApplicationAdapter {
         }
 
         // Draws score text that's part of the background
-        if (gameState != GameState.MAIN_MENU) {
+        if (gameState != GameState.MAIN_MENU && gameState != GameState.OPTIONS) {
             if (faderShaderTimer < 1) {
                 font.setScale(12, 12);
                 font.setColor(0, 0, 0, 0.3F);
@@ -559,7 +637,7 @@ public class CrappyGame extends ApplicationAdapter {
 
         // Shadow of shapes
         shapeRenderer.setColor(0, 0, 0, 0.3F);
-        if (gameState != GameState.MAIN_MENU) {
+        if (gameState != GameState.MAIN_MENU && gameState != GameState.OPTIONS) {
             shapeRenderer.rect(player_x + shadowcreep, player_y - 100, PLAYER_SCALE, PLAYER_SCALE);
         }
         shapeRenderer.rect(shadowcreep, 0, 900, 16000);
@@ -571,7 +649,7 @@ public class CrappyGame extends ApplicationAdapter {
 
         //Main Shapes
         shapeRenderer.setColor(1, 1, 1, 1);
-        if (gameState != GameState.MAIN_MENU) {
+        if (gameState != GameState.MAIN_MENU && gameState != GameState.OPTIONS) {
             shapeRenderer.rect(player_x, player_y, PLAYER_SCALE, PLAYER_SCALE);
         }
         shapeRenderer.rect(0, 0, 900, 16000);
@@ -603,7 +681,7 @@ public class CrappyGame extends ApplicationAdapter {
         // Scoring feild background
         shapeRenderer.setColor(1, 1, 1, 1);
         shapeRenderer.rect(1500, 9400 - (14300 * (1 - faderShaderTimer)), 6000, 4900);
-        shapeRenderer.setColor(0.8F, 0.8F, 0.8F, 1);
+        shapeRenderer.setColor(0.7F, 0.7F, 0.7F, 1);
         shapeRenderer.rect(1800, 10700 - (14300 * (1 - faderShaderTimer)), 5400, 3300);
         shapeRenderer.rect(2200, 9660 - (14300 * (1 - faderShaderTimer)), 5000, 780);
         shapeRenderer.circle(2150, 10050 - (14300 * (1 - faderShaderTimer)), 450);
@@ -635,6 +713,9 @@ public class CrappyGame extends ApplicationAdapter {
 
         Gdx.gl.glEnable(GL30.GL_BLEND);
         Gdx.gl.glBlendFunc(GL30.GL_SRC_ALPHA, GL30.GL_ONE_MINUS_SRC_ALPHA);
+
+        batch.draw(twat, 4975, 4700 - (14300 * (1 - faderShaderTimer)), 2000, 2000);
+        batch.draw(twit, 1900, 4700 - (14300 * (1 - faderShaderTimer)), 2000, 2000);
 
         font.setScale(6, 6);
         font.setColor(0, 0, 0, 0.4F);
@@ -673,6 +754,10 @@ public class CrappyGame extends ApplicationAdapter {
 
         if (gameState == GameState.MAIN_MENU) {
             drawMainMenu();
+        }
+
+        if (gameState == GameState.OPTIONS) {
+            drawOptions();
         }
 
         if (faderShaderTimer != 0.0F) {
@@ -737,6 +822,6 @@ public class CrappyGame extends ApplicationAdapter {
     }
 
     enum GameState {
-        SPLASH, MAIN_MENU, START, RUNNING, GAME_OVER
+        SPLASH, MAIN_MENU, OPTIONS, START, RUNNING, GAME_OVER
     }
 }
