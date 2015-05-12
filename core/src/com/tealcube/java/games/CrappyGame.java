@@ -82,7 +82,7 @@ public class CrappyGame extends ApplicationAdapter {
         FreeTypeFontGenerator generator = new FreeTypeFontGenerator(Gdx.files.internal("Fjalla.ttf"));
         FreeTypeFontGenerator.FreeTypeFontParameter parameter = new FreeTypeFontGenerator.FreeTypeFontParameter();
         parameter.size = 256;
-        parameter.characters = "abcCdDEefGgHhIijklmMNnOoPpqrRSstWuvy1234567890:!";
+        parameter.characters = "abcCdDEefGgHhIijklmMNnOoPpqrRSsTtWuvy1234567890:!";
         font = generator.generateFont(parameter);
 
         player_y = WORLD_HEIGHT / 6;
@@ -541,27 +541,36 @@ public class CrappyGame extends ApplicationAdapter {
 
         // sound1
         shapeRenderer.setColor(0, 0, 0, 0.3F);
-        shapeRenderer.rect(1500 + shadowcreep, 6900 - shadowcreep, 6000, 1800);
+        shapeRenderer.rect(1500 + shadowcreep, 6900 - shadowcreep, 6000, 1500);
         shapeRenderer.setColor(1, 1, 1, 1);
-        shapeRenderer.rect(1500, 6900, 6000, 1800);
+        if (track == 0) {
+            shapeRenderer.setColor(0.8F, 1, 0.8F, 1);
+        }
+        shapeRenderer.rect(1500, 6900, 6000, 1500);
 
         // sound2
         shapeRenderer.setColor(0, 0, 0, 0.3F);
-        shapeRenderer.rect(1500 + shadowcreep, 4750 - shadowcreep, 6000, 1800);
+        shapeRenderer.rect(1500 + shadowcreep, 5250 - shadowcreep, 6000, 1500);
         shapeRenderer.setColor(1, 1, 1, 1);
-        shapeRenderer.rect(1500, 4750, 6000, 1800);
+        if (track == 1) {
+            shapeRenderer.setColor(0.8F, 1, 0.8F, 1);
+        }
+        shapeRenderer.rect(1500, 5250, 6000, 1500);
 
         // sound3
         shapeRenderer.setColor(0, 0, 0, 0.3F);
-        shapeRenderer.rect(1500 + shadowcreep, 4750 - shadowcreep, 6000, 1800);
+        shapeRenderer.rect(1500 + shadowcreep, 3600 - shadowcreep, 6000, 1500);
         shapeRenderer.setColor(1, 1, 1, 1);
-        shapeRenderer.rect(1500, 2700, 6000, 1800);
+        if (track == 2) {
+            shapeRenderer.setColor(0.8F, 1, 0.8F, 1);
+        }
+        shapeRenderer.rect(1500, 3600, 6000, 1500);
 
         //main menu button
         shapeRenderer.setColor(0, 0, 0, 0.3F);
-        shapeRenderer.rect(1500 + shadowcreep, 4750 - shadowcreep, 6000, 1800);
+        shapeRenderer.rect(1500 + shadowcreep, 1950 - shadowcreep, 6000, 1500);
         shapeRenderer.setColor(1, 1, 1, 1);
-        shapeRenderer.rect(1500, 650, 6000, 1800);
+        shapeRenderer.rect(1500, 1950, 6000, 1500);
 
         shapeRenderer.end();
         Gdx.gl.glDisable(GL30.GL_BLEND);
