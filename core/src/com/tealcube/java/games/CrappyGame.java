@@ -20,7 +20,7 @@ import com.badlogic.gdx.utils.viewport.StretchViewport;
 import com.badlogic.gdx.utils.viewport.Viewport;
 
 public class CrappyGame extends ApplicationAdapter {
-    private static final int BASE_PLAYER_SPEED = 48;
+    private static final int BASE_PLAYER_SPEED = 42;
     private static final int BASE_BARRIER_SPEED = 48;
     private static final int WORLD_WIDTH = 9000;
     private static final int WORLD_HEIGHT = 16000;
@@ -82,7 +82,7 @@ public class CrappyGame extends ApplicationAdapter {
         FreeTypeFontGenerator generator = new FreeTypeFontGenerator(Gdx.files.internal("Fjalla.ttf"));
         FreeTypeFontGenerator.FreeTypeFontParameter parameter = new FreeTypeFontGenerator.FreeTypeFontParameter();
         parameter.size = 256;
-        parameter.characters = "abcCdDEefGgHhIijklmMNnOoPpqrRSsTtWuvy1234567890:!";
+        parameter.characters = "aBbcCdDEefGgHhIijklmMNnOoPpqrRSsTtWuvy1234567890:!";
         font = generator.generateFont(parameter);
 
         player_y = WORLD_HEIGHT / 6;
@@ -133,8 +133,6 @@ public class CrappyGame extends ApplicationAdapter {
         if (!preferences.contains("music")) {
             preferences.putInteger("music", 0);
         }
-        setHighScore(0);
-        setMusic(0);
         resetWorld();
     }
 
@@ -206,8 +204,8 @@ public class CrappyGame extends ApplicationAdapter {
             }
             lastRandom = tempRandom;
             barrierLoc = 8400 + tempRandom * -850;
-            barriers.add(new Barrier(barrierLoc, 16100 + i * 5500));
-            lastBarrier = 16000 + i * 5500;
+            barriers.add(new Barrier(barrierLoc, 16100 + i * 5750));
+            lastBarrier = 16000 + i * 5750;
         }
     }
 
@@ -253,8 +251,8 @@ public class CrappyGame extends ApplicationAdapter {
             }
             if (r.position.y <= -1350) {
                 Gdx.app.log("[INFO]", "LAST BARRIER WAS AT: " + lastBarrier);
-                r.position.y = lastBarrier + 5500;
-                lastBarrier += 5500;
+                r.position.y = lastBarrier + 5750;
+                lastBarrier += 5750;
                 Gdx.app.log("[INFO]", "MOVED LOWEST BARRIER TO: " + lastBarrier);
                 int tempRandom = lastRandom + MathUtils.random(1, 5);
                 if (tempRandom > 5) {
@@ -368,8 +366,58 @@ public class CrappyGame extends ApplicationAdapter {
         if (gameState == GameState.OPTIONS) {
             shadowcreep = 100;
             moveCircles();
+            if (Gdx.input.justTouched()) {
+                float x = grabX();
+                float y = grabY();
+                // TRACK1
+                if (x > 1500 && x < 7500 && y > 6900 && y < 8400) {
+                    track = 0;
+                    setMusic(0);
+                    menumusic.stop();
+                    music1.stop();
+                    music2.stop();
+                    music3.stop();
+                    music1.play();
+                    return;
+                }
+                // TRACK2
+                if (x > 1500 && x < 7500 && y > 5250 && y < 6750) {
+                    track = 1;
+                    setMusic(1);
+                    menumusic.stop();
+                    music1.stop();
+                    music2.stop();
+                    music3.stop();
+                    music2.play();
+                    return;
+                }
+                // TRACK3
+                if (x > 1500 && x < 7500 && y > 3600 && y < 5100) {
+                    track = 2;
+                    setMusic(2);
+                    menumusic.stop();
+                    music1.stop();
+                    music2.stop();
+                    music3.stop();
+                    music3.play();
+                    return;
+                }
+                // BACK1
+                if (x > 1500 && x < 7500 && y > 1950 && y < 3450) {
+                    gameState = GameState.MAIN_MENU;
+                    music1.stop();
+                    music2.stop();
+                    music3.stop();
+                    menumusic.play();
+                    return;
+                }
+            }
         }
 
+        // shapeRenderer.rect(1500, 6900, 6000, 1500);
+        // shapeRenderer.rect(1500, 5250, 6000, 1500);
+        // shapeRenderer.rect(1500, 3600, 6000, 1500);
+        // shapeRenderer.rect(1500, 1950, 6000, 1500);
         if (gameState == GameState.START) {
             moveCircles();
             if (faderShaderTimer > 0.0F) {
@@ -594,10 +642,13 @@ public class CrappyGame extends ApplicationAdapter {
 
         font.setScale(5, 5);
         font.setColor(0, 0, 0, 0.4F);
-        font.draw(batch, "Track 1", 3530, 8380);
-        font.draw(batch, "Track 2", 2710, 6250);
-        font.draw(batch, "Track 3", 2710, 6250);
-        font.draw(batch, "Main Menu", 2710, 6250);
+        font.draw(batch, "Track 1", 2850, 8200);
+        font.draw(batch, "Track 2", 2850, 6550);
+        font.draw(batch, "Track 3", 2850, 4900);
+        font.draw(batch, "Back", 3500, 3250);
+
+        batch.draw(shadow, 2040 + 100, 10570 - 100, 2, 2, 4, 4, 300, 300, rotator, 0, 0, 4, 4, false, false);
+        batch.draw(square, 2040, 10570, 2, 2, 4, 4, 300, 300, rotator, 0, 0, 4, 4, false, false);
 
         batch.end();
         Gdx.gl.glDisable(GL30.GL_BLEND);
@@ -700,7 +751,7 @@ public class CrappyGame extends ApplicationAdapter {
         shapeRenderer.rect(1500, 7050 - (14300 * (1 - faderShaderTimer)), 6000, 2200);
 
         // Twitter button background
-        shapeRenderer.setColor(0.9F, 0.9F, 1F, 1);
+        shapeRenderer.setColor(0.8F, 0.8F, 1F, 1);
         shapeRenderer.rect(1500, 4700 - (14300 * (1 - faderShaderTimer)), 2925, 2200);
 
         // Facebook button background
@@ -723,8 +774,8 @@ public class CrappyGame extends ApplicationAdapter {
         Gdx.gl.glEnable(GL30.GL_BLEND);
         Gdx.gl.glBlendFunc(GL30.GL_SRC_ALPHA, GL30.GL_ONE_MINUS_SRC_ALPHA);
 
-        batch.draw(twat, 4975, 4700 - (14300 * (1 - faderShaderTimer)), 2000, 2000);
-        batch.draw(twit, 1900, 4700 - (14300 * (1 - faderShaderTimer)), 2000, 2000);
+        batch.draw(twit, 2040, 4800 - (14300 * (1 - faderShaderTimer)), 2000, 2000);
+        batch.draw(twat, 5050, 4800 - (14300 * (1 - faderShaderTimer)), 2000, 2000);
 
         font.setScale(6, 6);
         font.setColor(0, 0, 0, 0.4F);
