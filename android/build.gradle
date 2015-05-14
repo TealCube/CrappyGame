@@ -1,6 +1,11 @@
 android {
     buildToolsVersion "20.0.0"
     compileSdkVersion 20
+    buildTypes {
+        debug {
+            debuggable true
+        }
+    }
     sourceSets {
         main {
             manifest.srcFile 'AndroidManifest.xml'
