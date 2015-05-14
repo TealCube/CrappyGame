@@ -58,6 +58,7 @@ public class CrappyGame extends ApplicationAdapter {
     private float faderShaderTimer;
     private int highscore = 0;
     private int score = 0;
+    private boolean ads = true;
 
     private GameState gameState;
     private ShapeRenderer shapeRenderer;
@@ -68,6 +69,17 @@ public class CrappyGame extends ApplicationAdapter {
 
     private Array<Barrier> barriers = new Array<Barrier>();
     private Array<Circlez> circles = new Array<Circlez>();
+
+    private AdsController adsController;
+
+    public CrappyGame(AdsController adsController){
+        if (adsController != null) {
+            this.adsController = adsController;
+        } else {
+            ads = false;
+        }
+    }
+
 
     @Override
     public void create() {
@@ -313,7 +325,11 @@ public class CrappyGame extends ApplicationAdapter {
             }
             gameovermusic.play();
             gameState = GameState.GAME_OVER;
-
+            if (ads) {
+                if(adsController.isWifiConnected()) {
+                    adsController.showBannerAd();
+                }
+            }
         }
     }
 
@@ -458,6 +474,7 @@ public class CrappyGame extends ApplicationAdapter {
 
                     // Replay Button
                     if (x > 1500 && x < 7500 && y > 6050 && y < 8250) {
+                        if (ads) {adsController.hideBannerAd();}
                         gameState = GameState.START;
                         gameovermusic.stop();
                         resetWorld();
@@ -466,6 +483,7 @@ public class CrappyGame extends ApplicationAdapter {
 
                     // Main Menu Button
                     if (x > 1500 && x < 7500 && y > 3700 && y < 5900) {
+                        if (ads) {adsController.hideBannerAd();}
                         gameState = GameState.MAIN_MENU;
                         menumusic.play();
                         gameovermusic.stop();

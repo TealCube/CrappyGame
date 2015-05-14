@@ -11,6 +11,6 @@ public class DesktopLauncher {
 	    cfg.useGL30 = false;
 	    cfg.width = 380;
 	    cfg.height = 640;
-	    new LwjglApplication(new CrappyGame(), cfg);
+	    new LwjglApplication(new CrappyGame(null), cfg);
 	}
 }
