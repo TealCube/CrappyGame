@@ -443,7 +443,7 @@ public class CrappyGame extends ApplicationAdapter {
             movePlayer();
             moveBarriers();
             moveCircles();
-            bkgShift += 7;
+            bkgShift += 8;
             if (bkgShift > 150000) {
                 bkgShift = -15000;
             }
@@ -463,18 +463,15 @@ public class CrappyGame extends ApplicationAdapter {
                     float y = grabY();
 
                     // Replay Button
-                    if (x > 1500 && x < 7500 && y > 7000 && y < 9200) {
+                    if (x > 1500 && x < 7500 && y > 6050 && y < 8250) {
                         gameState = GameState.START;
                         gameovermusic.stop();
                         resetWorld();
                         return;
                     }
-                    // Facebook share button
-
-                    // Tweet button
 
                     // Main Menu Button
-                    if (x > 1500 && x < 7500 && y > 2350 && y < 4550) {
+                    if (x > 1500 && x < 7500 && y > 3700 && y < 5900) {
                         gameState = GameState.MAIN_MENU;
                         menumusic.play();
                         gameovermusic.stop();
@@ -740,27 +737,19 @@ public class CrappyGame extends ApplicationAdapter {
 
         // Scoring feild background
         shapeRenderer.setColor(1, 1, 1, 1);
-        shapeRenderer.rect(1500, 9400 - (14300 * (1 - faderShaderTimer)), 6000, 4900);
+        shapeRenderer.rect(1500, 8400 - (14300 * (1 - faderShaderTimer)), 6000, 4900);
         shapeRenderer.setColor(0.7F, 0.7F, 0.7F, 1);
-        shapeRenderer.rect(1800, 10700 - (14300 * (1 - faderShaderTimer)), 5400, 3300);
-        shapeRenderer.rect(2200, 9660 - (14300 * (1 - faderShaderTimer)), 5000, 780);
-        shapeRenderer.circle(2150, 10050 - (14300 * (1 - faderShaderTimer)), 450);
+        shapeRenderer.rect(1800, 9700 - (14300 * (1 - faderShaderTimer)), 5400, 3300);
+        shapeRenderer.rect(2200, 8660 - (14300 * (1 - faderShaderTimer)), 5000, 780);
+        shapeRenderer.circle(2150, 9050 - (14300 * (1 - faderShaderTimer)), 450);
 
         // Retry button background
         shapeRenderer.setColor(1, 1, 1, 1);
-        shapeRenderer.rect(1500, 7050 - (14300 * (1 - faderShaderTimer)), 6000, 2200);
-
-        // Twitter button background
-        shapeRenderer.setColor(0.8F, 0.8F, 1F, 1);
-        shapeRenderer.rect(1500, 4700 - (14300 * (1 - faderShaderTimer)), 2925, 2200);
-
-        // Facebook button background
-        shapeRenderer.setColor(0.7F, 0.7F, 1F, 1);
-        shapeRenderer.rect(4575, 4700 - (14300 * (1 - faderShaderTimer)), 2925, 2200);
+        shapeRenderer.rect(1500, 6050 - (14300 * (1 - faderShaderTimer)), 6000, 2200);
 
         // Main Menu Button
         shapeRenderer.setColor(1, 1, 1, 1);
-        shapeRenderer.rect(1500, 2350 - (14300 * (1 - faderShaderTimer)), 6000, 2200);
+        shapeRenderer.rect(1500, 3700 - (14300 * (1 - faderShaderTimer)), 6000, 2200);
 
         shapeRenderer.end();
         Gdx.gl.glDisable(GL30.GL_BLEND);
@@ -774,28 +763,25 @@ public class CrappyGame extends ApplicationAdapter {
         Gdx.gl.glEnable(GL30.GL_BLEND);
         Gdx.gl.glBlendFunc(GL30.GL_SRC_ALPHA, GL30.GL_ONE_MINUS_SRC_ALPHA);
 
-        batch.draw(twit, 2040, 4800 - (14300 * (1 - faderShaderTimer)), 2000, 2000);
-        batch.draw(twat, 5050, 4800 - (14300 * (1 - faderShaderTimer)), 2000, 2000);
-
         font.setScale(6, 6);
         font.setColor(0, 0, 0, 0.4F);
-        font.draw(batch, "Retry", 2970, 8850 - (14000 * (1 - faderShaderTimer)));
-        font.setScale(5, 5);
-        font.draw(batch, "Main Menu", 1800, 4000 - (14000 * (1 - faderShaderTimer)));
+        font.draw(batch, "Retry", 2970, 7850 - (14000 * (1 - faderShaderTimer)));
+        font.draw(batch, "Back", 3120, 5500 - (14000 * (1 - faderShaderTimer)));
         font.setScale(2.3F, 2.3F);
         font.setColor(1, 1, 1, 1);
         if (score <= highscore){
-            font.draw(batch, "Highscore: " + highscore, 2780, 10310 - (14000 * (1 - faderShaderTimer)));
+            font.draw(batch, "Highscore: " + highscore, 2720, 9310 - (14000 * (1 - faderShaderTimer)));
         } else {
-            font.draw(batch, "NEW HIGHSCORE!", 2780, 10310 - (14000 * (1 - faderShaderTimer)));
+            font.draw(batch, "NEW HIGHSCORE!", 2720, 9310 - (14000 * (1 - faderShaderTimer)));
         }
 
-        batch.draw(square, 2130, 10050 - (14000 * (1 - faderShaderTimer)), 2, 2, 4, 4, 130, 130, rotator, 0, 0, 4, 4, false, false);
+        batch.draw(square, 2130, 9050 - (14000 * (1 - faderShaderTimer)), 2, 2, 4, 4, 130, 130, rotator, 0, 0, 4, 4,
+                   false, false);
 
         if (faderShaderTimer > 0) {
             font.setScale(12, 12);
             font.setColor(1, 1, 1, 1);
-            font.drawMultiLine(batch, "" + score, 4500,13600-(14000*(1-faderShaderTimer)), 0, BitmapFont.HAlignment
+            font.drawMultiLine(batch, "" + score, 4500,12600-(14000*(1-faderShaderTimer)), 0, BitmapFont.HAlignment
                 .CENTER);
         }
 
