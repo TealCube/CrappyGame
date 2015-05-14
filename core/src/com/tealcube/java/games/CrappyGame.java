@@ -37,8 +37,6 @@ public class CrappyGame extends ApplicationAdapter {
     private Texture square;
     private Texture shadow;
     private Texture effects;
-    private Texture twit;
-    private Texture twat;
     private Sound TCload;
     private Music music1;
     private Music music2;
@@ -99,10 +97,6 @@ public class CrappyGame extends ApplicationAdapter {
         // Menu Assets
         square = new Texture("square.png");
         shadow = new Texture("shadow.png");
-
-        // Sharing Assets
-        twat = new Texture("twat.png");
-        twit = new Texture("twit.png");
 
         menumusic = Gdx.audio.newMusic(Gdx.files.internal("odyssey.mp3"));
         music1 = Gdx.audio.newMusic(Gdx.files.internal("bensound-memories.mp3"));
