@@ -316,20 +316,19 @@ public class CrappyGame extends ApplicationAdapter {
                 setHighScore(score);
             }
             switch (track) {
-                case 0: music1.stop();
+                case 0:
+                    music1.stop();
                     break;
-                case 1: music2.stop();
+                case 1:
+                    music2.stop();
                     break;
-                case 2: music3.stop();
+                case 2:
+                    music3.stop();
                     break;
             }
             gameovermusic.play();
             gameState = GameState.GAME_OVER;
-            if (ads) {
-                if(adsController.isWifiConnected()) {
-                    adsController.showBannerAd();
-                }
-            }
+            adsController.showBannerAd();
         }
     }
 
@@ -548,11 +547,6 @@ public class CrappyGame extends ApplicationAdapter {
         shapeRenderer.rect(1500 + shadowcreep, 4750 - shadowcreep, 6000, 1800);
         shapeRenderer.setColor(1, 1, 1, 1);
         shapeRenderer.rect(1500, 4750, 6000, 1800);
-
-        shapeRenderer.setColor(0, 0, 0, 0.3F);
-        shapeRenderer.rect(2500 + shadowcreep, 2600 - shadowcreep, 4000, 1800);
-        shapeRenderer.setColor(0.95F, 0.95F, 0.6F, 1);
-        shapeRenderer.rect(2500, 2600, 4000, 1800);
 
         shapeRenderer.end();
         Gdx.gl.glDisable(GL30.GL_BLEND);
