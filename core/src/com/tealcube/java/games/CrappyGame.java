@@ -38,6 +38,8 @@ public class CrappyGame extends ApplicationAdapter {
     private Texture shadow;
     private Texture effects;
     private Sound TCload;
+    private Sound click;
+    private Sound collide;
     private Music music1;
     private Music music2;
     private Music music3;
@@ -103,10 +105,12 @@ public class CrappyGame extends ApplicationAdapter {
         TCload.setVolume(0, 0.5F);
 
         // Gameplay Assets
+        collide = Gdx.audio.newSound(Gdx.files.internal("collide.wav"));
         colorShiftBkg = new Texture("shifter.png");
         effects = new Texture("bkgcircle.png");
 
         // Menu Assets
+        click = Gdx.audio.newSound(Gdx.files.internal("click.mp3"));
         square = new Texture("square.png");
         shadow = new Texture("shadow.png");
 
@@ -127,7 +131,7 @@ public class CrappyGame extends ApplicationAdapter {
         music2.setLooping(true);
         music3.setLooping(true);
 
-        for (int i = 0; i < 25; i++) {
+        for (int i = 0; i < 23; i++) {
             circles.add(new Circlez(MathUtils.random(-1000,4200), MathUtils.random(0, 9000), MathUtils.random(5,30),
                                     MathUtils.random(400,1500)));
         }
@@ -204,7 +208,7 @@ public class CrappyGame extends ApplicationAdapter {
         LEFT_BOUNDS = MAX_LEFT_BOUNDS;
         barriers.clear();
 
-        for (int i = 0; i < 10; i++) {
+        for (int i = 0; i < 3; i++) {
             tempRandom = lastRandom + MathUtils.random(1, 5);
             if (tempRandom > 5) {
                 tempRandom -= 6;
@@ -330,6 +334,7 @@ public class CrappyGame extends ApplicationAdapter {
                     music3.stop();
                     break;
             }
+            collide.play();
             gameovermusic.play();
             gameState = GameState.GAME_OVER;
             if (ads) {
@@ -356,15 +361,17 @@ public class CrappyGame extends ApplicationAdapter {
                 float x = grabX();
                 float y = grabY();
                 // Play Button 1500, 5000, 6000, 2200
-                if (x > 750 && x < 3750 && y > 3450 && y < 4350) {
+                if (x > 750 && x < 3750 && y > 3050 && y < 3950) {
                     gameState = GameState.START;
                     menumusic.stop();
                     resetWorld();
+                    click.play();
                     return;
                 }
                 // Options button 1500, 4750, 6000, 1800
-                if (x > 750 && x < 3750 && y > 2375 && y < 3275) {
+                if (x > 750 && x < 3750 && y > 1975 && y < 2875) {
                     gameState = GameState.OPTIONS;
+                    click.play();
                     return;
                 }
                 // Remove Ads Button
@@ -385,7 +392,7 @@ public class CrappyGame extends ApplicationAdapter {
                 float x = grabX();
                 float y = grabY();
                 // TRACK1
-                if (x > 750 && x < 3750 && y > 3450 && y < 4200) {
+                if (x > 750 && x < 3750 && y > 3250 && y < 4000) {
                     track = 0;
                     setMusic(0);
                     menumusic.stop();
@@ -393,10 +400,11 @@ public class CrappyGame extends ApplicationAdapter {
                     music2.stop();
                     music3.stop();
                     music1.play();
+                    click.play();
                     return;
                 }
                 // TRACK2
-                if (x > 750 && x < 3750 && y > 2625 && y < 3375) {
+                if (x > 750 && x < 3750 && y > 2425 && y < 3175) {
                     track = 1;
                     setMusic(1);
                     menumusic.stop();
@@ -404,10 +412,11 @@ public class CrappyGame extends ApplicationAdapter {
                     music2.stop();
                     music3.stop();
                     music2.play();
+                    click.play();
                     return;
                 }
                 // TRACK3
-                if (x > 750 && x < 7500 && y > 1800 && y < 2550) {
+                if (x > 750 && x < 7500 && y > 1500 && y < 2350) {
                     track = 2;
                     setMusic(2);
                     menumusic.stop();
@@ -415,15 +424,17 @@ public class CrappyGame extends ApplicationAdapter {
                     music2.stop();
                     music3.stop();
                     music3.play();
+                    click.play();
                     return;
                 }
                 // BACK1
-                if (x > 750 && x < 7500 && y > 975 && y < 1725) {
+                if (x > 750 && x < 7500 && y > 775 && y < 1525) {
                     gameState = GameState.MAIN_MENU;
                     music1.stop();
                     music2.stop();
                     music3.stop();
                     menumusic.play();
+                    click.play();
                     return;
                 }
             }
@@ -478,18 +489,19 @@ public class CrappyGame extends ApplicationAdapter {
                     float y = grabY();
 
                     // Replay Button
-                    if (x > 750 && x < 3750 && y > 3025 && y < 4125) {
+                    if (x > 750 && x < 3750 && y > 2900 && y < 4000) {
                         if (ads) {
                             adsController.hideBannerAd();
                         }
                         gameState = GameState.START;
                         gameovermusic.stop();
                         resetWorld();
+                        click.play();
                         return;
                     }
 
                     // Main Menu Button
-                    if (x > 750 && x < 1850 && y > 1850 && y < 2950) {
+                    if (x > 750 && x < 3750 && y > 1650 && y < 2750) {
                         if (ads) {
                             adsController.hideBannerAd();
                         }
@@ -497,6 +509,7 @@ public class CrappyGame extends ApplicationAdapter {
                         menumusic.play();
                         gameovermusic.stop();
                         resetWorld();
+                        click.play();
                         return;
                     }
                 }
@@ -602,36 +615,36 @@ public class CrappyGame extends ApplicationAdapter {
 
         // sound1
         shapeRenderer.setColor(0, 0, 0, 0.3F);
-        shapeRenderer.rect(750 + shadowcreep, 3450 - shadowcreep, 3000, 750);
+        shapeRenderer.rect(750 + shadowcreep, 3250 - shadowcreep, 3000, 750);
         shapeRenderer.setColor(1, 1, 1, 1);
         if (track == 0) {
             shapeRenderer.setColor(0.8F, 1, 0.8F, 1);
         }
-        shapeRenderer.rect(750, 3450, 3000, 750);
+        shapeRenderer.rect(750, 3250, 3000, 750);
 
         // sound2
         shapeRenderer.setColor(0, 0, 0, 0.3F);
-        shapeRenderer.rect(750 + shadowcreep, 2625 - shadowcreep, 3000, 750);
+        shapeRenderer.rect(750 + shadowcreep, 2425 - shadowcreep, 3000, 750);
         shapeRenderer.setColor(1, 1, 1, 1);
         if (track == 1) {
             shapeRenderer.setColor(0.8F, 1, 0.8F, 1);
         }
-        shapeRenderer.rect(750, 2625, 3000, 750);
+        shapeRenderer.rect(750, 2425, 3000, 750);
 
         // sound3
         shapeRenderer.setColor(0, 0, 0, 0.3F);
-        shapeRenderer.rect(750 + shadowcreep, 1800 - shadowcreep, 3000, 750);
+        shapeRenderer.rect(750 + shadowcreep, 1600 - shadowcreep, 3000, 750);
         shapeRenderer.setColor(1, 1, 1, 1);
         if (track == 2) {
             shapeRenderer.setColor(0.8F, 1, 0.8F, 1);
         }
-        shapeRenderer.rect(750, 1800, 3000, 750);
+        shapeRenderer.rect(750, 1600, 3000, 750);
 
         //main menu button
         shapeRenderer.setColor(0, 0, 0, 0.3F);
-        shapeRenderer.rect(750 + shadowcreep, 975 - shadowcreep, 3000, 750);
+        shapeRenderer.rect(750 + shadowcreep, 775 - shadowcreep, 3000, 750);
         shapeRenderer.setColor(1, 1, 1, 1);
-        shapeRenderer.rect(750, 975, 3000, 750);
+        shapeRenderer.rect(750, 775, 3000, 750);
 
         shapeRenderer.end();
         Gdx.gl.glDisable(GL30.GL_BLEND);
@@ -655,10 +668,10 @@ public class CrappyGame extends ApplicationAdapter {
 
         font.setScale(2, 2);
         font.setColor(0, 0, 0, 0.4F);
-        font.draw(batch, "Track 1", 1425, 4100);
-        font.draw(batch, "Track 2", 1425, 3275);
-        font.draw(batch, "Track 3", 1425, 2450);
-        font.draw(batch, "Back", 1715, 1625);
+        font.draw(batch, "Track 1", 1550, 3850);
+        font.draw(batch, "Track 2", 1550, 3025);
+        font.draw(batch, "Track 3", 1550, 2200);
+        font.draw(batch, "Back", 1750, 1375);
 
         batch.draw(shadow, 1020 + 50, 4830 - 50, 2, 2, 4, 4, 150, 150, rotator, 0, 0, 4, 4, false, false);
         batch.draw(square, 1020, 4830, 2, 2, 4, 4, 150, 150, rotator, 0, 0, 4, 4, false, false);
@@ -849,7 +862,13 @@ public class CrappyGame extends ApplicationAdapter {
         colorShiftBkg.dispose();
 
         menumusic.dispose();
+        music1.dispose();
+        music2.dispose();
+        music3.dispose();
+        gameovermusic.dispose();
+        collide.dispose();
         TCload.dispose();
+        click.dispose();
 
         font.dispose();
         batch.dispose();
