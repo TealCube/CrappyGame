@@ -19,7 +19,11 @@ import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.viewport.StretchViewport;
 import com.badlogic.gdx.utils.viewport.Viewport;
 
+import java.util.Random;
+
 public class CrappyGame extends ApplicationAdapter {
+
+    private static final Random RANDOM = new Random(System.currentTimeMillis());
 
     private static final int BASE_PLAYER_SPEED = 21;
     private static final int BASE_BARRIER_SPEED = 24;
@@ -33,7 +37,10 @@ public class CrappyGame extends ApplicationAdapter {
     private float RIGHT_BOUNDS = MAX_RIGHT_BOUNDS;
     private float LEFT_BOUNDS = MAX_LEFT_BOUNDS;
 
-    private Texture colorShiftBkg;
+    private RgbColor topLeft = new RgbColor(RANDOM.nextInt(255), RANDOM.nextInt(255), RANDOM.nextInt(255));
+    private RgbColor topRight = new RgbColor(RANDOM.nextInt(255), RANDOM.nextInt(255), RANDOM.nextInt(255));
+    private RgbColor bottomLeft = new RgbColor(RANDOM.nextInt(255), RANDOM.nextInt(255), RANDOM.nextInt(255));
+    private RgbColor bottomRight = new RgbColor(RANDOM.nextInt(255), RANDOM.nextInt(255), RANDOM.nextInt(255));
     private Texture TClogo;
     private Texture square;
     private Texture shadow;
@@ -52,7 +59,6 @@ public class CrappyGame extends ApplicationAdapter {
     private int player_y;
     private int playerspeed;
     private int barrierspeed;
-    private int bkgShift;
     private int lastRandom;
     private int lastBarrier;
     private int rotator;
@@ -107,7 +113,6 @@ public class CrappyGame extends ApplicationAdapter {
 
         // Gameplay Assets
         collide = Gdx.audio.newSound(Gdx.files.internal("collide.wav"));
-        colorShiftBkg = new Texture("shifter.png");
         effects = new Texture("bkgcircle.png");
 
         // Menu Assets
@@ -200,7 +205,6 @@ public class CrappyGame extends ApplicationAdapter {
         player_x = WORLD_WIDTH / 2 - PLAYER_SCALE / 2;
         player_y = WORLD_HEIGHT / 6;
 
-        bkgShift = 0;
         shadowcreep = -50;
 
         RIGHT_BOUNDS = MAX_RIGHT_BOUNDS;
@@ -217,6 +221,11 @@ public class CrappyGame extends ApplicationAdapter {
             barriers.add(new Barrier(barrierLoc, WORLD_HEIGHT + 100 + i * 2875));
             lastBarrier = WORLD_HEIGHT + i * 2875;
         }
+
+        topLeft = new RgbColor(MathUtils.random(255), MathUtils.random(255), MathUtils.random(255));
+        topRight = new RgbColor(MathUtils.random(255), MathUtils.random(255), MathUtils.random(255));
+        bottomLeft = new RgbColor(MathUtils.random(255), MathUtils.random(255), MathUtils.random(255));
+        bottomRight = new RgbColor(MathUtils.random(255), MathUtils.random(255), MathUtils.random(255));
     }
 
     // DANCE, PLAYER, DANCE!!
@@ -344,17 +353,16 @@ public class CrappyGame extends ApplicationAdapter {
             checkBarriers();
             checkGameOver();
             moveCircles();
-            bkgShift += 4;
-            if (bkgShift > 75000) {
-                bkgShift = -7500;
-            }
+
+            topLeft = topLeft.change(2);
+            topRight = topRight.change(2);
+            bottomLeft = bottomLeft.change(2);
+            bottomRight = bottomRight.change(2);
+
             return;
         }
 
         if (gameState == GameState.GAME_OVER) {
-            if (bkgShift > 1) {
-                bkgShift-= 75+(bkgShift/25);
-            }
             moveBarriers();
             moveCircles();
             player_y -= barrierspeed;
@@ -678,6 +686,18 @@ public class CrappyGame extends ApplicationAdapter {
     }
 
     private void drawGameplay() {
+        //Setup ShapeRenderer
+        shapeRenderer.dispose();
+        shapeRenderer = new ShapeRenderer();
+
+        shapeRenderer.setProjectionMatrix(camera.combined);
+        shapeRenderer.begin(ShapeRenderer.ShapeType.Filled);
+
+        shapeRenderer.rect(0, 0, WORLD_WIDTH, WORLD_HEIGHT,
+                topLeft.toColor(), topRight.toColor(), bottomLeft.toColor(), bottomRight.toColor());
+
+        shapeRenderer.end();
+
         batch.dispose();
         batch = new SpriteBatch();
 
@@ -688,7 +708,6 @@ public class CrappyGame extends ApplicationAdapter {
         Gdx.gl.glBlendFunc(GL30.GL_SRC_ALPHA, GL30.GL_ONE_MINUS_SRC_ALPHA);
 
         // Draw background (includes text)
-        batch.draw(colorShiftBkg, 0, -bkgShift, WORLD_WIDTH, WORLD_HEIGHT * 10);
         for (Circlez circle : circles) {
             batch.draw(effects, circle.position.x, circle.position.y, circle.scale, circle.scale);
         }
@@ -708,9 +727,7 @@ public class CrappyGame extends ApplicationAdapter {
         batch.end();
         Gdx.gl.glDisable(GL30.GL_BLEND);
 
-        //Setup ShapeRenderer
-        shapeRenderer.dispose();
-        shapeRenderer = new ShapeRenderer();
+        shapeRenderer.end();
 
         shapeRenderer.setProjectionMatrix(camera.combined);
         shapeRenderer.begin(ShapeRenderer.ShapeType.Filled);
@@ -859,7 +876,6 @@ public class CrappyGame extends ApplicationAdapter {
         effects.dispose();
         square.dispose();
         shadow.dispose();
-        colorShiftBkg.dispose();
 
         menumusic.dispose();
         music1.dispose();
@@ -907,5 +923,58 @@ public class CrappyGame extends ApplicationAdapter {
 
     enum GameState {
         SPLASH, MAIN_MENU, OPTIONS, START, RUNNING, GAME_OVER
+    }
+
+    class RgbColor {
+        int red;
+        int green;
+        int blue;
+        boolean redFlip;
+        boolean greenFlip;
+        boolean blueFlip;
+
+        RgbColor(int red, int green, int blue) {
+            this.red = red;
+            this.green = green;
+            this.blue = blue;
+
+            if (this.red > 255) redFlip = true;
+            if (this.red < 0) redFlip = false;
+            if (this.green > 255) greenFlip = true;
+            if (this.green < 0) greenFlip = false;
+            if (this.blue > 255) blueFlip = true;
+            if (this.blue < 0) blueFlip = false;
+        }
+
+        Color toColor() {
+            return new Color(this.red / 255f, this.green / 255f, this.blue / 255f, 1f);
+        }
+
+        RgbColor change(int maxAmount) {
+            if (redFlip) {
+                red -= Math.floor(RANDOM.nextDouble() * maxAmount);
+            } else {
+                red += Math.floor(RANDOM.nextDouble() * maxAmount);
+            }
+            if (greenFlip) {
+                green -= Math.floor(RANDOM.nextDouble() * maxAmount);
+            } else {
+                green += Math.floor(RANDOM.nextDouble() * maxAmount);
+            }
+            if (blueFlip) {
+                blue -= Math.floor(RANDOM.nextDouble() * maxAmount);
+            } else {
+                blue += Math.floor(RANDOM.nextDouble() * maxAmount);
+            }
+
+            if (this.red > 255) redFlip = true;
+            if (this.red < 0) redFlip = false;
+            if (this.green > 255) greenFlip = true;
+            if (this.green < 0) greenFlip = false;
+            if (this.blue > 255) blueFlip = true;
+            if (this.blue < 0) blueFlip = false;
+
+            return this;
+        }
     }
 }
