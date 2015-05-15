@@ -32,6 +32,7 @@ public class CrappyGame extends ApplicationAdapter {
     private static final int MAX_RIGHT_BOUNDS = 3400;
     private static final int MAX_LEFT_BOUNDS = 400;
     private static final int PLAYER_SCALE = 675;
+    public static final int BACKGROUND_CHANGE_RATE = 2;
     private static Preferences preferences;
 
     private float RIGHT_BOUNDS = MAX_RIGHT_BOUNDS;
@@ -285,7 +286,7 @@ public class CrappyGame extends ApplicationAdapter {
     private void moveCircles() {
         for (Circlez r : circles) {
             if (gameState == GameState.START || gameState == GameState.MAIN_MENU || gameState == GameState.OPTIONS) {
-                r.position.y = r.position.y - (r.speed/2);
+                r.position.y = r.position.y - (r.speed/ 2);
             } else {
                 r.position.y = r.position.y - r.speed;
             }
@@ -375,10 +376,7 @@ public class CrappyGame extends ApplicationAdapter {
             checkGameOver();
             moveCircles();
 
-            topLeft = topLeft.change(2);
-            topRight = topRight.change(2);
-            bottomLeft = bottomLeft.change(2);
-            bottomRight = bottomRight.change(2);
+            colorify();
 
             return;
         }
@@ -387,10 +385,7 @@ public class CrappyGame extends ApplicationAdapter {
             moveBarriers();
             moveCircles();
 
-            topLeft = topLeft.change(2);
-            topRight = topRight.change(2);
-            bottomLeft = bottomLeft.change(2);
-            bottomRight = bottomRight.change(2);
+            colorify();
 
             player_y -= barrierspeed;
             if (faderShaderTimer >= 1.0F) {
@@ -436,10 +431,7 @@ public class CrappyGame extends ApplicationAdapter {
             shadowcreep = 50;
             moveCircles();
 
-            topLeft = topLeft.change(2);
-            topRight = topRight.change(2);
-            bottomLeft = bottomLeft.change(2);
-            bottomRight = bottomRight.change(2);
+            colorify();
 
             if (Gdx.input.justTouched()) {
                 float x = grabX();
@@ -477,6 +469,9 @@ public class CrappyGame extends ApplicationAdapter {
         if (gameState == GameState.OPTIONS) {
             shadowcreep = 50;
             moveCircles();
+
+            colorify();
+            
             if (Gdx.input.justTouched()) {
                 float x = grabX();
                 float y = grabY();
@@ -543,6 +538,7 @@ public class CrappyGame extends ApplicationAdapter {
         }
 
         if (gameState == GameState.START) {
+            colorify();
             moveCircles();
             if (faderShaderTimer > 0.0F) {
                 faderShaderTimer -= 0.1F;
@@ -568,6 +564,13 @@ public class CrappyGame extends ApplicationAdapter {
         if (gameState == GameState.SPLASH) {
             doSplash();
         }
+    }
+
+    private void colorify() {
+        topLeft = topLeft.change(BACKGROUND_CHANGE_RATE);
+        topRight = topRight.change(BACKGROUND_CHANGE_RATE);
+        bottomLeft = bottomLeft.change(BACKGROUND_CHANGE_RATE);
+        bottomRight = bottomRight.change(BACKGROUND_CHANGE_RATE);
     }
 
     private void drawSplash() {
