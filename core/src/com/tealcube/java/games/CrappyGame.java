@@ -42,31 +42,31 @@ public class CrappyGame extends ApplicationAdapter {
     private RgbColor topRight = new RgbColor(RANDOM.nextInt(255), RANDOM.nextInt(255), RANDOM.nextInt(255));
     private RgbColor bottomLeft = new RgbColor(RANDOM.nextInt(255), RANDOM.nextInt(255), RANDOM.nextInt(255));
     private RgbColor bottomRight = new RgbColor(RANDOM.nextInt(255), RANDOM.nextInt(255), RANDOM.nextInt(255));
-    private Texture TClogo;
+    private Texture tcLogo;
     private Texture square;
     private Texture shadow;
     private Texture effects;
-    private Sound TCload;
+    private Sound tcLoad;
     private Sound click;
     private Sound collide;
     private Music music1;
     private Music music2;
     private Music music3;
-    private Music menumusic;
-    private Music gameovermusic;
+    private Music menuMusic;
+    private Music gameOverMusic;
 
-    private float shadowcreep;
+    private float shadowCreep;
     private int player_x;
     private int player_y;
-    private int playerspeed;
-    private int barrierspeed;
+    private int playerSpeed;
+    private int barrierSpeed;
     private int lastRandom;
     private int lastBarrier;
     private int rotator;
     private int track;
     private float splashTimer;
     private float faderShaderTimer;
-    private int highscore = 0;
+    private int highScore = 0;
     private int score = 0;
     private boolean ads = true;
 
@@ -90,7 +90,6 @@ public class CrappyGame extends ApplicationAdapter {
         }
     }
 
-
     @Override
     public void create() {
         gameState = GameState.SPLASH;
@@ -108,9 +107,9 @@ public class CrappyGame extends ApplicationAdapter {
         player_y = WORLD_HEIGHT / 6;
 
         // Splash Assets
-        TClogo = new Texture("TClogo.png");
-        TCload = Gdx.audio.newSound(Gdx.files.internal("TCload.wav"));
-        TCload.setVolume(0, 0.5F);
+        tcLogo = new Texture("TClogo.png");
+        tcLoad = Gdx.audio.newSound(Gdx.files.internal("TCload.wav"));
+        tcLoad.setVolume(0, 0.5F);
 
         // Gameplay Assets
         collide = Gdx.audio.newSound(Gdx.files.internal("collide.wav"));
@@ -121,19 +120,19 @@ public class CrappyGame extends ApplicationAdapter {
         square = new Texture("square.png");
         shadow = new Texture("shadow.png");
 
-        menumusic = Gdx.audio.newMusic(Gdx.files.internal("odyssey.mp3"));
+        menuMusic = Gdx.audio.newMusic(Gdx.files.internal("odyssey.mp3"));
         music1 = Gdx.audio.newMusic(Gdx.files.internal("bensound-memories.mp3"));
         music2 = Gdx.audio.newMusic(Gdx.files.internal("dream-culture.mp3"));
         music3 = Gdx.audio.newMusic(Gdx.files.internal("bensound-goinghigher.mp3"));
-        gameovermusic = Gdx.audio.newMusic(Gdx.files.internal("easy-lemon.mp3"));
+        gameOverMusic = Gdx.audio.newMusic(Gdx.files.internal("easy-lemon.mp3"));
 
-        menumusic.setVolume(0.7F);
+        menuMusic.setVolume(0.7F);
         music1.setVolume(0.6F);
         music1.setVolume(0.6F);
         music1.setVolume(0.6F);
-        gameovermusic.setVolume(0.8F);
+        gameOverMusic.setVolume(0.8F);
 
-        menumusic.setLooping(true);
+        menuMusic.setLooping(true);
         music1.setLooping(true);
         music2.setLooping(true);
         music3.setLooping(true);
@@ -198,15 +197,15 @@ public class CrappyGame extends ApplicationAdapter {
         int barrierLoc;
 
         track = getMusic();
-        highscore = getHighScore();
+        highScore = getHighScore();
         score = 0;
-        playerspeed = BASE_PLAYER_SPEED;
-        barrierspeed = BASE_BARRIER_SPEED;
+        playerSpeed = BASE_PLAYER_SPEED;
+        barrierSpeed = BASE_BARRIER_SPEED;
 
         player_x = WORLD_WIDTH / 2 - PLAYER_SCALE / 2;
         player_y = WORLD_HEIGHT / 6;
 
-        shadowcreep = -50;
+        shadowCreep = -50;
 
         RIGHT_BOUNDS = MAX_RIGHT_BOUNDS;
         LEFT_BOUNDS = MAX_LEFT_BOUNDS;
@@ -232,9 +231,9 @@ public class CrappyGame extends ApplicationAdapter {
     // DANCE, PLAYER, DANCE!!
     private void movePlayer() {
         if (Gdx.input.justTouched()) {
-            playerspeed = playerspeed * -1;
+            playerSpeed = playerSpeed * -1;
         }
-        player_x += playerspeed;
+        player_x += playerSpeed;
     }
 
     // Moves Barriers and sets colision bounds
@@ -253,10 +252,10 @@ public class CrappyGame extends ApplicationAdapter {
                     LEFT_BOUNDS = MAX_LEFT_BOUNDS;
                     r.counted = true;
                     score++;
-                    if (score < (Math.max(highscore, 25F))) {
-                        shadowcreep = -50 + (((float) score / (Math.max((float) highscore, 25F))) * 100);
+                    if (score < (Math.max(highScore, 25F))) {
+                        shadowCreep = -50 + (((float) score / (Math.max((float) highScore, 25F))) * 100);
                     } else {
-                        shadowcreep = 50;
+                        shadowCreep = 50;
                     }
                 }
             }
@@ -264,9 +263,9 @@ public class CrappyGame extends ApplicationAdapter {
     }
 
     private void moveBarriers() {
-        lastBarrier -= barrierspeed;
+        lastBarrier -= barrierSpeed;
         for (Barrier r : barriers) {
-            r.position.y -= barrierspeed;
+            r.position.y -= barrierSpeed;
             if (r.position.y <= -PLAYER_SCALE) {
                 r.position.y = lastBarrier + 2875;
                 lastBarrier += 2875;
@@ -305,15 +304,15 @@ public class CrappyGame extends ApplicationAdapter {
         if (splashTimer < 90) {
             splashTimer++;
             if (splashTimer == 10) {
-                TCload.play(0.6F);
+                tcLoad.play(0.6F);
             }
         } else {
             gameState = GameState.MAIN_MENU;
-            TClogo.dispose();
-            TCload.dispose();
+            tcLogo.dispose();
+            tcLoad.dispose();
             track = getMusic();
             if (track != 3) {
-                menumusic.play();
+                menuMusic.play();
             }
         }
     }
@@ -321,7 +320,7 @@ public class CrappyGame extends ApplicationAdapter {
     // Check to see if you lose/set highscore
     private void checkGameOver() {
         if (player_x < LEFT_BOUNDS || player_x > RIGHT_BOUNDS) {
-            if (score > highscore) {
+            if (score > highScore) {
                 setHighScore(score);
             }
             switch (track) {
@@ -330,32 +329,32 @@ public class CrappyGame extends ApplicationAdapter {
                     music1.stop();
                     music2.stop();
                     music3.stop();
-                    menumusic.stop();
+                    menuMusic.stop();
                     break;
                 case 1:
                     music2.stop();
                     music1.stop();
                     music2.stop();
                     music3.stop();
-                    menumusic.stop();
+                    menuMusic.stop();
                     break;
                 case 2:
                     music3.stop();
                     music1.stop();
                     music2.stop();
                     music3.stop();
-                    menumusic.stop();
+                    menuMusic.stop();
                     break;
                 case 3:
                     music1.stop();
                     music2.stop();
                     music3.stop();
-                    menumusic.stop();
+                    menuMusic.stop();
                     break;
             }
             collide.play();
             if (track != 3) {
-                gameovermusic.play();
+                gameOverMusic.play();
             }
             gameState = GameState.GAME_OVER;
             if (ads) {
@@ -389,7 +388,7 @@ public class CrappyGame extends ApplicationAdapter {
 
             colorify();
 
-            player_y -= barrierspeed;
+            player_y -= barrierSpeed;
             if (faderShaderTimer >= 1.0F) {
                 if (Gdx.input.justTouched()) {
                     float x = grabX();
@@ -401,7 +400,7 @@ public class CrappyGame extends ApplicationAdapter {
                             adsController.hideBannerAd();
                         }
                         gameState = GameState.START;
-                        gameovermusic.stop();
+                        gameOverMusic.stop();
                         resetWorld();
                         click.play();
                         return;
@@ -413,8 +412,8 @@ public class CrappyGame extends ApplicationAdapter {
                             adsController.hideBannerAd();
                         }
                         gameState = GameState.MAIN_MENU;
-                        menumusic.play();
-                        gameovermusic.stop();
+                        menuMusic.play();
+                        gameOverMusic.stop();
                         resetWorld();
                         click.play();
                         return;
@@ -430,7 +429,7 @@ public class CrappyGame extends ApplicationAdapter {
         }
 
         if (gameState == GameState.MAIN_MENU) {
-            shadowcreep = 50;
+            shadowCreep = 50;
             moveCircles();
 
             colorify();
@@ -441,7 +440,7 @@ public class CrappyGame extends ApplicationAdapter {
                 // Play Button 1500, 5000, 6000, 2200
                 if (x > 750 && x < 3750 && y > 3050 && y < 3950) {
                     gameState = GameState.START;
-                    menumusic.stop();
+                    menuMusic.stop();
                     resetWorld();
                     click.play();
                     return;
@@ -469,7 +468,7 @@ public class CrappyGame extends ApplicationAdapter {
         }
 
         if (gameState == GameState.OPTIONS) {
-            shadowcreep = 50;
+            shadowCreep = 50;
             moveCircles();
 
             colorify();
@@ -481,7 +480,7 @@ public class CrappyGame extends ApplicationAdapter {
                 if (x > 750 && x < 3750 && y > 4075 && y < 4825) {
                     track = 3;
                     setMusic(3);
-                    menumusic.stop();
+                    menuMusic.stop();
                     music1.stop();
                     music2.stop();
                     music3.stop();
@@ -492,7 +491,7 @@ public class CrappyGame extends ApplicationAdapter {
                 if (x > 750 && x < 3750 && y > 3250 && y < 4000) {
                     track = 0;
                     setMusic(0);
-                    menumusic.stop();
+                    menuMusic.stop();
                     music1.stop();
                     music2.stop();
                     music3.stop();
@@ -504,7 +503,7 @@ public class CrappyGame extends ApplicationAdapter {
                 if (x > 750 && x < 3750 && y > 2425 && y < 3175) {
                     track = 1;
                     setMusic(1);
-                    menumusic.stop();
+                    menuMusic.stop();
                     music1.stop();
                     music2.stop();
                     music3.stop();
@@ -516,7 +515,7 @@ public class CrappyGame extends ApplicationAdapter {
                 if (x > 750 && x < 3750 && y > 1500 && y < 2350) {
                     track = 2;
                     setMusic(2);
-                    menumusic.stop();
+                    menuMusic.stop();
                     music1.stop();
                     music2.stop();
                     music3.stop();
@@ -531,7 +530,7 @@ public class CrappyGame extends ApplicationAdapter {
                     music2.stop();
                     music3.stop();
                     if (track != 3) {
-                        menumusic.play();
+                        menuMusic.play();
                     }
                     click.play();
                     return;
@@ -598,7 +597,7 @@ public class CrappyGame extends ApplicationAdapter {
         if (splashTimer < 10) {
             batch.setColor(c.r, c.g, c.b, splashTimer / 10);
         }
-        batch.draw(TClogo, 1500, 3250, 1500, 1500);
+        batch.draw(tcLogo, 1500, 3250, 1500, 1500);
         batch.end();
         Gdx.gl.glDisable(GL30.GL_BLEND);
     }
@@ -614,17 +613,17 @@ public class CrappyGame extends ApplicationAdapter {
         shapeRenderer.begin(ShapeRenderer.ShapeType.Filled);
 
         shapeRenderer.setColor(0, 0, 0, 0.3F);
-        shapeRenderer.rect(750 + shadowcreep, 3050 - shadowcreep, 3000, 900);
+        shapeRenderer.rect(750 + shadowCreep, 3050 - shadowCreep, 3000, 900);
         shapeRenderer.setColor(1, 1, 1, 1);
         shapeRenderer.rect(750, 3050, 3000, 900);
 
         shapeRenderer.setColor(0, 0, 0, 0.3F);
-        shapeRenderer.rect(750 + shadowcreep, 1975 - shadowcreep, 3000, 900);
+        shapeRenderer.rect(750 + shadowCreep, 1975 - shadowCreep, 3000, 900);
         shapeRenderer.setColor(1, 1, 1, 1);
         shapeRenderer.rect(750, 1975, 3000, 900);
 
         shapeRenderer.setColor(0, 0, 0, 0.3F);
-        shapeRenderer.rect(1250 + shadowcreep, 900 - shadowcreep, 2000, 900);
+        shapeRenderer.rect(1250 + shadowCreep, 900 - shadowCreep, 2000, 900);
         shapeRenderer.setColor(1, 1, 1, 1);
         shapeRenderer.rect(1250, 900, 2000, 900);
 
@@ -673,7 +672,7 @@ public class CrappyGame extends ApplicationAdapter {
 
         // nosound
         shapeRenderer.setColor(0, 0, 0, 0.3F);
-        shapeRenderer.rect(750 + shadowcreep, 4075 - shadowcreep, 3000, 750);
+        shapeRenderer.rect(750 + shadowCreep, 4075 - shadowCreep, 3000, 750);
         shapeRenderer.setColor(1, 1, 1, 1);
         if (track == 3) {
             shapeRenderer.setColor(0.8F, 1, 0.8F, 1);
@@ -682,7 +681,7 @@ public class CrappyGame extends ApplicationAdapter {
 
         // sound1
         shapeRenderer.setColor(0, 0, 0, 0.3F);
-        shapeRenderer.rect(750 + shadowcreep, 3250 - shadowcreep, 3000, 750);
+        shapeRenderer.rect(750 + shadowCreep, 3250 - shadowCreep, 3000, 750);
         shapeRenderer.setColor(1, 1, 1, 1);
         if (track == 0) {
             shapeRenderer.setColor(0.8F, 1, 0.8F, 1);
@@ -691,7 +690,7 @@ public class CrappyGame extends ApplicationAdapter {
 
         // sound2
         shapeRenderer.setColor(0, 0, 0, 0.3F);
-        shapeRenderer.rect(750 + shadowcreep, 2425 - shadowcreep, 3000, 750);
+        shapeRenderer.rect(750 + shadowCreep, 2425 - shadowCreep, 3000, 750);
         shapeRenderer.setColor(1, 1, 1, 1);
         if (track == 1) {
             shapeRenderer.setColor(0.8F, 1, 0.8F, 1);
@@ -700,7 +699,7 @@ public class CrappyGame extends ApplicationAdapter {
 
         // sound3
         shapeRenderer.setColor(0, 0, 0, 0.3F);
-        shapeRenderer.rect(750 + shadowcreep, 1600 - shadowcreep, 3000, 750);
+        shapeRenderer.rect(750 + shadowCreep, 1600 - shadowCreep, 3000, 750);
         shapeRenderer.setColor(1, 1, 1, 1);
         if (track == 2) {
             shapeRenderer.setColor(0.8F, 1, 0.8F, 1);
@@ -709,7 +708,7 @@ public class CrappyGame extends ApplicationAdapter {
 
         //main menu button
         shapeRenderer.setColor(0, 0, 0, 0.3F);
-        shapeRenderer.rect(750 + shadowcreep, 775 - shadowcreep, 3000, 750);
+        shapeRenderer.rect(750 + shadowCreep, 775 - shadowCreep, 3000, 750);
         shapeRenderer.setColor(1, 1, 1, 1);
         shapeRenderer.rect(750, 775, 3000, 750);
 
@@ -780,7 +779,7 @@ public class CrappyGame extends ApplicationAdapter {
             if (faderShaderTimer < 1) {
                 font.setScale(5, 5);
                 font.setColor(0, 0, 0, 0.3F);
-                font.drawMultiLine(batch, "" + score, 2250 + shadowcreep, 5950, 0, BitmapFont.HAlignment.CENTER);
+                font.drawMultiLine(batch, "" + score, 2250 + shadowCreep, 5950, 0, BitmapFont.HAlignment.CENTER);
                 font.setColor(1, 1, 1, 1);
                 font.drawMultiLine(batch, "" + score, 2250, 6000, 0, BitmapFont.HAlignment.CENTER);
             }
@@ -801,16 +800,16 @@ public class CrappyGame extends ApplicationAdapter {
         // Shadow of shapes
         shapeRenderer.setColor(0, 0, 0, 0.3F);
         if (gameState != GameState.MAIN_MENU && gameState != GameState.OPTIONS) {
-            shapeRenderer.rect(player_x + shadowcreep, player_y - 50, PLAYER_SCALE, PLAYER_SCALE);
+            shapeRenderer.rect(player_x + shadowCreep, player_y - 50, PLAYER_SCALE, PLAYER_SCALE);
         }
-        if (shadowcreep > 0) {
-            shapeRenderer.rect(shadowcreep, 0, 450, WORLD_HEIGHT);
+        if (shadowCreep > 0) {
+            shapeRenderer.rect(shadowCreep, 0, 450, WORLD_HEIGHT);
         } else {
-            shapeRenderer.rect(4500 + shadowcreep, 0, -450, WORLD_HEIGHT);
+            shapeRenderer.rect(4500 + shadowCreep, 0, -450, WORLD_HEIGHT);
         }
         for (Barrier barrier : barriers) {
-            shapeRenderer.rect(barrier.position.x + shadowcreep - 4659, barrier.position.y - 50, 3000, PLAYER_SCALE);
-            shapeRenderer.rect(barrier.position.x + shadowcreep, barrier.position.y - 50, 3000, PLAYER_SCALE);
+            shapeRenderer.rect(barrier.position.x + shadowCreep - 4659, barrier.position.y - 50, 3000, PLAYER_SCALE);
+            shapeRenderer.rect(barrier.position.x + shadowCreep, barrier.position.y - 50, 3000, PLAYER_SCALE);
         }
 
         //Main Shapes
@@ -880,8 +879,8 @@ public class CrappyGame extends ApplicationAdapter {
         font.draw(batch, "Back", 1560, 2540 - (7150 * (1 - faderShaderTimer)));
         font.setScale(1F, 1F);
         font.setColor(1, 1, 1, 1);
-        if (score <= highscore){
-            font.draw(batch, "Highscore: " + highscore, 1360, 4605 - (7150 * (1 - faderShaderTimer)));
+        if (score <= highScore){
+            font.draw(batch, "Highscore: " + highScore, 1360, 4605 - (7150 * (1 - faderShaderTimer)));
         } else {
             font.draw(batch, "NEW HIGHSCORE!", 1360, 4605 - (7150 * (1 - faderShaderTimer)));
         }
@@ -935,18 +934,18 @@ public class CrappyGame extends ApplicationAdapter {
 
     @Override
     public void dispose() {
-        TClogo.dispose();
+        tcLogo.dispose();
         effects.dispose();
         square.dispose();
         shadow.dispose();
 
-        menumusic.dispose();
+        menuMusic.dispose();
         music1.dispose();
         music2.dispose();
         music3.dispose();
-        gameovermusic.dispose();
+        gameOverMusic.dispose();
         collide.dispose();
-        TCload.dispose();
+        tcLoad.dispose();
         click.dispose();
 
         font.dispose();
