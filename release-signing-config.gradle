@@ -1,0 +1,16 @@
+android {
+    signingConfigs {
+        release {
+            storeFile file("${System.env.ANDROID_HOME}/keystores/release.jks")
+            storePassword "${System.env.KEYSTORE_PW}"
+            keyAlias "alias"
+            keyPassword "${System.env.ALIAS_PW}"
+        }
+    }
+
+    buildTypes {
+        release {
+            signingConfig signingConfigs.release
+        }
+    }
+}
