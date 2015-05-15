@@ -228,10 +228,8 @@ public class CrappyGame extends ApplicationAdapter {
     }
 
     // Moves Barriers and sets colision bounds
-    private void moveBarriers() {
-        lastBarrier -= barrierspeed;
+    private void checkBarriers() {
         for (Barrier r : barriers) {
-            r.position.y -= barrierspeed;
             if (!r.counted) {
                 if (!r.activated) {
                     if (r.position.y <= player_y+PLAYER_SCALE) {
@@ -251,19 +249,25 @@ public class CrappyGame extends ApplicationAdapter {
                         shadowcreep = 50;
                     }
                 }
-            } else {
-                if (r.position.y <= -PLAYER_SCALE) {
-                    r.position.y = lastBarrier + 2875;
-                    lastBarrier += 2875;
-                    int tempRandom = lastRandom + MathUtils.random(1, 5);
-                    if (tempRandom > 5) {
-                        tempRandom -= 6;
-                    }
-                    lastRandom = tempRandom;
-                    r.position.x = 4150 + tempRandom * -425;
-                    r.counted = false;
-                    r.activated = false;
+            }
+        }
+    }
+
+    private void moveBarriers() {
+        lastBarrier -= barrierspeed;
+        for (Barrier r : barriers) {
+            r.position.y -= barrierspeed;
+            if (r.position.y <= -PLAYER_SCALE) {
+                r.position.y = lastBarrier + 2875;
+                lastBarrier += 2875;
+                int tempRandom = lastRandom + MathUtils.random(1, 5);
+                if (tempRandom > 5) {
+                    tempRandom -= 6;
                 }
+                lastRandom = tempRandom;
+                r.position.x = 4150 + tempRandom * -425;
+                r.counted = false;
+                r.activated = false;
             }
         }
     }
@@ -337,6 +341,7 @@ public class CrappyGame extends ApplicationAdapter {
         if (gameState == GameState.RUNNING) {
             movePlayer();
             moveBarriers();
+            checkBarriers();
             checkGameOver();
             moveCircles();
             bkgShift += 4;
