@@ -447,6 +447,17 @@ public class CrappyGame extends ApplicationAdapter {
             if (Gdx.input.justTouched()) {
                 float x = grabX();
                 float y = grabY();
+                // NO MUSIC *CLAP CLAPCLAPCLAPCLAP*
+                if (x > 750 && x < 3750 && y > 4075 && y < 4825) {
+                    track = 3;
+                    setMusic(3);
+                    menumusic.stop();
+                    music1.stop();
+                    music2.stop();
+                    music3.stop();
+                    click.play();
+                    return;
+                }
                 // TRACK1
                 if (x > 750 && x < 3750 && y > 3250 && y < 4000) {
                     track = 0;
@@ -472,7 +483,7 @@ public class CrappyGame extends ApplicationAdapter {
                     return;
                 }
                 // TRACK3
-                if (x > 750 && x < 7500 && y > 1500 && y < 2350) {
+                if (x > 750 && x < 3750 && y > 1500 && y < 2350) {
                     track = 2;
                     setMusic(2);
                     menumusic.stop();
@@ -511,6 +522,8 @@ public class CrappyGame extends ApplicationAdapter {
                     case 1: music2.play();
                         break;
                     case 2: music3.play();
+                        break;
+                    case 3:
                         break;
                 }
                 return;
@@ -618,6 +631,15 @@ public class CrappyGame extends ApplicationAdapter {
         shapeRenderer.setProjectionMatrix(camera.combined);
         shapeRenderer.begin(ShapeRenderer.ShapeType.Filled);
 
+        // nosound
+        shapeRenderer.setColor(0, 0, 0, 0.3F);
+        shapeRenderer.rect(750 + shadowcreep, 4075 - shadowcreep, 3000, 750);
+        shapeRenderer.setColor(1, 1, 1, 1);
+        if (track == 3) {
+            shapeRenderer.setColor(0.8F, 1, 0.8F, 1);
+        }
+        shapeRenderer.rect(750, 4075, 3000, 750);
+
         // sound1
         shapeRenderer.setColor(0, 0, 0, 0.3F);
         shapeRenderer.rect(750 + shadowcreep, 3250 - shadowcreep, 3000, 750);
@@ -673,6 +695,7 @@ public class CrappyGame extends ApplicationAdapter {
 
         font.setScale(2, 2);
         font.setColor(0, 0, 0, 0.4F);
+        font.draw(batch, "No Track", 1550, 4675);
         font.draw(batch, "Track 1", 1550, 3850);
         font.draw(batch, "Track 2", 1550, 3025);
         font.draw(batch, "Track 3", 1550, 2200);
