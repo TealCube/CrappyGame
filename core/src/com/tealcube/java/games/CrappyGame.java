@@ -224,8 +224,8 @@ public class CrappyGame extends ApplicationAdapter {
             }
             lastRandom = tempRandom;
             barrierLoc = 4200 + tempRandom * -425;
-            barriers.add(new Barrier(barrierLoc, WORLD_HEIGHT + 100 + i * 2875));
-            lastBarrier = WORLD_HEIGHT + i * 2875;
+            barriers.add(new Barrier(barrierLoc, WORLD_HEIGHT + 100 + i * 2925));
+            lastBarrier = WORLD_HEIGHT + i * 2925;
         }
     }
 
@@ -268,8 +268,8 @@ public class CrappyGame extends ApplicationAdapter {
         for (Barrier r : barriers) {
             r.position.y -= barrierSpeed;
             if (r.position.y <= -PLAYER_SCALE) {
-                r.position.y = lastBarrier + 2875;
-                lastBarrier += 2875;
+                r.position.y = lastBarrier + 2925;
+                lastBarrier += 2925;
                 int tempRandom = lastRandom + MathUtils.random(1, 5);
                 if (tempRandom > 5) {
                     tempRandom -= 6;
@@ -1032,11 +1032,11 @@ public class CrappyGame extends ApplicationAdapter {
             }
 
             if (this.red > 220) redFlip = true;
-            if (this.red < 80) redFlip = false;
+            if (this.red < 70) redFlip = false;
             if (this.green > 220) greenFlip = true;
-            if (this.green < 80) greenFlip = false;
+            if (this.green < 70) greenFlip = false;
             if (this.blue > 220) blueFlip = true;
-            if (this.blue < 80) blueFlip = false;
+            if (this.blue < 70) blueFlip = false;
 
             return this;
         }
