@@ -71,6 +71,7 @@ public class CrappyGame extends ApplicationAdapter {
     private int score = 0;
     private boolean ads = true;
     private int backgroundChangeTick = 0;
+    private int moveTowardsTick = 0;
 
     private GameState gameState;
     private ShapeRenderer shapeRenderer;
@@ -387,7 +388,7 @@ public class CrappyGame extends ApplicationAdapter {
             moveBarriers();
             moveCircles();
 
-            moveTowardsTopLeft();
+            moveTowards(RANDOM.nextInt(4));
 
             player_y -= barrierSpeed;
             if (faderShaderTimer >= 1.0F) {
@@ -434,7 +435,7 @@ public class CrappyGame extends ApplicationAdapter {
         if (gameState == GameState.MAIN_MENU) {
             shadowCreep = 50;
 
-            moveTowardsTopLeft();
+            moveTowards(RANDOM.nextInt(4));
 
             moveCircles();
 
@@ -475,8 +476,8 @@ public class CrappyGame extends ApplicationAdapter {
             shadowCreep = 50;
             moveCircles();
 
-            moveTowardsTopLeft();
-            
+            moveTowards(RANDOM.nextInt(4));
+
             if (Gdx.input.justTouched()) {
                 float x = grabX();
                 float y = grabY();
@@ -584,10 +585,34 @@ public class CrappyGame extends ApplicationAdapter {
         }
     }
 
-    private void moveTowardsTopLeft() {
-        topRight = topRight.towards(topLeft, BACKGROUND_CHANGE_RATE);
-        bottomLeft = bottomLeft.towards(topLeft, BACKGROUND_CHANGE_RATE);
-        bottomRight = bottomRight.towards(topLeft, BACKGROUND_CHANGE_RATE);
+    private void moveTowards(int i) {
+        if (moveTowardsTick++ >= BACKGROUND_CHANGE_INTERVAL / 4) {
+            switch (i) {
+                case 0:
+                    topRight = topRight.towards(topLeft, BACKGROUND_CHANGE_RATE);
+                    bottomLeft = bottomLeft.towards(topLeft, BACKGROUND_CHANGE_RATE);
+                    bottomRight = bottomRight.towards(topLeft, BACKGROUND_CHANGE_RATE);
+                    break;
+                case 1:
+                    topLeft = topLeft.towards(topRight, BACKGROUND_CHANGE_RATE);
+                    bottomLeft = bottomLeft.towards(topRight, BACKGROUND_CHANGE_RATE);
+                    bottomRight = bottomRight.towards(topRight, BACKGROUND_CHANGE_RATE);
+                    break;
+                case 2:
+                    topLeft = topLeft.towards(bottomLeft, BACKGROUND_CHANGE_RATE);
+                    topRight = topRight.towards(bottomLeft, BACKGROUND_CHANGE_RATE);
+                    bottomRight = bottomRight.towards(bottomLeft, BACKGROUND_CHANGE_RATE);
+                    break;
+                case 3:
+                    topLeft = topLeft.towards(bottomRight, BACKGROUND_CHANGE_RATE);
+                    topRight = topRight.towards(bottomRight, BACKGROUND_CHANGE_RATE);
+                    bottomLeft = bottomRight.towards(bottomRight, BACKGROUND_CHANGE_RATE);
+                    break;
+                default:
+                    break;
+            }
+            moveTowardsTick -= BACKGROUND_CHANGE_INTERVAL / 4;
+        }
     }
 
     private void drawSplash() {
