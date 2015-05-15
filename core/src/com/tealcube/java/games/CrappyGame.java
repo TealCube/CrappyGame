@@ -736,7 +736,7 @@ public class CrappyGame extends ApplicationAdapter {
 
         font.setScale(2, 2);
         font.setColor(0, 0, 0, 0.4F);
-        font.draw(batch, "No Track", 1550, 4675);
+        font.draw(batch, "No Music", 1400, 4675);
         font.draw(batch, "Track 1", 1550, 3850);
         font.draw(batch, "Track 2", 1550, 3025);
         font.draw(batch, "Track 3", 1550, 2200);
