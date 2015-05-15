@@ -7,13 +7,6 @@ android {
         versionName appVersion
     }
     buildTypes {
-        release {
-            if (project.hasProperty("build_signingConfig")
-                    && new File(project.build_signingConfig).exists()) {
-                logger.lifecycle("[SIGNING CONFIG] Applying signing configuration to release builds from: " + project.build_signingConfig);
-                apply from: project.build_signingConfig;
-            }
-        }
         debug {
             debuggable true
         }
@@ -30,6 +23,10 @@ android {
 
         instrumentTest.setRoot('tests')
     }
+}
+
+if (project.hasProperty("build_configFile") && new File(project.property("build_configFile")).exists()) {
+    apply from: project.property("build_configFile")
 }
 
 // needed to add JNI shared libraries to APK when compiling on CLI

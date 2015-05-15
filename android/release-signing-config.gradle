@@ -7,4 +7,10 @@ android {
             keyPassword "${System.env.ALIAS_PW}"
         }
     }
+
+    buildTypes {
+        release {
+            signingConfig signingConfigs.release
+        }
+    }
 }
