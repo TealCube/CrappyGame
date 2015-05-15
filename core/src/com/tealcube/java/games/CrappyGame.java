@@ -726,11 +726,11 @@ public class CrappyGame extends ApplicationAdapter {
 
         font.setScale(4, 4);
         font.setColor(0, 0, 0, 0.3F);
-        font.draw(batch, "Chroma", 595, 6150);
-        font.draw(batch, "Dodge", 1560, 5200);
+        font.draw(batch, "Chroma", 595, 6975);
+        font.draw(batch, "Dodge", 1560, 6025);
         font.setColor(1, 1, 1, 1);
-        font.draw(batch, "Chroma", 545, 6200);
-        font.draw(batch, "Dodge", 1510, 5250);
+        font.draw(batch, "Chroma", 545, 7025);
+        font.draw(batch, "Dodge", 1510, 6100);
 
         font.setScale(2, 2);
         font.setColor(0, 0, 0, 0.4F);
@@ -740,8 +740,8 @@ public class CrappyGame extends ApplicationAdapter {
         font.draw(batch, "Track 3", 1550, 2200);
         font.draw(batch, "Back", 1750, 1375);
 
-        batch.draw(shadow, 1020 + 50, 4830 - 50, 2, 2, 4, 4, 150, 150, rotator, 0, 0, 4, 4, false, false);
-        batch.draw(square, 1020, 4830, 2, 2, 4, 4, 150, 150, rotator, 0, 0, 4, 4, false, false);
+        batch.draw(shadow, 1020 + 50, 6975 - 1370 - 50, 2, 2, 4, 4, 150, 150, rotator, 0, 0, 4, 4, false, false);
+        batch.draw(square, 1020, 6975 - 1370, 2, 2, 4, 4, 150, 150, rotator, 0, 0, 4, 4, false, false);
 
         batch.end();
         Gdx.gl.glDisable(GL30.GL_BLEND);
