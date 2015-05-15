@@ -27,6 +27,9 @@ android {
 
 if (project.hasProperty("build_configFile") && new File(project.property("build_configFile")).exists()) {
     apply from: project.property("build_configFile")
+    logger.quiet("[SIGNING] applying build_configFile: " + project.property("build_configFile"))
+} else {
+    logger.quiet("[SIGNING] build_configFile does not exist")
 }
 
 // needed to add JNI shared libraries to APK when compiling on CLI
