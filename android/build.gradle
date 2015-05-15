@@ -7,6 +7,9 @@ android {
         versionName appVersion
     }
     buildTypes {
+        release {
+
+        }
         debug {
             debuggable true
         }
@@ -27,7 +30,7 @@ android {
 
 if (project.hasProperty("build_signingConfig")
         && new File(project.build_signingConfig).exists()) {
-    logger.debug("[SIGNING CONFIG] Applying signing configuration to release builds from: " + project.build_signingConfig);
+    logger.lifecycle("[SIGNING CONFIG] Applying signing configuration to release builds from: " + project.build_signingConfig);
     apply from: project.build_signingConfig;
 }
 
