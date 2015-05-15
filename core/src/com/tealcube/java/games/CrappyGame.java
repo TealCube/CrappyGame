@@ -310,7 +310,10 @@ public class CrappyGame extends ApplicationAdapter {
             gameState = GameState.MAIN_MENU;
             TClogo.dispose();
             TCload.dispose();
-            menumusic.play();
+            track = getMusic();
+            if (track != 3) {
+                menumusic.play();
+            }
         }
     }
 
@@ -323,12 +326,30 @@ public class CrappyGame extends ApplicationAdapter {
             switch (track) {
                 case 0:
                     music1.stop();
+                    music1.stop();
+                    music2.stop();
+                    music3.stop();
+                    menumusic.stop();
                     break;
                 case 1:
                     music2.stop();
+                    music1.stop();
+                    music2.stop();
+                    music3.stop();
+                    menumusic.stop();
                     break;
                 case 2:
                     music3.stop();
+                    music1.stop();
+                    music2.stop();
+                    music3.stop();
+                    menumusic.stop();
+                    break;
+                case 3:
+                    music1.stop();
+                    music2.stop();
+                    music3.stop();
+                    menumusic.stop();
                     break;
             }
             collide.play();
@@ -365,6 +386,12 @@ public class CrappyGame extends ApplicationAdapter {
         if (gameState == GameState.GAME_OVER) {
             moveBarriers();
             moveCircles();
+
+            topLeft = topLeft.change(2);
+            topRight = topRight.change(2);
+            bottomLeft = bottomLeft.change(2);
+            bottomRight = bottomRight.change(2);
+
             player_y -= barrierspeed;
             if (faderShaderTimer >= 1.0F) {
                 if (Gdx.input.justTouched()) {
@@ -408,6 +435,12 @@ public class CrappyGame extends ApplicationAdapter {
         if (gameState == GameState.MAIN_MENU) {
             shadowcreep = 50;
             moveCircles();
+
+            topLeft = topLeft.change(2);
+            topRight = topRight.change(2);
+            bottomLeft = bottomLeft.change(2);
+            bottomRight = bottomRight.change(2);
+
             if (Gdx.input.justTouched()) {
                 float x = grabX();
                 float y = grabY();
@@ -500,7 +533,9 @@ public class CrappyGame extends ApplicationAdapter {
                     music1.stop();
                     music2.stop();
                     music3.stop();
-                    menumusic.play();
+                    if (track != 3) {
+                        menumusic.play();
+                    }
                     click.play();
                     return;
                 }
