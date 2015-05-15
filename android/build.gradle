@@ -3,7 +3,7 @@ android {
     buildToolsVersion "20.0.0"
     compileSdkVersion 20
     defaultConfig {
-        versionCode buildVersionCode(version + appVersion)
+        versionCode buildVersionCode(version + appVersion + versionTag)
         versionName (version + appVersion + versionTag)
     }
     buildTypes {
