@@ -33,7 +33,7 @@ public class CrappyGame extends ApplicationAdapter {
     private static final int MAX_LEFT_BOUNDS = 400;
     private static final int PLAYER_SCALE = 675;
     private static final int BACKGROUND_CHANGE_RATE = 2;
-    private static final int BACKGROUND_CHANGE_INTERVAL = 30;
+    private static final int BACKGROUND_CHANGE_INTERVAL = 15;
     private static Preferences preferences;
 
     private float RIGHT_BOUNDS = MAX_RIGHT_BOUNDS;
