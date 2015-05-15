@@ -32,7 +32,8 @@ public class CrappyGame extends ApplicationAdapter {
     private static final int MAX_RIGHT_BOUNDS = 3400;
     private static final int MAX_LEFT_BOUNDS = 400;
     private static final int PLAYER_SCALE = 675;
-    private static final int BACKGROUND_CHANGE_RATE = 1;
+    private static final int BACKGROUND_CHANGE_RATE = 2;
+    private static final int BACKGROUND_CHANGE_INTERVAL = 60;
     private static Preferences preferences;
 
     private float RIGHT_BOUNDS = MAX_RIGHT_BOUNDS;
@@ -69,6 +70,7 @@ public class CrappyGame extends ApplicationAdapter {
     private int highScore = 0;
     private int score = 0;
     private boolean ads = true;
+    private int backgroundChangeTick = 0;
 
     private GameState gameState;
     private ShapeRenderer shapeRenderer;
@@ -565,10 +567,13 @@ public class CrappyGame extends ApplicationAdapter {
     }
 
     private void colorify() {
-        topLeft = topLeft.change(BACKGROUND_CHANGE_RATE);
-        topRight = topRight.change(BACKGROUND_CHANGE_RATE);
-        bottomLeft = bottomLeft.change(BACKGROUND_CHANGE_RATE);
-        bottomRight = bottomRight.change(BACKGROUND_CHANGE_RATE);
+        if (backgroundChangeTick++ >= BACKGROUND_CHANGE_INTERVAL) {
+            topLeft = topLeft.change(BACKGROUND_CHANGE_RATE);
+            topRight = topRight.change(BACKGROUND_CHANGE_RATE);
+            bottomLeft = bottomLeft.change(BACKGROUND_CHANGE_RATE);
+            bottomRight = bottomRight.change(BACKGROUND_CHANGE_RATE);
+            backgroundChangeTick -= BACKGROUND_CHANGE_INTERVAL;
+        }
     }
 
     private void drawSplash() {
