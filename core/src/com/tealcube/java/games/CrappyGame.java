@@ -354,7 +354,9 @@ public class CrappyGame extends ApplicationAdapter {
                     break;
             }
             collide.play();
-            gameovermusic.play();
+            if (track != 3) {
+                gameovermusic.play();
+            }
             gameState = GameState.GAME_OVER;
             if (ads) {
                 adsController.showBannerAd();
