@@ -387,6 +387,8 @@ public class CrappyGame extends ApplicationAdapter {
             moveBarriers();
             moveCircles();
 
+            moveTowardsTopLeft();
+
             player_y -= barrierSpeed;
             if (faderShaderTimer >= 1.0F) {
                 if (Gdx.input.justTouched()) {
@@ -411,7 +413,9 @@ public class CrappyGame extends ApplicationAdapter {
                             adsController.hideBannerAd();
                         }
                         gameState = GameState.MAIN_MENU;
-                        menuMusic.play();
+                        if (track != 3) {
+                            menuMusic.play();
+                        }
                         gameOverMusic.stop();
                         resetWorld();
                         click.play();
@@ -430,7 +434,7 @@ public class CrappyGame extends ApplicationAdapter {
         if (gameState == GameState.MAIN_MENU) {
             shadowCreep = 50;
 
-            colorify();
+            moveTowardsTopLeft();
 
             moveCircles();
 
@@ -471,7 +475,7 @@ public class CrappyGame extends ApplicationAdapter {
             shadowCreep = 50;
             moveCircles();
 
-            colorify();
+            moveTowardsTopLeft();
             
             if (Gdx.input.justTouched()) {
                 float x = grabX();
@@ -557,6 +561,10 @@ public class CrappyGame extends ApplicationAdapter {
                     case 3:
                         break;
                 }
+                topLeft.invertFlip();
+                topRight.invertFlip();
+                bottomLeft.invertFlip();
+                bottomRight.invertFlip();
                 return;
             }
         }
@@ -574,6 +582,12 @@ public class CrappyGame extends ApplicationAdapter {
             bottomRight = bottomRight.change(BACKGROUND_CHANGE_RATE);
             backgroundChangeTick -= BACKGROUND_CHANGE_INTERVAL;
         }
+    }
+
+    private void moveTowardsTopLeft() {
+        topRight = topRight.towards(topLeft, BACKGROUND_CHANGE_RATE);
+        bottomLeft = bottomLeft.towards(topLeft, BACKGROUND_CHANGE_RATE);
+        bottomRight = bottomRight.towards(topLeft, BACKGROUND_CHANGE_RATE);
     }
 
     private void drawSplash() {
@@ -998,9 +1012,13 @@ public class CrappyGame extends ApplicationAdapter {
         boolean blueFlip;
 
         RgbColor(int red, int green, int blue) {
-            this.red = red;
-            this.green = green;
-            this.blue = blue;
+            this.red = Math.min(255, Math.max(0, red));
+            this.green = Math.min(255, Math.max(0, green));
+            this.blue = Math.min(255, Math.max(0, blue));
+
+            this.redFlip = RANDOM.nextBoolean();
+            this.greenFlip = RANDOM.nextBoolean();
+            this.blueFlip = RANDOM.nextBoolean();
 
             if (this.red > 255) redFlip = true;
             if (this.red < 0) redFlip = false;
@@ -1037,6 +1055,51 @@ public class CrappyGame extends ApplicationAdapter {
             if (this.green < 70) greenFlip = false;
             if (this.blue > 220) blueFlip = true;
             if (this.blue < 70) blueFlip = false;
+
+            return this;
+        }
+
+        RgbColor invertFlip() {
+            redFlip = !redFlip;
+            greenFlip = !greenFlip;
+            blueFlip = !blueFlip;
+            return this;
+        }
+
+        RgbColor towards(RgbColor color, int maxAmount) {
+            int theirRed = color.red;
+            int theirGreen = color.green;
+            int theirBlue = color.blue;
+
+            int redDiff = Math.abs(red - theirRed);
+            int blueDiff = Math.abs(blue - theirBlue);
+            int greenDiff = Math.abs(green - theirGreen);
+
+            if (redDiff <= maxAmount) {
+                red = color.red;
+            }
+            if (greenDiff <= maxAmount) {
+                green = color.green;
+            }
+            if (blueDiff <= maxAmount) {
+                blue = color.blue;
+            }
+
+            if (red < theirRed) {
+                red += Math.floor(RANDOM.nextDouble() * maxAmount);
+            } else if (red > theirRed) {
+                red -= Math.floor(RANDOM.nextDouble() * maxAmount);
+            }
+            if (green < theirGreen) {
+                green += Math.floor(RANDOM.nextDouble() * maxAmount);
+            } else if (green > theirGreen) {
+                green -= Math.floor(RANDOM.nextDouble() * maxAmount);
+            }
+            if (blue < theirBlue) {
+                blue += Math.floor(RANDOM.nextDouble() * maxAmount);
+            } else if (blue > theirBlue) {
+                blue -= Math.floor(RANDOM.nextDouble() * maxAmount);
+            }
 
             return this;
         }
