@@ -5,12 +5,12 @@ import com.badlogic.gdx.backends.lwjgl.LwjglApplicationConfiguration;
 import com.tealcube.java.games.CrappyGame;
 
 public class DesktopLauncher {
-	public static void main (String[] arg) {
-	    LwjglApplicationConfiguration cfg = new LwjglApplicationConfiguration();
-	    cfg.title = "ChromaDodgeOrSomeCrap";
-	    cfg.useGL30 = false;
-	    cfg.width = 380;
-	    cfg.height = 640;
-	    new LwjglApplication(new CrappyGame(null), cfg);
-	}
+    public static void main(String[] arg) {
+        LwjglApplicationConfiguration cfg = new LwjglApplicationConfiguration();
+        cfg.title = "ChromaDodgeOrSomeCrap";
+        cfg.useGL30 = false;
+        cfg.width = 380;
+        cfg.height = 640;
+        new LwjglApplication(new CrappyGame(null), cfg);
+    }
 }

@@ -14,18 +14,16 @@ import com.tealcube.java.games.AdsController;
 
 public class AndroidLauncher extends AndroidApplication implements AdsController {
 
-    @Override
-    public boolean isWifiConnected() {
+    private static final String INTERSTITIAL_UNIT_ID = "ca-app-pub-5519384153835422/6795093799";
+    InterstitialAd interstitialAd;
+
+    @Override public boolean isWifiConnected() {
         ConnectivityManager cm = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
         NetworkInfo ni = cm.getNetworkInfo(ConnectivityManager.TYPE_WIFI);
         return (ni != null && ni.isConnected());
     }
 
-    private static final String INTERSTITIAL_UNIT_ID = "ca-app-pub-5519384153835422/6795093799";
-    InterstitialAd interstitialAd;
-
-    @Override
-    protected void onCreate(Bundle savedInstanceState) {
+    @Override protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         AndroidApplicationConfiguration config = new AndroidApplicationConfiguration();
     }
@@ -39,15 +37,12 @@ public class AndroidLauncher extends AndroidApplication implements AdsController
         interstitialAd.loadAd(ad);
     }
 
-    @Override
-    public void showInterstitialAd(final Runnable then) {
+    @Override public void showInterstitialAd(final Runnable then) {
         runOnUiThread(new Runnable() {
-            @Override
-            public void run() {
+            @Override public void run() {
                 if (then != null) {
                     interstitialAd.setAdListener(new AdListener() {
-                        @Override
-                        public void onAdClosed() {
+                        @Override public void onAdClosed() {
                             Gdx.app.postRunnable(then);
                             AdRequest.Builder builder = new AdRequest.Builder();
                             AdRequest ad = builder.build();
