@@ -10,13 +10,17 @@ import com.badlogic.gdx.backends.android.AndroidApplicationConfiguration;
 import com.google.android.gms.ads.AdListener;
 import com.google.android.gms.ads.AdRequest;
 import com.google.android.gms.ads.InterstitialAd;
+import com.google.android.gms.analytics.GoogleAnalytics;
+import com.google.android.gms.analytics.Tracker;
 import com.tealcube.java.games.AdsController;
 import com.tealcube.java.games.CrappyGame;
 
 public class AndroidLauncher extends AndroidApplication implements AdsController {
 
     private static final String INTERSTITIAL_UNIT_ID = "ca-app-pub-5519384153835422/6795093799";
+    private static final String TRACKING_ID = "UA-63024465-1";
     private InterstitialAd interstitialAd;
+    private Tracker tracker;
 
     @Override public boolean isWifiConnected() {
         ConnectivityManager cm = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
@@ -29,6 +33,7 @@ public class AndroidLauncher extends AndroidApplication implements AdsController
         AndroidApplicationConfiguration config = new AndroidApplicationConfiguration();
         initialize(new CrappyGame(this), config);
         setupAds();
+        tracker = getTracker();
     }
 
     public void setupAds() {
@@ -63,6 +68,18 @@ public class AndroidLauncher extends AndroidApplication implements AdsController
         AdRequest adRequest = new AdRequest.Builder().addTestDevice("YOUR_DEVICE_HASH").build();
 
         interstitialAd.loadAd(adRequest);
+    }
+
+    private synchronized Tracker getTracker() {
+        if (tracker == null) {
+
+            GoogleAnalytics analytics = GoogleAnalytics.getInstance(this);
+            tracker = analytics.newTracker(TRACKING_ID);
+            tracker.enableAdvertisingIdCollection(true);
+            tracker.setSessionTimeout(300L);
+            tracker.enableAutoActivityTracking(true);
+        }
+        return tracker;
     }
 
 }
