@@ -165,7 +165,7 @@ public class CrappyGame extends ApplicationAdapter {
         music2.setLooping(true);
         music3.setLooping(true);
 
-        for (int i = 0; i < 11; i++) {
+        for (int i = 0; i < 8; i++) {
             circles.add(new Circlez(MathUtils.random(-1500, 4200), MathUtils.random(0, 9000), MathUtils.random(10, 22)
                 , MathUtils.random(1000, 3500)));
         }
