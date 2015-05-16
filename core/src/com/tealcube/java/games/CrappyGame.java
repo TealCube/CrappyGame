@@ -47,6 +47,7 @@ public class CrappyGame extends ApplicationAdapter {
     private Texture square;
     private Texture shadow;
     private Texture effects;
+    private Texture gameover;
     private Sound tcLoad;
     private Sound click;
     private Sound collide;
@@ -142,6 +143,7 @@ public class CrappyGame extends ApplicationAdapter {
 
         // Menu Assets
         click = Gdx.audio.newSound(Gdx.files.internal("click.mp3"));
+        gameover = new Texture("gameover.png");
         square = new Texture("square.png");
         shadow = new Texture("shadow.png");
 
@@ -151,9 +153,9 @@ public class CrappyGame extends ApplicationAdapter {
         music3 = Gdx.audio.newMusic(Gdx.files.internal("bensound-goinghigher.mp3"));
         gameOverMusic = Gdx.audio.newMusic(Gdx.files.internal("easy-lemon.mp3"));
 
-        menuMusic.setVolume(0.7F);
-        music1.setVolume(0.6F);
-        music1.setVolume(0.6F);
+        menuMusic.setVolume(0.8F);
+        music1.setVolume(0.7F);
+        music1.setVolume(0.7F);
         music1.setVolume(0.6F);
         gameOverMusic.setVolume(0.8F);
 
@@ -385,7 +387,6 @@ public class CrappyGame extends ApplicationAdapter {
                 adsController.showInterstitialAd(new Runnable() {
                     @Override public void run() {
                         System.out.println("Interstitial app closed");
-                        Gdx.app.exit();
                         resetWorld();
                         click.play();
                         gameState = GameState.START;
@@ -408,7 +409,7 @@ public class CrappyGame extends ApplicationAdapter {
 
                     // Replay Button
                     if (x > 750 && x < 3750 && y > 2900 && y < 4000) {
-                        if (ads && adCount > 3) {
+                        if (ads && adCount > 2) {
                             adCount = 0;
                             gameOverMusic.stop();
                             click.play();
@@ -446,7 +447,8 @@ public class CrappyGame extends ApplicationAdapter {
 
         if (gameState == GameState.MAIN_MENU) {
             shadowCreep = 50;
-            moveTowards(new RgbColor(102, 205, 255), new RgbColor(66, 205, 255), new RgbColor(87, 255, 190), new RgbColor(135, 255, 190));
+            moveTowards(new RgbColor(102, 155, 245), new RgbColor(26, 145, 245), new RgbColor(87, 255, 190), new
+                RgbColor(135, 255, 190));
 
             moveCircles();
 
@@ -455,10 +457,18 @@ public class CrappyGame extends ApplicationAdapter {
                 float y = grabY();
                 // Play Button 1500, 5000, 6000, 2200
                 if (x > 750 && x < 3750 && y > 3050 && y < 3950) {
-                    gameState = GameState.START;
-                    menuMusic.stop();
-                    resetWorld();
-                    click.play();
+                    if (ads && adCount > 2) {
+                        adCount = 0;
+                        gameOverMusic.stop();
+                        click.play();
+                        gameState = GameState.ADS;
+                    } else {
+                        adCount++;
+                        gameOverMusic.stop();
+                        resetWorld();
+                        click.play();
+                        gameState = GameState.START;
+                    }
                     return;
                 }
                 // Options button 1500, 4750, 6000, 1800
@@ -487,7 +497,8 @@ public class CrappyGame extends ApplicationAdapter {
             shadowCreep = 50;
             moveCircles();
 
-            moveTowards(new RgbColor(220, 150, 150), new RgbColor(230, 50, 50), new RgbColor(235, 30, 235), new RgbColor(225, 80, 225));
+            moveTowards(new RgbColor(230, 80, 80), new RgbColor(230, 50, 50), new RgbColor(205, 30, 205), new
+                RgbColor(205, 10, 205));
 
             if (Gdx.input.justTouched()) {
                 float x = grabX();
@@ -903,28 +914,8 @@ public class CrappyGame extends ApplicationAdapter {
         shapeRenderer.setProjectionMatrix(camera.combined);
         shapeRenderer.begin(ShapeRenderer.ShapeType.Filled);
 
-        // Shadow when in gameover
         shapeRenderer.setColor(0, 0, 0, faderShaderTimer / 3);
         shapeRenderer.rect(0, 0, WORLD_WIDTH, WORLD_HEIGHT);
-
-        // Scoring feild background
-        shapeRenderer.setColor(1, 1, 1, 1);
-        shapeRenderer.rect(750, 4150 - (7150 * (1 - faderShaderTimer)), 3000, 2450);
-        shapeRenderer.setColor(0.7F, 0.7F, 0.7F, 1);
-        shapeRenderer.rect(950, 4350 - (7150 * (1 - faderShaderTimer)), 2600, 2050);
-        shapeRenderer.setColor(1, 1, 1, 1);
-        shapeRenderer.rect(950, 4650 - (7150 * (1 - faderShaderTimer)), 2600, 150);
-
-        shapeRenderer.setColor(0.7F, 0.7F, 0.7F, 1);
-        shapeRenderer.circle(1070, 4480 - (7150 * (1 - faderShaderTimer)), 230);
-
-        // Retry button background
-        shapeRenderer.setColor(1, 1, 1, 1);
-        shapeRenderer.rect(750, 2900 - (7150 * (1 - faderShaderTimer)), 3000, 1100);
-
-        // Main Menu Button
-        shapeRenderer.rect(750, 1650 - (7150 * (1 - faderShaderTimer)), 3000, 1100);
-
         shapeRenderer.end();
         Gdx.gl.glDisable(GL30.GL_BLEND);
 
@@ -937,24 +928,25 @@ public class CrappyGame extends ApplicationAdapter {
         Gdx.gl.glEnable(GL30.GL_BLEND);
         Gdx.gl.glBlendFunc(GL30.GL_SRC_ALPHA, GL30.GL_ONE_MINUS_SRC_ALPHA);
 
-        font.setScale(3, 3);
-        font.setColor(0, 0, 0, 0.4F);
-        font.draw(batch, "Retry", 1485, 3800 - (7150 * (1 - faderShaderTimer)));
-        font.draw(batch, "Back", 1560, 2540 - (7150 * (1 - faderShaderTimer)));
+        batch.draw(gameover, 750, 1650 - (7150 * (1 - faderShaderTimer)), 3000, 5000);
+
         font.setScale(1F, 1F);
-        font.setColor(1, 1, 1, 1);
+        font.setColor(0.7F, 0.7F, 0.7F, 1);
         if (score <= highScore) {
-            font.draw(batch, "Highscore: " + highScore, 1360, 4605 - (7150 * (1 - faderShaderTimer)));
+            font.drawMultiLine(batch, "Highscore: " + highScore, 2250, 4490 - (7150 * (1 - faderShaderTimer)), 0,
+                               BitmapFont
+                                   .HAlignment.CENTER);
         } else {
-            font.draw(batch, "NEW HIGHSCORE!", 1360, 4605 - (7150 * (1 - faderShaderTimer)));
+            font.drawMultiLine(batch, "NEW HIGHSCORE!", 2250, 4490 - (7150 * (1 - faderShaderTimer)), 0,
+                               BitmapFont.HAlignment.CENTER);
         }
 
-        batch.draw(square, 1065, 4485 - (7150 * (1 - faderShaderTimer)), 2, 2, 4, 4, 70, 70, rotator, 0, 0, 4, 4, false, false);
 
         if (faderShaderTimer > 0) {
             font.setScale(6, 6);
             font.setColor(1, 1, 1, 1);
-            font.drawMultiLine(batch, "" + score, 2250, 6260 - (7150 * (1 - faderShaderTimer)), 0, BitmapFont.HAlignment.CENTER);
+            font.drawMultiLine(batch, "" + score, 2250, 6050 - (7150 * (1 - faderShaderTimer)), 0 ,BitmapFont
+                .HAlignment.CENTER);
         }
 
         batch.end();
