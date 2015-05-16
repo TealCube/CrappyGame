@@ -30,7 +30,7 @@ public class CrappyGame extends ApplicationAdapter {
     private static final int WORLD_WIDTH = 4500;
     private static final int WORLD_HEIGHT = 7500;
     private static final int MAX_RIGHT_BOUNDS = 3400;
-    private static final int MAX_LEFT_BOUNDS = 400;
+    private static final int MAX_LEFT_BOUNDS = 410;
     private static final int PLAYER_SCALE = 675;
     private static final int BACKGROUND_CHANGE_RATE = 2;
     private static final int BACKGROUND_CHANGE_INTERVAL = 10;
@@ -154,19 +154,20 @@ public class CrappyGame extends ApplicationAdapter {
         music3 = Gdx.audio.newMusic(Gdx.files.internal("bensound-goinghigher.mp3"));
         gameOverMusic = Gdx.audio.newMusic(Gdx.files.internal("easy-lemon.mp3"));
 
-        menuMusic.setVolume(0.8F);
+        menuMusic.setVolume(1.0F);
         music1.setVolume(0.7F);
         music1.setVolume(0.7F);
         music1.setVolume(0.6F);
-        gameOverMusic.setVolume(0.8F);
+        gameOverMusic.setVolume(0.9F);
 
         menuMusic.setLooping(true);
         music1.setLooping(true);
         music2.setLooping(true);
         music3.setLooping(true);
 
-        for (int i = 0; i < 20; i++) {
-            circles.add(new Circlez(MathUtils.random(-1000, 4200), MathUtils.random(0, 9000), MathUtils.random(5, 30), MathUtils.random(500, 1300)));
+        for (int i = 0; i < 11; i++) {
+            circles.add(new Circlez(MathUtils.random(-1500, 4200), MathUtils.random(0, 9000), MathUtils.random(10, 22)
+                , MathUtils.random(1000, 3500)));
         }
 
         preferences = Gdx.app.getPreferences("ChromaDodge");
@@ -293,11 +294,11 @@ public class CrappyGame extends ApplicationAdapter {
             } else {
                 r.position.y = r.position.y - r.speed;
             }
-            if (r.position.y < -1000) {
+            if (r.position.y < -r.scale) {
                 r.position.y = 9500;
-                r.position.x = -1000 + MathUtils.random(0, 4200);
-                r.scale = MathUtils.random(500, 1300);
-                r.speed = MathUtils.random(2, 10);
+                r.position.x = -1500 + MathUtils.random(0, 4700);
+                r.scale = MathUtils.random(1000, 3500);
+                r.speed = MathUtils.random(10, 22);
             }
         }
 
@@ -308,7 +309,7 @@ public class CrappyGame extends ApplicationAdapter {
         if (splashTimer < 90) {
             splashTimer++;
             if (splashTimer == 10) {
-                tcLoad.play(0.6F);
+                tcLoad.play(0.4F);
             }
         } else {
             gameState = GameState.MAIN_MENU;
@@ -404,7 +405,12 @@ public class CrappyGame extends ApplicationAdapter {
             moveCircles();
 
             player_y -= barrierSpeed;
-            if (faderShaderTimer >= 1.0F) {
+            if (faderShaderTimer != 1.0F) {
+                faderShaderTimer += 0.1F;
+                if (faderShaderTimer > 1.0F) {
+                    faderShaderTimer = 1.0F;
+                }
+            } else {
                 if (Gdx.input.justTouched()) {
                     float x = grabX();
                     float y = grabY();
@@ -412,7 +418,7 @@ public class CrappyGame extends ApplicationAdapter {
                     // Replay Button
                     if (x > 750 && x < 3750 && y > 2900 && y < 4000) {
                         if (ads && adCount > 2) {
-                            adCount = 0;
+                            adCount = -2;
                             gameOverMusic.stop();
                             click.play();
                             gameState = GameState.ADS;
@@ -439,64 +445,61 @@ public class CrappyGame extends ApplicationAdapter {
                     }
                 }
             }
-            if (faderShaderTimer < 1.0F) {
-                faderShaderTimer += 0.1F;
-                if (faderShaderTimer > 1.0F) {
-                    faderShaderTimer = 1.0F;
-                }
-            }
         }
 
         if (gameState == GameState.MAIN_MENU) {
             shadowCreep = 50;
+            player_y = -900;
             moveTowards(new RgbColor(102, 155, 245), new RgbColor(26, 145, 245), new RgbColor(87, 255, 190), new
                 RgbColor(135, 255, 190));
 
             moveCircles();
 
-            if (Gdx.input.justTouched()) {
-                float x = grabX();
-                float y = grabY();
-                // Play Button 1500, 5000, 6000, 2200
-                if (x > 750 && x < 3750 && y > 3050 && y < 3950) {
-                    if (ads && adCount > 2) {
-                        adCount = 0;
-                        gameOverMusic.stop();
-                        click.play();
-                        gameState = GameState.ADS;
-                    } else {
-                        adCount++;
-                        gameOverMusic.stop();
-                        resetWorld();
-                        click.play();
-                        gameState = GameState.START;
-                    }
-                    return;
-                }
-                // Options button 1500, 4750, 6000, 1800
-                if (x > 750 && x < 3750 && y > 1975 && y < 2875) {
-                    gameState = GameState.OPTIONS;
-                    click.play();
-                    return;
-                }
-                // Exit Button
-                if (x > 1250 && x < 3250 && y > 900 && y < 1800) {
-                    click.play();
-                    Gdx.app.exit();
-                    return;
-                }
-
-            }
-            if (faderShaderTimer > 0.0F) {
+            if (faderShaderTimer != 0.0F) {
                 faderShaderTimer -= 0.1F;
                 if (faderShaderTimer < 0.0F) {
                     faderShaderTimer = 0.0F;
+                }
+            } else {
+                if (Gdx.input.justTouched()) {
+                    float x = grabX();
+                    float y = grabY();
+                    // Play Button 1500, 5000, 6000, 2200
+                    if (x > 750 && x < 3750 && y > 3050 && y < 3950) {
+                        if (ads && adCount > 2) {
+                            adCount = -2;
+                            menuMusic.stop();
+                            click.play();
+                            gameState = GameState.ADS;
+                        } else {
+                            adCount++;
+                            menuMusic.stop();
+                            resetWorld();
+                            click.play();
+                            gameState = GameState.START;
+                        }
+                        return;
+                    }
+                    // Options button 1500, 4750, 6000, 1800
+                    if (x > 750 && x < 3750 && y > 1975 && y < 2875) {
+                        gameState = GameState.OPTIONS;
+                        click.play();
+                        return;
+                    }
+                    // Exit Button
+                    if (x > 1250 && x < 3250 && y > 900 && y < 1800) {
+                        click.play();
+                        Gdx.app.exit();
+                        return;
+                    }
+
                 }
             }
         }
 
         if (gameState == GameState.OPTIONS) {
             shadowCreep = 50;
+            player_y = -900;
             moveCircles();
 
             moveTowards(new RgbColor(230, 80, 80), new RgbColor(230, 50, 50), new RgbColor(205, 30, 205), new
@@ -681,33 +684,6 @@ public class CrappyGame extends ApplicationAdapter {
     }
 
     private void drawMainMenu() {
-        shapeRenderer.dispose();
-        shapeRenderer = new ShapeRenderer();
-
-        Gdx.gl.glEnable(GL30.GL_BLEND);
-        Gdx.gl.glBlendFunc(GL30.GL_SRC_ALPHA, GL30.GL_ONE_MINUS_SRC_ALPHA);
-
-        shapeRenderer.setProjectionMatrix(camera.combined);
-        shapeRenderer.begin(ShapeRenderer.ShapeType.Filled);
-
-        shapeRenderer.setColor(0, 0, 0, 0.3F);
-        shapeRenderer.rect(750 + shadowCreep, 3050 - shadowCreep, 3000, 900);
-        shapeRenderer.setColor(1, 1, 1, 1);
-        shapeRenderer.rect(750, 3050, 3000, 900);
-
-        shapeRenderer.setColor(0, 0, 0, 0.3F);
-        shapeRenderer.rect(750 + shadowCreep, 1975 - shadowCreep, 3000, 900);
-        shapeRenderer.setColor(1, 1, 1, 1);
-        shapeRenderer.rect(750, 1975, 3000, 900);
-
-        shapeRenderer.setColor(0, 0, 0, 0.3F);
-        shapeRenderer.rect(1250 + shadowCreep, 900 - shadowCreep, 2000, 900);
-        shapeRenderer.setColor(1, 1, 1, 1);
-        shapeRenderer.rect(1250, 900, 2000, 900);
-
-        shapeRenderer.end();
-        Gdx.gl.glDisable(GL30.GL_BLEND);
-
         batch.dispose();
         batch = new SpriteBatch();
 
@@ -716,6 +692,16 @@ public class CrappyGame extends ApplicationAdapter {
 
         Gdx.gl.glEnable(GL30.GL_BLEND);
         Gdx.gl.glBlendFunc(GL30.GL_SRC_ALPHA, GL30.GL_ONE_MINUS_SRC_ALPHA);
+
+        // shadows
+        batch.draw(shadow, 750 + shadowCreep, 3050 - shadowCreep, 3000, 900);
+        batch.draw(shadow, 750 + shadowCreep, 1975 - shadowCreep, 3000, 900);
+        batch.draw(shadow, 1250 + shadowCreep, 900 - shadowCreep, 2000, 900);
+
+        // whitethings
+        batch.draw(square, 750, 3050, 3000, 900);
+        batch.draw(square, 750, 1975, 3000, 900);
+        batch.draw(square, 1250, 900, 2000, 900);
 
         font.setScale(4, 4);
         font.setColor(0, 0, 0, 0.3F);
@@ -862,48 +848,34 @@ public class CrappyGame extends ApplicationAdapter {
             }
         }
 
+        // shadows
+        batch.draw(shadow, player_x + shadowCreep, player_y - 50, PLAYER_SCALE, PLAYER_SCALE);
+
+        if (shadowCreep > 0) {
+            batch.draw(shadow, shadowCreep, 0, 430, WORLD_HEIGHT);
+        } else {
+            batch.draw(shadow, 4500 + shadowCreep, 0, -450, WORLD_HEIGHT);
+        }
+
+        for (Barrier barrier : barriers) {
+            batch.draw(shadow, barrier.position.x + shadowCreep - 4659, barrier.position.y - 50, 3000, PLAYER_SCALE);
+            batch.draw(shadow, barrier.position.x + shadowCreep, barrier.position.y - 50, 3000, PLAYER_SCALE);
+        }
+
+        //Main Shapes
+        batch.draw(square, player_x, player_y, PLAYER_SCALE, PLAYER_SCALE);
+
+        batch.draw(square, 0, 0, 430, WORLD_HEIGHT);
+        batch.draw(square, WORLD_WIDTH, 0, -450, WORLD_HEIGHT);
+
+        for (Barrier barrier : barriers) {
+            batch.draw(square, barrier.position.x - 4659, barrier.position.y, 3000, PLAYER_SCALE);
+            batch.draw(square, barrier.position.x, barrier.position.y, 3000, PLAYER_SCALE);
+        }
         // End batch. Disable Blend.
         batch.end();
         Gdx.gl.glDisable(GL30.GL_BLEND);
 
-        shapeRenderer.end();
-
-        shapeRenderer.setProjectionMatrix(camera.combined);
-        shapeRenderer.begin(ShapeRenderer.ShapeType.Filled);
-
-        Gdx.gl.glEnable(GL30.GL_BLEND);
-        Gdx.gl.glBlendFunc(GL30.GL_SRC_ALPHA, GL30.GL_ONE_MINUS_SRC_ALPHA);
-
-        // Shadow of shapes
-        shapeRenderer.setColor(0, 0, 0, 0.3F);
-        if (gameState != GameState.MAIN_MENU && gameState != GameState.OPTIONS) {
-            shapeRenderer.rect(player_x + shadowCreep, player_y - 50, PLAYER_SCALE, PLAYER_SCALE);
-        }
-        if (shadowCreep > 0) {
-            shapeRenderer.rect(shadowCreep, 0, 450, WORLD_HEIGHT);
-        } else {
-            shapeRenderer.rect(4500 + shadowCreep, 0, -450, WORLD_HEIGHT);
-        }
-        for (Barrier barrier : barriers) {
-            shapeRenderer.rect(barrier.position.x + shadowCreep - 4659, barrier.position.y - 50, 3000, PLAYER_SCALE);
-            shapeRenderer.rect(barrier.position.x + shadowCreep, barrier.position.y - 50, 3000, PLAYER_SCALE);
-        }
-
-        //Main Shapes
-        shapeRenderer.setColor(1, 1, 1, 1);
-        if (gameState != GameState.MAIN_MENU && gameState != GameState.OPTIONS) {
-            shapeRenderer.rect(player_x, player_y, PLAYER_SCALE, PLAYER_SCALE);
-        }
-        shapeRenderer.rect(0, 0, 450, WORLD_HEIGHT);
-        shapeRenderer.rect(WORLD_WIDTH, 0, -450, WORLD_HEIGHT);
-        for (Barrier barrier : barriers) {
-            shapeRenderer.rect(barrier.position.x - 4650, barrier.position.y, 3000, PLAYER_SCALE);
-            shapeRenderer.rect(barrier.position.x, barrier.position.y, 3000, PLAYER_SCALE);
-        }
-
-        // End ShapeRenderer. Disable Blend.
-        shapeRenderer.end();
-        Gdx.gl.glDisable(GL30.GL_BLEND);
     }
 
     private void drawGameOver() {
@@ -933,14 +905,9 @@ public class CrappyGame extends ApplicationAdapter {
             font.drawMultiLine(batch, "NEW HIGHSCORE!", 2250, 4490 - scroller, 0,
                                BitmapFont.HAlignment.CENTER);
         }
-
-
-        if (faderShaderTimer > 0) {
-            font.setScale(6, 6);
-            font.setColor(1, 1, 1, 1);
-            font.drawMultiLine(batch, "" + score, 2250, 6050 - scroller, 0 ,BitmapFont
-                .HAlignment.CENTER);
-        }
+        font.setScale(6, 6);
+        font.setColor(1, 1, 1, 1);
+        font.drawMultiLine(batch, "" + score, 2250, 6050 - scroller, 0 ,BitmapFont.HAlignment.CENTER);
 
         batch.end();
         Gdx.gl.glDisable(GL30.GL_BLEND);
@@ -955,16 +922,17 @@ public class CrappyGame extends ApplicationAdapter {
             return;
         }
 
+        if (faderShaderTimer != 0.0F) {
+            drawGameOver();
+            return;
+        }
+
         if (gameState == GameState.MAIN_MENU) {
             drawMainMenu();
         }
 
         if (gameState == GameState.OPTIONS) {
             drawOptions();
-        }
-
-        if (faderShaderTimer != 0.0F) {
-            drawGameOver();
         }
     }
 
