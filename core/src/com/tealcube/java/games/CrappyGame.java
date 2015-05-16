@@ -359,6 +359,7 @@ public class CrappyGame extends ApplicationAdapter {
             if (track != 3) {
                 gameOverMusic.play();
             }
+            gameState = GameState.GAME_OVER;
         }
     }
 
@@ -433,6 +434,7 @@ public class CrappyGame extends ApplicationAdapter {
                         gameOverMusic.stop();
                         resetWorld();
                         click.play();
+                        gameState = GameState.MAIN_MENU;
                         return;
                     }
                 }
