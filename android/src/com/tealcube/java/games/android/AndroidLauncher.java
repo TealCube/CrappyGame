@@ -8,12 +8,15 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.RelativeLayout;
 
+import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.backends.android.AndroidApplication;
 import com.badlogic.gdx.backends.android.AndroidApplicationConfiguration;
 
+import com.google.android.gms.ads.AdListener;
 import com.google.android.gms.ads.AdRequest;
 import com.google.android.gms.ads.AdSize;
 import com.google.android.gms.ads.AdView;
+import com.google.android.gms.ads.InterstitialAd;
 
 import com.tealcube.java.games.AdsController;
 import com.tealcube.java.games.CrappyGame;
@@ -24,63 +27,46 @@ public class AndroidLauncher extends AndroidApplication implements AdsController
     public boolean isWifiConnected() {
         ConnectivityManager cm = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
         NetworkInfo ni = cm.getNetworkInfo(ConnectivityManager.TYPE_WIFI);
-
         return (ni != null && ni.isConnected());
     }
 
-    private static final String BANNER_AD_UNIT_ID = "ca-app-pub-8201405583925190/4015725866";
-    AdView bannerAd;
+    private static final String INTERSTITIAL_UNIT_ID = "ca-app-pub-5519384153835422/6795093799";
+    InterstitialAd interstitialAd;
 
     @Override
     protected void onCreate (Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         AndroidApplicationConfiguration config = new AndroidApplicationConfiguration();
-
-        // Create a gameView and a bannerAd AdView
-        View gameView = initializeForView(new CrappyGame(this), config);
-        setupAds();
-
-        // Define the layout
-        RelativeLayout layout = new RelativeLayout(this);
-        layout.addView(gameView, ViewGroup.LayoutParams.MATCH_PARENT,
-                       ViewGroup.LayoutParams.MATCH_PARENT);
-        RelativeLayout.LayoutParams params = new RelativeLayout.LayoutParams(
-            ViewGroup.LayoutParams.MATCH_PARENT,
-            ViewGroup.LayoutParams.WRAP_CONTENT);
-        params.addRule(RelativeLayout.ALIGN_PARENT_BOTTOM);
-        layout.addView(bannerAd, params);
-
-        setContentView(layout);
     }
 
     public void setupAds() {
-        bannerAd = new AdView(this);
-        bannerAd.setVisibility(View.INVISIBLE);
-        bannerAd.setBackgroundColor(0xff000000); // black
-        bannerAd.setAdUnitId(BANNER_AD_UNIT_ID);
-        bannerAd.setAdSize(AdSize.SMART_BANNER);
+        interstitialAd = new InterstitialAd(this);
+        interstitialAd.setAdUnitId(INTERSTITIAL_UNIT_ID);
+
+        AdRequest.Builder builder = new AdRequest.Builder();
+        AdRequest ad = builder.build();
+        interstitialAd.loadAd(ad);
     }
 
     @Override
-    public void showBannerAd() {
+    public void showInterstitialAd(final Runnable then) {
         runOnUiThread(new Runnable() {
             @Override
             public void run() {
-                bannerAd.setVisibility(View.VISIBLE);
-                AdRequest.Builder builder = new AdRequest.Builder();
-                AdRequest ad = builder.build();
-                bannerAd.loadAd(ad);
+                if (then != null) {
+                    interstitialAd.setAdListener(new AdListener() {
+                        @Override
+                        public void onAdClosed() {
+                            Gdx.app.postRunnable(then);
+                            AdRequest.Builder builder = new AdRequest.Builder();
+                            AdRequest ad = builder.build();
+                            interstitialAd.loadAd(ad);
+                        }
+                    });
+                }
+                interstitialAd.show();
             }
         });
     }
 
-    @Override
-    public void hideBannerAd() {
-        runOnUiThread(new Runnable() {
-            @Override
-            public void run() {
-                bannerAd.setVisibility(View.INVISIBLE);
-            }
-        });
-    }
 }

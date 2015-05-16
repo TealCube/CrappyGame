@@ -33,7 +33,7 @@ public class CrappyGame extends ApplicationAdapter {
     private static final int MAX_LEFT_BOUNDS = 400;
     private static final int PLAYER_SCALE = 675;
     private static final int BACKGROUND_CHANGE_RATE = 2;
-    private static final int BACKGROUND_CHANGE_INTERVAL = 15;
+    private static final int BACKGROUND_CHANGE_INTERVAL = 10;
     private static Preferences preferences;
 
     private float RIGHT_BOUNDS = MAX_RIGHT_BOUNDS;
@@ -67,6 +67,7 @@ public class CrappyGame extends ApplicationAdapter {
     private int track;
     private float splashTimer;
     private float faderShaderTimer;
+    private int adCount = 0;
     private int highScore = 0;
     private int score = 0;
     private boolean ads = true;
@@ -358,10 +359,6 @@ public class CrappyGame extends ApplicationAdapter {
             if (track != 3) {
                 gameOverMusic.play();
             }
-            gameState = GameState.GAME_OVER;
-            if (ads) {
-                adsController.showBannerAd();
-            }
         }
     }
 
@@ -384,11 +381,26 @@ public class CrappyGame extends ApplicationAdapter {
             return;
         }
 
+        if (gameState == GameState.ADS) {
+            if (adsController.isWifiConnected()) {
+                adsController.showInterstitialAd(new Runnable() {
+                    @Override
+                    public void run() {
+                        System.out.println("Interstitial app closed");
+                        Gdx.app.exit();
+                        resetWorld();
+                        click.play();
+                        gameState = GameState.START;
+                    }
+                });
+            } else {
+                System.out.println("Interstitial ad not (yet) loaded");
+            }
+        }
+
         if (gameState == GameState.GAME_OVER) {
             moveBarriers();
             moveCircles();
-
-            moveTowards(RANDOM.nextInt(4));
 
             player_y -= barrierSpeed;
             if (faderShaderTimer >= 1.0F) {
@@ -398,22 +410,23 @@ public class CrappyGame extends ApplicationAdapter {
 
                     // Replay Button
                     if (x > 750 && x < 3750 && y > 2900 && y < 4000) {
-                        if (ads) {
-                            adsController.hideBannerAd();
+                        if (ads && adCount > 3) {
+                            adCount = 0;
+                            gameOverMusic.stop();
+                            click.play();
+                            gameState = GameState.ADS;
+                        } else {
+                            adCount++;
+                            gameOverMusic.stop();
+                            resetWorld();
+                            click.play();
+                            gameState = GameState.START;
                         }
-                        gameState = GameState.START;
-                        gameOverMusic.stop();
-                        resetWorld();
-                        click.play();
                         return;
                     }
 
                     // Main Menu Button
                     if (x > 750 && x < 3750 && y > 1650 && y < 2750) {
-                        if (ads) {
-                            adsController.hideBannerAd();
-                        }
-                        gameState = GameState.MAIN_MENU;
                         if (track != 3) {
                             menuMusic.play();
                         }
@@ -434,8 +447,8 @@ public class CrappyGame extends ApplicationAdapter {
 
         if (gameState == GameState.MAIN_MENU) {
             shadowCreep = 50;
-
-            moveTowards(RANDOM.nextInt(4));
+            moveTowards(new RgbColor(102,205,255), new RgbColor(66,205,255), new RgbColor(87,255,190), new RgbColor
+                (135,255,190));
 
             moveCircles();
 
@@ -476,7 +489,8 @@ public class CrappyGame extends ApplicationAdapter {
             shadowCreep = 50;
             moveCircles();
 
-            moveTowards(RANDOM.nextInt(4));
+            moveTowards(new RgbColor(220,150,150), new RgbColor(230,50,50), new RgbColor(235,30,235), new RgbColor
+                (225,80,225));
 
             if (Gdx.input.justTouched()) {
                 float x = grabX();
@@ -545,6 +559,9 @@ public class CrappyGame extends ApplicationAdapter {
 
         if (gameState == GameState.START) {
             moveCircles();
+            moveTowards(new RgbColor(102, 205, 255), new RgbColor(66, 205, 255), new RgbColor(87, 255, 190),
+                        new RgbColor
+                            (135, 255, 190));
             if (faderShaderTimer > 0.0F) {
                 faderShaderTimer -= 0.1F;
                 if (faderShaderTimer < 0.0F) {
@@ -1034,7 +1051,7 @@ public class CrappyGame extends ApplicationAdapter {
     }
 
     enum GameState {
-        SPLASH, MAIN_MENU, OPTIONS, START, RUNNING, GAME_OVER
+        SPLASH, MAIN_MENU, OPTIONS, START, RUNNING, GAME_OVER, ADS
     }
 
     class RgbColor {
