@@ -11,11 +11,12 @@ import com.google.android.gms.ads.AdListener;
 import com.google.android.gms.ads.AdRequest;
 import com.google.android.gms.ads.InterstitialAd;
 import com.tealcube.java.games.AdsController;
+import com.tealcube.java.games.CrappyGame;
 
 public class AndroidLauncher extends AndroidApplication implements AdsController {
 
     private static final String INTERSTITIAL_UNIT_ID = "ca-app-pub-5519384153835422/6795093799";
-    InterstitialAd interstitialAd;
+    private InterstitialAd interstitialAd;
 
     @Override public boolean isWifiConnected() {
         ConnectivityManager cm = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
@@ -26,20 +27,23 @@ public class AndroidLauncher extends AndroidApplication implements AdsController
     @Override protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         AndroidApplicationConfiguration config = new AndroidApplicationConfiguration();
+        initialize(new CrappyGame(this), config);
+        setupAds();
     }
 
     public void setupAds() {
         interstitialAd = new InterstitialAd(this);
         interstitialAd.setAdUnitId(INTERSTITIAL_UNIT_ID);
 
-        AdRequest.Builder builder = new AdRequest.Builder();
-        AdRequest ad = builder.build();
-        interstitialAd.loadAd(ad);
+        requestInterstitialAd();
     }
 
     @Override public void showInterstitialAd(final Runnable then) {
         runOnUiThread(new Runnable() {
             @Override public void run() {
+                if (!isWifiConnected() || !interstitialAd.isLoaded()) {
+                    return;
+                }
                 if (then != null) {
                     interstitialAd.setAdListener(new AdListener() {
                         @Override public void onAdClosed() {
@@ -53,6 +57,12 @@ public class AndroidLauncher extends AndroidApplication implements AdsController
                 interstitialAd.show();
             }
         });
+    }
+
+    @Override public void requestInterstitialAd() {
+        AdRequest adRequest = new AdRequest.Builder().addTestDevice("YOUR_DEVICE_HASH").build();
+
+        interstitialAd.loadAd(adRequest);
     }
 
 }
