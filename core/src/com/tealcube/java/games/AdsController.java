@@ -1,8 +1,10 @@
 package com.tealcube.java.games;
 
 public interface AdsController {
-    public boolean isWifiConnected();
+    boolean isWifiConnected();
 
-    public void showInterstitialAd(Runnable then);
+    void showInterstitialAd(Runnable then);
     // vfrgvcdfrgbfd
+
+    void requestInterstitialAd();
 }
