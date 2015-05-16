@@ -8,6 +8,9 @@ buildscript {
     }
 }
 
+sourceCompatibility = JavaVersion.VERSION_1_7
+targetCompatibility = JavaVersion.VERSION_1_7
+
 allprojects {
     apply plugin: "eclipse"
     apply plugin: "idea"
