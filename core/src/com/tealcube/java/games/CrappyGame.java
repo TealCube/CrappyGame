@@ -68,6 +68,7 @@ public class CrappyGame extends ApplicationAdapter {
     private int track;
     private float splashTimer;
     private float faderShaderTimer;
+    private float scroller;
     private int adCount = 0;
     private int highScore = 0;
     private int score = 0;
@@ -365,6 +366,7 @@ public class CrappyGame extends ApplicationAdapter {
 
     // World update. Makes stuff happen.
     private void updateWorld() {
+        scroller = 7150 * (1 - faderShaderTimer);
         rotator++;
         if (rotator == 360) {
             rotator = 0;
@@ -905,20 +907,6 @@ public class CrappyGame extends ApplicationAdapter {
     }
 
     private void drawGameOver() {
-        shapeRenderer.dispose();
-        shapeRenderer = new ShapeRenderer();
-
-        Gdx.gl.glEnable(GL30.GL_BLEND);
-        Gdx.gl.glBlendFunc(GL30.GL_SRC_ALPHA, GL30.GL_ONE_MINUS_SRC_ALPHA);
-
-        shapeRenderer.setProjectionMatrix(camera.combined);
-        shapeRenderer.begin(ShapeRenderer.ShapeType.Filled);
-
-        shapeRenderer.setColor(0, 0, 0, faderShaderTimer / 3);
-        shapeRenderer.rect(0, 0, WORLD_WIDTH, WORLD_HEIGHT);
-        shapeRenderer.end();
-        Gdx.gl.glDisable(GL30.GL_BLEND);
-
         batch.dispose();
         batch = new SpriteBatch();
 
@@ -928,16 +916,21 @@ public class CrappyGame extends ApplicationAdapter {
         Gdx.gl.glEnable(GL30.GL_BLEND);
         Gdx.gl.glBlendFunc(GL30.GL_SRC_ALPHA, GL30.GL_ONE_MINUS_SRC_ALPHA);
 
+        Color c = batch.getColor();
+        batch.setColor(c.r, c.g, c.b, faderShaderTimer);
+        batch.draw(shadow, 0, 0, WORLD_WIDTH, WORLD_HEIGHT);
+        batch.setColor(1, 1, 1, 1);
+
         batch.draw(gameover, 750, 1650 - (7150 * (1 - faderShaderTimer)), 3000, 5000);
 
         font.setScale(1F, 1F);
         font.setColor(0.7F, 0.7F, 0.7F, 1);
         if (score <= highScore) {
-            font.drawMultiLine(batch, "Highscore: " + highScore, 2250, 4490 - (7150 * (1 - faderShaderTimer)), 0,
+            font.drawMultiLine(batch, "Highscore: " + highScore, 2250, 4490 - scroller, 0,
                                BitmapFont
                                    .HAlignment.CENTER);
         } else {
-            font.drawMultiLine(batch, "NEW HIGHSCORE!", 2250, 4490 - (7150 * (1 - faderShaderTimer)), 0,
+            font.drawMultiLine(batch, "NEW HIGHSCORE!", 2250, 4490 - scroller, 0,
                                BitmapFont.HAlignment.CENTER);
         }
 
@@ -945,7 +938,7 @@ public class CrappyGame extends ApplicationAdapter {
         if (faderShaderTimer > 0) {
             font.setScale(6, 6);
             font.setColor(1, 1, 1, 1);
-            font.drawMultiLine(batch, "" + score, 2250, 6050 - (7150 * (1 - faderShaderTimer)), 0 ,BitmapFont
+            font.drawMultiLine(batch, "" + score, 2250, 6050 - scroller, 0 ,BitmapFont
                 .HAlignment.CENTER);
         }
 
