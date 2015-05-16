@@ -615,6 +615,15 @@ public class CrappyGame extends ApplicationAdapter {
         }
     }
 
+    private void moveTowards(RgbColor tl, RgbColor tr, RgbColor bl, RgbColor br) {
+        if (moveTowardsTick++ >= BACKGROUND_CHANGE_INTERVAL / 4) {
+            topLeft = topLeft.towards(tl, BACKGROUND_CHANGE_RATE);
+            topRight = topRight.towards(tr, BACKGROUND_CHANGE_RATE);
+            bottomLeft = bottomLeft.towards(bl, BACKGROUND_CHANGE_RATE);
+            bottomRight = bottomLeft.towards(br, BACKGROUND_CHANGE_RATE);
+        }
+    }
+
     private void drawSplash() {
         shapeRenderer = new ShapeRenderer();
 
