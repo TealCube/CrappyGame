@@ -165,9 +165,9 @@ public class CrappyGame extends ApplicationAdapter {
         music2.setLooping(true);
         music3.setLooping(true);
 
-        for (int i = 0; i < 8; i++) {
-            circles.add(new Circlez(MathUtils.random(-1500, 4200), MathUtils.random(0, 9000), MathUtils.random(10, 22)
-                , MathUtils.random(1000, 3500)));
+        for (int i = 0; i < 7; i++) {
+            circles.add(new Circlez(MathUtils.random(-750, 4200), MathUtils.random(0, 9000), MathUtils.random(4, 14)
+                , MathUtils.random(1500, 3500)));
         }
 
         preferences = Gdx.app.getPreferences("ChromaDodge");
@@ -289,16 +289,12 @@ public class CrappyGame extends ApplicationAdapter {
     // Moves Barriers and sets colision bounds
     private void moveCircles() {
         for (Circlez r : circles) {
-            if (gameState == GameState.START || gameState == GameState.MAIN_MENU || gameState == GameState.OPTIONS) {
-                r.position.y = r.position.y - (r.speed / 2);
-            } else {
-                r.position.y = r.position.y - r.speed;
-            }
+            r.position.y = r.position.y - r.speed;
             if (r.position.y < -r.scale) {
-                r.position.y = 9500;
-                r.position.x = -1500 + MathUtils.random(0, 4700);
-                r.scale = MathUtils.random(1000, 3500);
-                r.speed = MathUtils.random(10, 22);
+                r.scale = MathUtils.random(1500, 3500);
+                r.speed = MathUtils.random(4, 14);
+                r.position.y = WORLD_HEIGHT;
+                r.position.x = -(r.scale/2) + MathUtils.random(0, (WORLD_WIDTH-(r.scale/2)));
             }
         }
 
