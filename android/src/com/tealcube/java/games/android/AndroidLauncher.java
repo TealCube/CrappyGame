@@ -15,7 +15,7 @@ import com.tealcube.java.games.CrappyGame;
 
 public class AndroidLauncher extends AndroidApplication implements AdsController {
 
-    private static final String INTERSTITIAL_UNIT_ID = "ca-app-pub-5519384153835422/6795093799";
+    private static final String INTERSTITIAL_UNIT_ID = "ca-app-pub-3953945236585912/9791715382";
     //private static final String TRACKING_ID = "UA-63024465-1";
     private InterstitialAd interstitialAd;
     //private Tracker tracker;
