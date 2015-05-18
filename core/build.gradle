@@ -7,6 +7,13 @@ targetCompatibility = JavaVersion.VERSION_1_7
 
 sourceSets.main.java.srcDirs = ["src/"]
 
+findbugs {
+    ignoreFailures = true
+}
+
+pmd {
+    ignoreFailures = true
+}
 
 eclipse.project {
     name = appName + "-core"
