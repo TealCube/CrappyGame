@@ -58,8 +58,6 @@ public class CrappyGame extends ApplicationAdapter {
 
     private String tuttext;
     private float tutCounter;
-    private float tutAlpha;
-    private boolean tutFadeIn = true;
     private boolean tutFinished = false;
 
     private int player_x;
@@ -216,7 +214,6 @@ public class CrappyGame extends ApplicationAdapter {
 
         tutFinished = false;
         tutCounter = 0;
-        tutFadeIn = true;
         tuttext = "Tap anywhere to start!";
 
         track = getMusic();
@@ -718,9 +715,9 @@ public class CrappyGame extends ApplicationAdapter {
 
         smallFont.setScale(9, 9);
 
-        smallFont.setColor(0, 0, 0, tutAlpha / 3);
+        smallFont.setColor(0, 0, 0, 1 / 3);
         smallFont.drawMultiLine(batch, tuttext, 1950 + (tutCounter * 300), 2500, 0, BitmapFont.HAlignment.CENTER);
-        smallFont.setColor(1, 1, 1, tutAlpha);
+        smallFont.setColor(1, 1, 1, 1);
         smallFont.drawMultiLine(batch, tuttext, 1950 + (tutCounter * 300), 2520, 0, BitmapFont.HAlignment.CENTER);
 
         batch.end();
