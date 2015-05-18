@@ -313,30 +313,30 @@ public class CrappyGame extends ApplicationAdapter {
 
     }
 
-    private void checkTutorial() {
-        if (tutFadeIn) {
-            tutAlpha = tutCounter;
-            tutCounter = tutCounter + 0.0004F + ((1 - tutCounter) / 20);
-            if (tutCounter >= 1) {
-                tutCounter = 1;
-                tutFadeIn = false;
-            }
-        } else {
-            tutCounter = tutCounter + 0.2F;
-            tutAlpha = 2-tutCounter;
-            if (tutCounter >= 2) {
-                if (tuttext.equals("Tap anywhere to start!")) {
-                    tuttext = "Tap again to move!";
-                } else if (tuttext.equals("Tap again to move!")) {
-                    tuttext = "Don't hit stuff!";
-                } else if (tuttext.equals("Don't hit stuff!")) {
-                    tutFinished = true;
-                }
-                tutFadeIn = true;
-                tutCounter = 0.005F;
-            }
-        }
-    }
+    //private void checkTutorial() {
+    //    if (tutFadeIn) {
+    //        tutAlpha = tutCounter;
+    //        tutCounter = tutCounter + 0.0004F + ((1 - tutCounter) / 20);
+    //        if (tutCounter >= 1) {
+    //            tutCounter = 1;
+    //            tutFadeIn = false;
+    //        }
+    //    } else {
+    //        tutCounter = tutCounter + 0.2F;
+    //        tutAlpha = 2-tutCounter;
+    //        if (tutCounter >= 2) {
+    //            if (tuttext.equals("Tap anywhere to start!")) {
+    //                tuttext = "Tap again to move!";
+    //            } else if (tuttext.equals("Tap again to move!")) {
+    //                tuttext = "Don't hit stuff!";
+    //            } else if (tuttext.equals("Don't hit stuff!")) {
+    //                tutFinished = true;
+    //            }
+    //            tutFadeIn = true;
+    //            tutCounter = 0.005F;
+    //        }
+    //    }
+    //}
 
     // Handles the splash opening
     private void doSplash() {
@@ -408,9 +408,9 @@ public class CrappyGame extends ApplicationAdapter {
         }
 
         if (gameState == GameState.RUNNING) {
-            if (!tutFinished) {
-                checkTutorial();
-            }
+            //if (!tutFinished) {
+            //    checkTutorial();
+            //}
             movePlayer();
             moveBarriers();
             checkBarriers();
@@ -600,9 +600,9 @@ public class CrappyGame extends ApplicationAdapter {
 
         if (gameState == GameState.START) {
             moveCircles();
-            if (!tutFinished) {
-                checkTutorial();
-            }
+            //if (!tutFinished) {
+            //    checkTutorial();
+            //}
 
             if (faderShaderTimer != 0.0F) {
                 faderShaderTimer -= 0.1F;
