@@ -58,6 +58,8 @@ public class CrappyGame extends ApplicationAdapter {
 
     private String tuttext;
     private float tutCounter;
+    private float tutAlpha;
+    private boolean tutFadeIn;
     private boolean tutFinished = false;
 
     private int player_x;
@@ -211,10 +213,9 @@ public class CrappyGame extends ApplicationAdapter {
         LEFT_BOUNDS = MAX_LEFT_BOUNDS;
         barriers.clear();
 
-        // This ensures that newbies don't get smashed with ads when the first try! It's lame
-        // to lose 3 times in a row and then get hit with an ad...
-        if (highScore < 4) {
-            adCount = -2;
+        // Makes it so they never see an ad until they hit highscore of 3
+        if (highScore < 3) {
+            adCount = 1;
         }
 
         for (int i = 0; i < 3; i++) {
@@ -246,9 +247,9 @@ public class CrappyGame extends ApplicationAdapter {
         }
 
         if (gameState == GameState.RUNNING) {
-            //if (!tutFinished) {
-            //    checkTutorial();
-            //}
+            if (!tutFinished) {
+                checkTutorial();
+            }
             movePlayer();
             moveBarriers();
             checkBarriers();
@@ -439,9 +440,9 @@ public class CrappyGame extends ApplicationAdapter {
 
         if (gameState == GameState.START) {
             moveCircles();
-            //if (!tutFinished) {
-            //    checkTutorial();
-            //}
+            if (!tutFinished) {
+                checkTutorial();
+            }
 
             if (faderShaderTimer != 0.0F) {
                 faderShaderTimer -= 0.1F;
@@ -500,30 +501,30 @@ public class CrappyGame extends ApplicationAdapter {
         player_x += playerSpeed;
     }
 
-    //private void checkTutorial() {
-    //    if (tutFadeIn) {
-    //        tutAlpha = tutCounter;
-    //        tutCounter = tutCounter + 0.0004F + ((1 - tutCounter) / 20);
-    //        if (tutCounter >= 1) {
-    //            tutCounter = 1;
-    //            tutFadeIn = false;
-    //        }
-    //    } else {
-    //        tutCounter = tutCounter + 0.2F;
-    //        tutAlpha = 2-tutCounter;
-    //        if (tutCounter >= 2) {
-    //            if (tuttext.equals("Tap anywhere to start!")) {
-    //                tuttext = "Tap again to move!";
-    //            } else if (tuttext.equals("Tap again to move!")) {
-    //                tuttext = "Don't hit stuff!";
-    //            } else if (tuttext.equals("Don't hit stuff!")) {
-    //                tutFinished = true;
-    //            }
-    //            tutFadeIn = true;
-    //            tutCounter = 0.005F;
-    //        }
-    //    }
-    //}
+    private void checkTutorial() {
+        if (tutFadeIn) {
+            tutAlpha = tutCounter;
+            tutCounter = tutCounter + 0.0004F + ((1 - tutCounter) / 20);
+            if (tutCounter >= 1) {
+                tutCounter = 1;
+                tutFadeIn = false;
+            }
+        } else {
+            tutCounter = tutCounter + 0.2F;
+            tutAlpha = 2-tutCounter;
+            if (tutCounter >= 2) {
+                if (tuttext.equals("Tap anywhere to start!")) {
+                    tuttext = "Tap again to move!";
+                } else if (tuttext.equals("Tap again to move!")) {
+                    tuttext = "Don't hit stuff!";
+                } else if (tuttext.equals("Don't hit stuff!")) {
+                    tutFinished = true;
+                }
+                tutFadeIn = true;
+                tutCounter = 0.005F;
+            }
+        }
+    }
 
     // Moves Barriers and sets colision bounds
     private void checkBarriers() {
