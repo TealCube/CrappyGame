@@ -33,7 +33,7 @@ public class CrappyGame extends ApplicationAdapter {
     private static final int PLAYER_SCALE = 675;
     private static final int BACKGROUND_CHANGE_RATE = 2;
     private static final int BACKGROUND_CHANGE_INTERVAL = 10;
-    private static Preferences preferences;
+    private Preferences preferences;
 
     private float RIGHT_BOUNDS = MAX_RIGHT_BOUNDS;
     private float LEFT_BOUNDS = MAX_LEFT_BOUNDS;
@@ -100,23 +100,23 @@ public class CrappyGame extends ApplicationAdapter {
     }
 
     // Gets the highscore, if you hadn't figured that out.
-    public static int getHighScore() {
+    public int getHighScore() {
         return preferences.getInteger("highscore");
     }
 
     // Changes the saved highscore.
-    public static void setHighScore(int val) {
+    public void setHighScore(int val) {
         preferences.putInteger("highscore", val);
         preferences.flush();
     }
 
     // Gets the music, if you hadn't figured that out.
-    public static int getMusic() {
+    public int getMusic() {
         return preferences.getInteger("music");
     }
 
     // Changes the saved track.
-    public static void setMusic(int val) {
+    public void setMusic(int val) {
         preferences.putInteger("music", val);
         preferences.flush();
     }
