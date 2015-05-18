@@ -20,18 +20,18 @@ public class AndroidLauncher extends AndroidApplication implements AdsController
     private InterstitialAd interstitialAd;
     //private Tracker tracker;
 
-    @Override public boolean isWifiConnected() {
-        ConnectivityManager cm = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
-        NetworkInfo ni = cm.getNetworkInfo(ConnectivityManager.TYPE_WIFI);
-        return (ni != null && ni.isConnected());
-    }
-
-    @Override protected void onCreate(Bundle savedInstanceState) {
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         AndroidApplicationConfiguration config = new AndroidApplicationConfiguration();
         initialize(new CrappyGame(this), config);
         setupAds();
         //tracker = getTracker();
+    }    @Override
+    public boolean isWifiConnected() {
+        ConnectivityManager cm = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
+        NetworkInfo ni = cm.getNetworkInfo(ConnectivityManager.TYPE_WIFI);
+        return (ni != null && ni.isConnected());
     }
 
     public void setupAds() {
@@ -41,15 +41,20 @@ public class AndroidLauncher extends AndroidApplication implements AdsController
         requestInterstitialAd();
     }
 
-    @Override public void showInterstitialAd(final Runnable then) {
+
+
+    @Override
+    public void showInterstitialAd(final Runnable then) {
         runOnUiThread(new Runnable() {
-            @Override public void run() {
+            @Override
+            public void run() {
                 if (!isWifiConnected() || !interstitialAd.isLoaded()) {
                     return;
                 }
                 if (then != null) {
                     interstitialAd.setAdListener(new AdListener() {
-                        @Override public void onAdClosed() {
+                        @Override
+                        public void onAdClosed() {
                             Gdx.app.postRunnable(then);
                             AdRequest.Builder builder = new AdRequest.Builder();
                             AdRequest ad = builder.build();
@@ -62,7 +67,8 @@ public class AndroidLauncher extends AndroidApplication implements AdsController
         });
     }
 
-    @Override public void requestInterstitialAd() {
+    @Override
+    public void requestInterstitialAd() {
         AdRequest adRequest = new AdRequest.Builder().addTestDevice("YOUR_DEVICE_HASH").build();
 
         interstitialAd.loadAd(adRequest);

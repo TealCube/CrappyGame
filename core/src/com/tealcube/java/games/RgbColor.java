@@ -23,18 +23,24 @@ public class RgbColor {
         this.greenFlip = RANDOM.nextBoolean();
         this.blueFlip = RANDOM.nextBoolean();
 
-        if (this.red > 255)
+        if (this.red > 255) {
             redFlip = true;
-        if (this.red < 0)
+        }
+        if (this.red < 0) {
             redFlip = false;
-        if (this.green > 255)
+        }
+        if (this.green > 255) {
             greenFlip = true;
-        if (this.green < 0)
+        }
+        if (this.green < 0) {
             greenFlip = false;
-        if (this.blue > 255)
+        }
+        if (this.blue > 255) {
             blueFlip = true;
-        if (this.blue < 0)
+        }
+        if (this.blue < 0) {
             blueFlip = false;
+        }
     }
 
     public Color toColor() {
@@ -58,18 +64,24 @@ public class RgbColor {
             blue += Math.floor(RANDOM.nextDouble() * maxAmount);
         }
 
-        if (this.red > 220)
+        if (this.red > 220) {
             redFlip = true;
-        if (this.red < 70)
+        }
+        if (this.red < 70) {
             redFlip = false;
-        if (this.green > 220)
+        }
+        if (this.green > 220) {
             greenFlip = true;
-        if (this.green < 70)
+        }
+        if (this.green < 70) {
             greenFlip = false;
-        if (this.blue > 220)
+        }
+        if (this.blue > 220) {
             blueFlip = true;
-        if (this.blue < 70)
+        }
+        if (this.blue < 70) {
             blueFlip = false;
+        }
 
         return this;
     }
@@ -119,28 +131,15 @@ public class RgbColor {
         return this;
     }
 
-    public int getRed() {
-        return red;
-    }
-
-    public int getGreen() {
-        return green;
-    }
-
-    public int getBlue() {
-        return blue;
-    }
-
-    public boolean isRedFlip() {
-        return redFlip;
-    }
-
-    public boolean isGreenFlip() {
-        return greenFlip;
-    }
-
-    public boolean isBlueFlip() {
-        return blueFlip;
+    @Override
+    public int hashCode() {
+        int result = getRed();
+        result = 31 * result + getGreen();
+        result = 31 * result + getBlue();
+        result = 31 * result + (isRedFlip() ? 1 : 0);
+        result = 31 * result + (isGreenFlip() ? 1 : 0);
+        result = 31 * result + (isBlueFlip() ? 1 : 0);
+        return result;
     }
 
     @Override
@@ -172,14 +171,27 @@ public class RgbColor {
         return isBlueFlip() == rgbColor.isBlueFlip();
     }
 
-    @Override
-    public int hashCode() {
-        int result = getRed();
-        result = 31 * result + getGreen();
-        result = 31 * result + getBlue();
-        result = 31 * result + (isRedFlip() ? 1 : 0);
-        result = 31 * result + (isGreenFlip() ? 1 : 0);
-        result = 31 * result + (isBlueFlip() ? 1 : 0);
-        return result;
+    public int getRed() {
+        return red;
+    }
+
+    public int getGreen() {
+        return green;
+    }
+
+    public int getBlue() {
+        return blue;
+    }
+
+    public boolean isRedFlip() {
+        return redFlip;
+    }
+
+    public boolean isGreenFlip() {
+        return greenFlip;
+    }
+
+    public boolean isBlueFlip() {
+        return blueFlip;
     }
 }

@@ -99,29 +99,8 @@ public class CrappyGame extends ApplicationAdapter {
         }
     }
 
-    // Gets the highscore, if you hadn't figured that out.
-    public int getHighScore() {
-        return preferences.getInteger("highscore");
-    }
-
-    // Changes the saved highscore.
-    public void setHighScore(int val) {
-        preferences.putInteger("highscore", val);
-        preferences.flush();
-    }
-
-    // Gets the music, if you hadn't figured that out.
-    public int getMusic() {
-        return preferences.getInteger("music");
-    }
-
-    // Changes the saved track.
-    public void setMusic(int val) {
-        preferences.putInteger("music", val);
-        preferences.flush();
-    }
-
-    @Override public void create() {
+    @Override
+    public void create() {
         gameState = GameState.SPLASH;
         splashTimer = 1;
         camera = new OrthographicCamera();
@@ -173,7 +152,7 @@ public class CrappyGame extends ApplicationAdapter {
 
         for (int i = 0; i < 6; i++) {
             circles.add(new Circle(MathUtils.random(-750, 4200), MathUtils.random(0, 9000), MathUtils.random(4, 14)
-                , MathUtils.random(1500, 4000)));
+                    , MathUtils.random(1500, 4000)));
         }
 
         preferences = Gdx.app.getPreferences("ChromaDodge");
@@ -189,22 +168,6 @@ public class CrappyGame extends ApplicationAdapter {
         bottomLeft = new RgbColor(87, 255, 190);
         bottomRight = new RgbColor(135, 255, 190);
         resetWorld();
-    }
-
-    // Grab screen adjusted X value
-    private float grabX() {
-        int width = Gdx.graphics.getWidth();
-        float x = Gdx.input.getX();
-        x = WORLD_WIDTH * (x / (float) width);
-        return x;
-    }
-
-    // Grab screen adjusted Y value
-    private float grabY() {
-        int height = Gdx.graphics.getHeight();
-        float y = Gdx.input.getY();
-        y = WORLD_HEIGHT - WORLD_HEIGHT * y / (float) height;
-        return y;
     }
 
     // Resets the world when you hit retry or w/e
@@ -247,150 +210,43 @@ public class CrappyGame extends ApplicationAdapter {
         }
     }
 
-    // DANCE, PLAYER, DANCE!!
-    private void movePlayer() {
-        if (Gdx.input.justTouched()) {
-            playerSpeed = playerSpeed * -1;
-        }
-        player_x += playerSpeed;
+    // Gets the highscore, if you hadn't figured that out.
+    public int getHighScore() {
+        return preferences.getInteger("highscore");
     }
 
-    // Moves Barriers and sets colision bounds
-    private void checkBarriers() {
-        for (Barrier r : barriers) {
-            if (!r.counted) {
-                if (!r.activated && r.position.y <= player_y + PLAYER_SCALE) {
-                    RIGHT_BOUNDS = r.position.x - 660;
-                    LEFT_BOUNDS = r.position.x - 1650;
-                    r.activated = true;
-                }
-                if (r.position.y <= (player_y - PLAYER_SCALE)) {
-                    RIGHT_BOUNDS = MAX_RIGHT_BOUNDS;
-                    LEFT_BOUNDS = MAX_LEFT_BOUNDS;
-                    r.counted = true;
-                    score++;
-                }
-            }
-        }
+    // Changes the saved highscore.
+    public void setHighScore(int val) {
+        preferences.putInteger("highscore", val);
+        preferences.flush();
     }
 
-    private void moveBarriers() {
-        lastBarrier -= barrierSpeed;
-        for (Barrier r : barriers) {
-            r.position.y -= barrierSpeed;
-            if (r.position.y <= -PLAYER_SCALE) {
-                r.position.y = lastBarrier + 2950;
-                lastBarrier += 2950;
-                int tempRandom = lastRandom + MathUtils.random(1, 5);
-                if (tempRandom > 5) {
-                    tempRandom -= 6;
-                }
-                lastRandom = tempRandom;
-                r.position.x = 4150 + tempRandom * -425;
-                r.counted = false;
-                r.activated = false;
-            }
-        }
+    // Gets the music, if you hadn't figured that out.
+    public int getMusic() {
+        return preferences.getInteger("music");
     }
 
-    // Moves Barriers and sets colision bounds
-    private void moveCircles() {
-        for (Circle r : circles) {
-            r.position.y = r.position.y - r.speed;
-            if (r.position.y < -r.scale) {
-                r.scale = MathUtils.random(1500, 4000);
-                r.speed = MathUtils.random(4, 14);
-                r.position.y = WORLD_HEIGHT;
-                r.position.x = -(r.scale/2) + MathUtils.random(0, WORLD_WIDTH- r.scale/2);
-            }
-        }
-
+    // Changes the saved track.
+    public void setMusic(int val) {
+        preferences.putInteger("music", val);
+        preferences.flush();
     }
 
-    //private void checkTutorial() {
-    //    if (tutFadeIn) {
-    //        tutAlpha = tutCounter;
-    //        tutCounter = tutCounter + 0.0004F + ((1 - tutCounter) / 20);
-    //        if (tutCounter >= 1) {
-    //            tutCounter = 1;
-    //            tutFadeIn = false;
-    //        }
-    //    } else {
-    //        tutCounter = tutCounter + 0.2F;
-    //        tutAlpha = 2-tutCounter;
-    //        if (tutCounter >= 2) {
-    //            if (tuttext.equals("Tap anywhere to start!")) {
-    //                tuttext = "Tap again to move!";
-    //            } else if (tuttext.equals("Tap again to move!")) {
-    //                tuttext = "Don't hit stuff!";
-    //            } else if (tuttext.equals("Don't hit stuff!")) {
-    //                tutFinished = true;
-    //            }
-    //            tutFadeIn = true;
-    //            tutCounter = 0.005F;
-    //        }
-    //    }
-    //}
-
-    // Handles the splash opening
-    private void doSplash() {
-        if (splashTimer < 90) {
-            splashTimer++;
-            if (splashTimer == 10) {
-                tcLoad.play(0.4F);
-            }
-        } else {
-            gameState = GameState.MAIN_MENU;
-            tcLogo.dispose();
-            tcLoad.dispose();
-            track = getMusic();
-            if (track != 3) {
-                menuMusic.play();
-            }
-        }
+    @Override
+    public void resize(int width, int height) {
+        viewport.update(width, height);
+        camera.position.set(camera.viewportWidth / 2, camera.viewportHeight / 2, 0);
     }
 
-    // Check to see if you lose/set highscore
-    private void checkGameOver() {
-        if (player_x < LEFT_BOUNDS || player_x > RIGHT_BOUNDS) {
-            if (score > highScore) {
-                setHighScore(score);
-            }
-            switch (track) {
-                case 0:
-                    music1.stop();
-                    music1.stop();
-                    music2.stop();
-                    music3.stop();
-                    menuMusic.stop();
-                    break;
-                case 1:
-                    music2.stop();
-                    music1.stop();
-                    music2.stop();
-                    music3.stop();
-                    menuMusic.stop();
-                    break;
-                case 2:
-                    music3.stop();
-                    music1.stop();
-                    music2.stop();
-                    music3.stop();
-                    menuMusic.stop();
-                    break;
-                case 3:
-                    music1.stop();
-                    music2.stop();
-                    music3.stop();
-                    menuMusic.stop();
-                    break;
-            }
-            collide.play();
-            if (track != 3) {
-                gameOverMusic.play();
-            }
-            gameState = GameState.GAME_OVER;
-        }
+    @Override
+    public void render() {
+        camera.update();
+
+        Gdx.gl.glClearColor(0.273F, 0.602F, 0.906F, 0.91F);
+        Gdx.gl.glClear(GL30.GL_COLOR_BUFFER_BIT);
+
+        updateWorld();
+        mainDraw();
     }
 
     // World update. Makes stuff happen.
@@ -419,7 +275,8 @@ public class CrappyGame extends ApplicationAdapter {
         if (gameState == GameState.ADS) {
             if (adsController.isWifiConnected()) {
                 adsController.showInterstitialAd(new Runnable() {
-                    @Override public void run() {
+                    @Override
+                    public void run() {
                         System.out.println("Interstitial app closed");
                         resetWorld();
                         faderShaderTimer = 0;
@@ -478,7 +335,7 @@ public class CrappyGame extends ApplicationAdapter {
         if (gameState == GameState.MAIN_MENU) {
             player_y = -900;
             moveTowards(new RgbColor(102, 155, 245), new RgbColor(26, 145, 245), new RgbColor(87, 245, 190), new
-                RgbColor(125, 255, 170));
+                    RgbColor(125, 255, 170));
 
             moveCircles();
 
@@ -524,8 +381,8 @@ public class CrappyGame extends ApplicationAdapter {
             player_y = -900;
             moveCircles();
 
-            moveTowards(new RgbColor(87, 225, 190), new RgbColor(135, 225, 190) , new RgbColor(240, 240, 50), new
-                RgbColor(230, 230, 120));
+            moveTowards(new RgbColor(87, 225, 190), new RgbColor(135, 225, 190), new RgbColor(240, 240, 50), new
+                    RgbColor(230, 230, 120));
 
             if (Gdx.input.justTouched()) {
                 float x = grabX();
@@ -631,6 +488,168 @@ public class CrappyGame extends ApplicationAdapter {
         }
     }
 
+    // Grab screen adjusted X value
+    private float grabX() {
+        int width = Gdx.graphics.getWidth();
+        float x = Gdx.input.getX();
+        x = WORLD_WIDTH * (x / (float) width);
+        return x;
+    }
+
+    // Grab screen adjusted Y value
+    private float grabY() {
+        int height = Gdx.graphics.getHeight();
+        float y = Gdx.input.getY();
+        y = WORLD_HEIGHT - WORLD_HEIGHT * y / (float) height;
+        return y;
+    }
+
+    // DANCE, PLAYER, DANCE!!
+    private void movePlayer() {
+        if (Gdx.input.justTouched()) {
+            playerSpeed = playerSpeed * -1;
+        }
+        player_x += playerSpeed;
+    }
+
+    //private void checkTutorial() {
+    //    if (tutFadeIn) {
+    //        tutAlpha = tutCounter;
+    //        tutCounter = tutCounter + 0.0004F + ((1 - tutCounter) / 20);
+    //        if (tutCounter >= 1) {
+    //            tutCounter = 1;
+    //            tutFadeIn = false;
+    //        }
+    //    } else {
+    //        tutCounter = tutCounter + 0.2F;
+    //        tutAlpha = 2-tutCounter;
+    //        if (tutCounter >= 2) {
+    //            if (tuttext.equals("Tap anywhere to start!")) {
+    //                tuttext = "Tap again to move!";
+    //            } else if (tuttext.equals("Tap again to move!")) {
+    //                tuttext = "Don't hit stuff!";
+    //            } else if (tuttext.equals("Don't hit stuff!")) {
+    //                tutFinished = true;
+    //            }
+    //            tutFadeIn = true;
+    //            tutCounter = 0.005F;
+    //        }
+    //    }
+    //}
+
+    // Moves Barriers and sets colision bounds
+    private void checkBarriers() {
+        for (Barrier r : barriers) {
+            if (!r.counted) {
+                if (!r.activated && r.position.y <= player_y + PLAYER_SCALE) {
+                    RIGHT_BOUNDS = r.position.x - 660;
+                    LEFT_BOUNDS = r.position.x - 1650;
+                    r.activated = true;
+                }
+                if (r.position.y <= (player_y - PLAYER_SCALE)) {
+                    RIGHT_BOUNDS = MAX_RIGHT_BOUNDS;
+                    LEFT_BOUNDS = MAX_LEFT_BOUNDS;
+                    r.counted = true;
+                    score++;
+                }
+            }
+        }
+    }
+
+    private void moveBarriers() {
+        lastBarrier -= barrierSpeed;
+        for (Barrier r : barriers) {
+            r.position.y -= barrierSpeed;
+            if (r.position.y <= -PLAYER_SCALE) {
+                r.position.y = lastBarrier + 2950;
+                lastBarrier += 2950;
+                int tempRandom = lastRandom + MathUtils.random(1, 5);
+                if (tempRandom > 5) {
+                    tempRandom -= 6;
+                }
+                lastRandom = tempRandom;
+                r.position.x = 4150 + tempRandom * -425;
+                r.counted = false;
+                r.activated = false;
+            }
+        }
+    }
+
+    // Moves Barriers and sets colision bounds
+    private void moveCircles() {
+        for (Circle r : circles) {
+            r.position.y = r.position.y - r.speed;
+            if (r.position.y < -r.scale) {
+                r.scale = MathUtils.random(1500, 4000);
+                r.speed = MathUtils.random(4, 14);
+                r.position.y = WORLD_HEIGHT;
+                r.position.x = -(r.scale / 2) + MathUtils.random(0, WORLD_WIDTH - r.scale / 2);
+            }
+        }
+
+    }
+
+    // Handles the splash opening
+    private void doSplash() {
+        if (splashTimer < 90) {
+            splashTimer++;
+            if (splashTimer == 10) {
+                tcLoad.play(0.4F);
+            }
+        } else {
+            gameState = GameState.MAIN_MENU;
+            tcLogo.dispose();
+            tcLoad.dispose();
+            track = getMusic();
+            if (track != 3) {
+                menuMusic.play();
+            }
+        }
+    }
+
+    // Check to see if you lose/set highscore
+    private void checkGameOver() {
+        if (player_x < LEFT_BOUNDS || player_x > RIGHT_BOUNDS) {
+            if (score > highScore) {
+                setHighScore(score);
+            }
+            switch (track) {
+                case 0:
+                    music1.stop();
+                    music1.stop();
+                    music2.stop();
+                    music3.stop();
+                    menuMusic.stop();
+                    break;
+                case 1:
+                    music2.stop();
+                    music1.stop();
+                    music2.stop();
+                    music3.stop();
+                    menuMusic.stop();
+                    break;
+                case 2:
+                    music3.stop();
+                    music1.stop();
+                    music2.stop();
+                    music3.stop();
+                    menuMusic.stop();
+                    break;
+                case 3:
+                    music1.stop();
+                    music2.stop();
+                    music3.stop();
+                    menuMusic.stop();
+                    break;
+            }
+            collide.play();
+            if (track != 3) {
+                gameOverMusic.play();
+            }
+            gameState = GameState.GAME_OVER;
+        }
+    }
+
     private void colorify() {
         if (backgroundChangeTick++ >= BACKGROUND_CHANGE_INTERVAL) {
             topLeft = topLeft.change(BACKGROUND_CHANGE_RATE);
@@ -641,36 +660,6 @@ public class CrappyGame extends ApplicationAdapter {
         }
     }
 
-    private void moveTowards(int i) {
-        if (moveTowardsTick++ >= BACKGROUND_CHANGE_INTERVAL / 4) {
-            switch (i) {
-                case 0:
-                    topRight = topRight.towards(topLeft, BACKGROUND_CHANGE_RATE);
-                    bottomLeft = bottomLeft.towards(topLeft, BACKGROUND_CHANGE_RATE);
-                    bottomRight = bottomRight.towards(topLeft, BACKGROUND_CHANGE_RATE);
-                    break;
-                case 1:
-                    topLeft = topLeft.towards(topRight, BACKGROUND_CHANGE_RATE);
-                    bottomLeft = bottomLeft.towards(topRight, BACKGROUND_CHANGE_RATE);
-                    bottomRight = bottomRight.towards(topRight, BACKGROUND_CHANGE_RATE);
-                    break;
-                case 2:
-                    topLeft = topLeft.towards(bottomLeft, BACKGROUND_CHANGE_RATE);
-                    topRight = topRight.towards(bottomLeft, BACKGROUND_CHANGE_RATE);
-                    bottomRight = bottomRight.towards(bottomLeft, BACKGROUND_CHANGE_RATE);
-                    break;
-                case 3:
-                    topLeft = topLeft.towards(bottomRight, BACKGROUND_CHANGE_RATE);
-                    topRight = topRight.towards(bottomRight, BACKGROUND_CHANGE_RATE);
-                    bottomLeft = bottomRight.towards(bottomRight, BACKGROUND_CHANGE_RATE);
-                    break;
-                default:
-                    break;
-            }
-            moveTowardsTick -= BACKGROUND_CHANGE_INTERVAL / 4;
-        }
-    }
-
     private void moveTowards(RgbColor tl, RgbColor tr, RgbColor bl, RgbColor br) {
         if (moveTowardsTick++ >= BACKGROUND_CHANGE_INTERVAL / 4) {
             topLeft = topLeft.towards(tl, BACKGROUND_CHANGE_RATE);
@@ -678,6 +667,35 @@ public class CrappyGame extends ApplicationAdapter {
             bottomLeft = bottomLeft.towards(bl, BACKGROUND_CHANGE_RATE);
             bottomRight = bottomLeft.towards(br, BACKGROUND_CHANGE_RATE);
         }
+    }
+
+    // Draw event for the renderer to use.
+    private void mainDraw() {
+        Gdx.gl.glEnable(GL30.GL_BLEND);
+        Gdx.gl.glBlendFunc(GL30.GL_SRC_ALPHA, GL30.GL_ONE_MINUS_SRC_ALPHA);
+
+        if (gameState != GameState.SPLASH) {
+            drawGameplay();
+        } else {
+            drawSplash();
+        }
+
+        if (!tutFinished && (gameState == GameState.START || gameState == GameState.RUNNING)) {
+            drawTutorial();
+        }
+
+        if (gameState == GameState.MAIN_MENU) {
+            drawMainMenu();
+        }
+
+        if (faderShaderTimer != 0.0F) {
+            drawGameOver();
+        }
+
+        if (gameState == GameState.OPTIONS) {
+            drawOptions();
+        }
+        Gdx.gl.glDisable(GL30.GL_BLEND);
     }
 
     private void drawSplash() {
@@ -922,53 +940,16 @@ public class CrappyGame extends ApplicationAdapter {
         largeFont.setScale(1F, 1F);
         largeFont.setColor(0.7F, 0.7F, 0.7F, 1);
         if (score <= highScore) {
-            largeFont.drawMultiLine(batch, "Highscore: " + highScore, 2250, 4490 - scroller, 0, BitmapFont.HAlignment.CENTER);
+            largeFont.drawMultiLine(batch, "Highscore: " + highScore, 2250, 4490 - scroller, 0,
+                                    BitmapFont.HAlignment.CENTER);
         } else {
             largeFont.drawMultiLine(batch, "NEW HIGHSCORE!", 2250, 4490 - scroller, 0, BitmapFont.HAlignment.CENTER);
         }
         batch.end();
     }
 
-    // Draw event for the renderer to use.
-    private void mainDraw() {
-        Gdx.gl.glEnable(GL30.GL_BLEND);
-        Gdx.gl.glBlendFunc(GL30.GL_SRC_ALPHA, GL30.GL_ONE_MINUS_SRC_ALPHA);
-
-        if (gameState != GameState.SPLASH) {
-            drawGameplay();
-        } else {
-            drawSplash();
-        }
-
-        if (!tutFinished && (gameState == GameState.START || gameState == GameState.RUNNING)) {
-            drawTutorial();
-        }
-
-        if (gameState == GameState.MAIN_MENU) {
-            drawMainMenu();
-        }
-
-        if (faderShaderTimer != 0.0F) {
-            drawGameOver();
-        }
-
-        if (gameState == GameState.OPTIONS) {
-            drawOptions();
-        }
-        Gdx.gl.glDisable(GL30.GL_BLEND);
-    }
-
-    @Override public void render() {
-        camera.update();
-
-        Gdx.gl.glClearColor(0.273F, 0.602F, 0.906F, 0.91F);
-        Gdx.gl.glClear(GL30.GL_COLOR_BUFFER_BIT);
-
-        updateWorld();
-        mainDraw();
-    }
-
-    @Override public void dispose() {
+    @Override
+    public void dispose() {
         tcLogo.dispose();
         effects.dispose();
         square.dispose();
@@ -990,8 +971,33 @@ public class CrappyGame extends ApplicationAdapter {
         shapeRenderer.dispose();
     }
 
-    @Override public void resize(int width, int height) {
-        viewport.update(width, height);
-        camera.position.set(camera.viewportWidth / 2, camera.viewportHeight / 2, 0);
+    private void moveTowards(int i) {
+        if (moveTowardsTick++ >= BACKGROUND_CHANGE_INTERVAL / 4) {
+            switch (i) {
+                case 0:
+                    topRight = topRight.towards(topLeft, BACKGROUND_CHANGE_RATE);
+                    bottomLeft = bottomLeft.towards(topLeft, BACKGROUND_CHANGE_RATE);
+                    bottomRight = bottomRight.towards(topLeft, BACKGROUND_CHANGE_RATE);
+                    break;
+                case 1:
+                    topLeft = topLeft.towards(topRight, BACKGROUND_CHANGE_RATE);
+                    bottomLeft = bottomLeft.towards(topRight, BACKGROUND_CHANGE_RATE);
+                    bottomRight = bottomRight.towards(topRight, BACKGROUND_CHANGE_RATE);
+                    break;
+                case 2:
+                    topLeft = topLeft.towards(bottomLeft, BACKGROUND_CHANGE_RATE);
+                    topRight = topRight.towards(bottomLeft, BACKGROUND_CHANGE_RATE);
+                    bottomRight = bottomRight.towards(bottomLeft, BACKGROUND_CHANGE_RATE);
+                    break;
+                case 3:
+                    topLeft = topLeft.towards(bottomRight, BACKGROUND_CHANGE_RATE);
+                    topRight = topRight.towards(bottomRight, BACKGROUND_CHANGE_RATE);
+                    bottomLeft = bottomRight.towards(bottomRight, BACKGROUND_CHANGE_RATE);
+                    break;
+                default:
+                    break;
+            }
+            moveTowardsTick -= BACKGROUND_CHANGE_INTERVAL / 4;
+        }
     }
 }
