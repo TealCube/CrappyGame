@@ -57,7 +57,9 @@ project(":desktop") {
 
 project(":core") {
     apply plugin: "java"
-
+    apply plugin: "findbugs"
+    apply plugin: "pmd"
+    apply plugin: "build-dashboard"
 
     dependencies {
         compile "com.badlogicgames.gdx:gdx:$gdxVersion"
