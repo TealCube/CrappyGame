@@ -14,7 +14,6 @@ import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.freetype.FreeTypeFontGenerator;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.math.MathUtils;
-import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.viewport.StretchViewport;
 import com.badlogic.gdx.utils.viewport.Viewport;
@@ -90,7 +89,7 @@ public class CrappyGame extends ApplicationAdapter {
     private BitmapFont largeFont;
 
     private Array<Barrier> barriers = new Array<Barrier>();
-    private Array<Circlez> circles = new Array<Circlez>();
+    private Array<Circle> circles = new Array<Circle>();
 
     private AdsController adsController;
 
@@ -175,7 +174,7 @@ public class CrappyGame extends ApplicationAdapter {
         music3.setLooping(true);
 
         for (int i = 0; i < 6; i++) {
-            circles.add(new Circlez(MathUtils.random(-750, 4200), MathUtils.random(0, 9000), MathUtils.random(4, 14)
+            circles.add(new Circle(MathUtils.random(-750, 4200), MathUtils.random(0, 9000), MathUtils.random(4, 14)
                 , MathUtils.random(1500, 4000)));
         }
 
@@ -301,7 +300,7 @@ public class CrappyGame extends ApplicationAdapter {
 
     // Moves Barriers and sets colision bounds
     private void moveCircles() {
-        for (Circlez r : circles) {
+        for (Circle r : circles) {
             r.position.y = r.position.y - r.speed;
             if (r.position.y < -r.scale) {
                 r.scale = MathUtils.random(1500, 4000);
@@ -869,7 +868,7 @@ public class CrappyGame extends ApplicationAdapter {
         batch.begin();
 
         // Draw background (includes text)
-        for (Circlez circle : circles) {
+        for (Circle circle : circles) {
             batch.draw(effects, circle.position.x, circle.position.y, circle.scale, circle.scale);
         }
 
@@ -1003,147 +1002,5 @@ public class CrappyGame extends ApplicationAdapter {
     @Override public void resize(int width, int height) {
         viewport.update(width, height);
         camera.position.set(camera.viewportWidth / 2, camera.viewportHeight / 2, 0);
-    }
-
-    enum GameState {
-        SPLASH, MAIN_MENU, OPTIONS, START, RUNNING, GAME_OVER, ADS
-    }
-
-    class Barrier {
-        Vector2 position = new Vector2();
-        boolean counted;
-        boolean activated;
-
-        Barrier(int x, int y) {
-            this.position.x = x;
-            this.position.y = y;
-        }
-    }
-
-    class Circlez {
-        Vector2 position = new Vector2();
-        int speed;
-        float scale;
-
-        Circlez(int x, int y, int z, int a) {
-            this.position.x = x;
-            this.position.y = y;
-            this.speed = z;
-            this.scale = a;
-        }
-    }
-
-    class RgbColor {
-        int red;
-        int green;
-        int blue;
-        boolean redFlip;
-        boolean greenFlip;
-        boolean blueFlip;
-
-        RgbColor(int red, int green, int blue) {
-            this.red = Math.min(255, Math.max(0, red));
-            this.green = Math.min(255, Math.max(0, green));
-            this.blue = Math.min(255, Math.max(0, blue));
-
-            this.redFlip = RANDOM.nextBoolean();
-            this.greenFlip = RANDOM.nextBoolean();
-            this.blueFlip = RANDOM.nextBoolean();
-
-            if (this.red > 255)
-                redFlip = true;
-            if (this.red < 0)
-                redFlip = false;
-            if (this.green > 255)
-                greenFlip = true;
-            if (this.green < 0)
-                greenFlip = false;
-            if (this.blue > 255)
-                blueFlip = true;
-            if (this.blue < 0)
-                blueFlip = false;
-        }
-
-        Color toColor() {
-            return new Color(this.red / 255f, this.green / 255f, this.blue / 255f, 1f);
-        }
-
-        RgbColor change(int maxAmount) {
-            if (redFlip) {
-                red -= Math.floor(RANDOM.nextDouble() * maxAmount);
-            } else {
-                red += Math.floor(RANDOM.nextDouble() * maxAmount);
-            }
-            if (greenFlip) {
-                green -= Math.floor(RANDOM.nextDouble() * maxAmount);
-            } else {
-                green += Math.floor(RANDOM.nextDouble() * maxAmount);
-            }
-            if (blueFlip) {
-                blue -= Math.floor(RANDOM.nextDouble() * maxAmount);
-            } else {
-                blue += Math.floor(RANDOM.nextDouble() * maxAmount);
-            }
-
-            if (this.red > 220)
-                redFlip = true;
-            if (this.red < 70)
-                redFlip = false;
-            if (this.green > 220)
-                greenFlip = true;
-            if (this.green < 70)
-                greenFlip = false;
-            if (this.blue > 220)
-                blueFlip = true;
-            if (this.blue < 70)
-                blueFlip = false;
-
-            return this;
-        }
-
-        RgbColor invertFlip() {
-            redFlip = !redFlip;
-            greenFlip = !greenFlip;
-            blueFlip = !blueFlip;
-            return this;
-        }
-
-        RgbColor towards(RgbColor color, int maxAmount) {
-            int theirRed = color.red;
-            int theirGreen = color.green;
-            int theirBlue = color.blue;
-
-            int redDiff = Math.abs(red - theirRed);
-            int blueDiff = Math.abs(blue - theirBlue);
-            int greenDiff = Math.abs(green - theirGreen);
-
-            if (redDiff <= maxAmount) {
-                red = color.red;
-            }
-            if (greenDiff <= maxAmount) {
-                green = color.green;
-            }
-            if (blueDiff <= maxAmount) {
-                blue = color.blue;
-            }
-
-            if (red < theirRed) {
-                red += Math.floor(RANDOM.nextDouble() * maxAmount);
-            } else if (red > theirRed) {
-                red -= Math.floor(RANDOM.nextDouble() * maxAmount);
-            }
-            if (green < theirGreen) {
-                green += Math.floor(RANDOM.nextDouble() * maxAmount);
-            } else if (green > theirGreen) {
-                green -= Math.floor(RANDOM.nextDouble() * maxAmount);
-            }
-            if (blue < theirBlue) {
-                blue += Math.floor(RANDOM.nextDouble() * maxAmount);
-            } else if (blue > theirBlue) {
-                blue -= Math.floor(RANDOM.nextDouble() * maxAmount);
-            }
-
-            return this;
-        }
     }
 }
