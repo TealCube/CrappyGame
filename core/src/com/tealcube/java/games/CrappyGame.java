@@ -63,7 +63,6 @@ public class CrappyGame extends ApplicationAdapter {
     private boolean tutFadeIn = true;
     private boolean tutFinished = false;
 
-    private float shadowCreep;
     private int player_x;
     private int player_y;
     private int playerSpeed;
@@ -230,8 +229,6 @@ public class CrappyGame extends ApplicationAdapter {
         player_x = WORLD_WIDTH / 2 - PLAYER_SCALE / 2;
         player_y = WORLD_HEIGHT / 6;
 
-        shadowCreep = -50;
-
         RIGHT_BOUNDS = MAX_RIGHT_BOUNDS;
         LEFT_BOUNDS = MAX_LEFT_BOUNDS;
         barriers.clear();
@@ -278,11 +275,6 @@ public class CrappyGame extends ApplicationAdapter {
                     LEFT_BOUNDS = MAX_LEFT_BOUNDS;
                     r.counted = true;
                     score++;
-                    if (score < (Math.max(highScore, 25F))) {
-                        shadowCreep = -50 + (((float) score / (Math.max((float) highScore, 25F))) * 100);
-                    } else {
-                        shadowCreep = 50;
-                    }
                 }
             }
         }
@@ -490,10 +482,9 @@ public class CrappyGame extends ApplicationAdapter {
         }
 
         if (gameState == GameState.MAIN_MENU) {
-            shadowCreep = 50;
             player_y = -900;
-            moveTowards(new RgbColor(102, 155, 245), new RgbColor(26, 145, 245), new RgbColor(87, 255, 190), new
-                RgbColor(135, 255, 190));
+            moveTowards(new RgbColor(102, 155, 245), new RgbColor(26, 145, 245), new RgbColor(87, 245, 190), new
+                RgbColor(125, 255, 170));
 
             moveCircles();
 
@@ -536,12 +527,11 @@ public class CrappyGame extends ApplicationAdapter {
         }
 
         if (gameState == GameState.OPTIONS) {
-            shadowCreep = 50;
             player_y = -900;
             moveCircles();
 
-            moveTowards(new RgbColor(230, 80, 80), new RgbColor(230, 50, 50), new RgbColor(205, 30, 205), new
-                RgbColor(205, 10, 205));
+            moveTowards(new RgbColor(87, 225, 190), new RgbColor(135, 225, 190) , new RgbColor(240, 240, 50), new
+                RgbColor(230, 230, 120));
 
             if (Gdx.input.justTouched()) {
                 float x = grabX();
@@ -711,9 +701,6 @@ public class CrappyGame extends ApplicationAdapter {
         batch.setProjectionMatrix(camera.combined);
         batch.begin();
 
-        Gdx.gl.glEnable(GL30.GL_BLEND);
-        Gdx.gl.glBlendFunc(GL30.GL_SRC_ALPHA, GL30.GL_ONE_MINUS_SRC_ALPHA);
-
         Color c = batch.getColor();
         batch.setColor(c.r, c.g, c.b, 1f);
         if (splashTimer < 10) {
@@ -721,7 +708,6 @@ public class CrappyGame extends ApplicationAdapter {
         }
         batch.draw(tcLogo, 1500, 3250, 1500, 1500);
         batch.end();
-        Gdx.gl.glDisable(GL30.GL_BLEND);
     }
 
     private void drawTutorial() {
@@ -731,18 +717,14 @@ public class CrappyGame extends ApplicationAdapter {
         batch.setProjectionMatrix(camera.combined);
         batch.begin();
 
-        Gdx.gl.glEnable(GL30.GL_BLEND);
-        Gdx.gl.glBlendFunc(GL30.GL_SRC_ALPHA, GL30.GL_ONE_MINUS_SRC_ALPHA);
-
         smallFont.setScale(9, 9);
 
-        smallFont.setColor(0, 0, 0, tutAlpha/3);
+        smallFont.setColor(0, 0, 0, tutAlpha / 3);
         smallFont.drawMultiLine(batch, tuttext, 1950 + (tutCounter * 300), 2500, 0, BitmapFont.HAlignment.CENTER);
         smallFont.setColor(1, 1, 1, tutAlpha);
         smallFont.drawMultiLine(batch, tuttext, 1950 + (tutCounter * 300), 2520, 0, BitmapFont.HAlignment.CENTER);
 
         batch.end();
-        Gdx.gl.glDisable(GL30.GL_BLEND);
     }
 
     private void drawMainMenu() {
@@ -752,13 +734,10 @@ public class CrappyGame extends ApplicationAdapter {
         batch.setProjectionMatrix(camera.combined);
         batch.begin();
 
-        Gdx.gl.glEnable(GL30.GL_BLEND);
-        Gdx.gl.glBlendFunc(GL30.GL_SRC_ALPHA, GL30.GL_ONE_MINUS_SRC_ALPHA);
-
         // shadows
-        batch.draw(shadow, 750 + shadowCreep, 3050 - shadowCreep, 3000, 900);
-        batch.draw(shadow, 750 + shadowCreep, 1975 - shadowCreep, 3000, 900);
-        batch.draw(shadow, 1250 + shadowCreep, 900 - shadowCreep, 2000, 900);
+        batch.draw(shadow, 800, 3000, 3000, 900);
+        batch.draw(shadow, 800, 1925, 3000, 900);
+        batch.draw(shadow, 1300, 850, 2000, 900);
 
         // whitethings
         batch.draw(square, 750, 3050, 3000, 900);
@@ -779,26 +758,25 @@ public class CrappyGame extends ApplicationAdapter {
         largeFont.draw(batch, "Options", 1355, 2725);
         largeFont.draw(batch, "Exit", 1810, 1620);
 
-        batch.draw(shadow, 1020 + 50, 4830 - 50, 2, 2, 4, 4, 150, 150, rotator, 0, 0, 4, 4, false, false);
-        batch.draw(square, 1030, 4830, 2, 2, 4, 4, 150, 150, rotator, 0, 0, 4, 4, false, false);
+        batch.draw(shadow, 1080, 4780, 1, 1, 2, 2, 300, 300, rotator, 0, 0, 2, 2, false, false);
+        batch.draw(square, 1030, 4830, 1, 1, 2, 2, 300, 300, rotator, 0, 0, 2, 2, false, false);
 
         batch.end();
-        Gdx.gl.glDisable(GL30.GL_BLEND);
     }
 
     private void drawOptions() {
-        shapeRenderer.dispose();
-        shapeRenderer = new ShapeRenderer();
-
         Gdx.gl.glEnable(GL30.GL_BLEND);
         Gdx.gl.glBlendFunc(GL30.GL_SRC_ALPHA, GL30.GL_ONE_MINUS_SRC_ALPHA);
+
+        shapeRenderer.dispose();
+        shapeRenderer = new ShapeRenderer();
 
         shapeRenderer.setProjectionMatrix(camera.combined);
         shapeRenderer.begin(ShapeRenderer.ShapeType.Filled);
 
         // nosound
         shapeRenderer.setColor(0, 0, 0, 0.3F);
-        shapeRenderer.rect(750 + shadowCreep, 4075 - shadowCreep, 3000, 750);
+        shapeRenderer.rect(800, 4025, 3000, 750);
         shapeRenderer.setColor(1, 1, 1, 1);
         if (track == 3) {
             shapeRenderer.setColor(0.8F, 1, 0.8F, 1);
@@ -807,7 +785,7 @@ public class CrappyGame extends ApplicationAdapter {
 
         // sound1
         shapeRenderer.setColor(0, 0, 0, 0.3F);
-        shapeRenderer.rect(750 + shadowCreep, 3250 - shadowCreep, 3000, 750);
+        shapeRenderer.rect(800, 3200, 3000, 750);
         shapeRenderer.setColor(1, 1, 1, 1);
         if (track == 0) {
             shapeRenderer.setColor(0.8F, 1, 0.8F, 1);
@@ -816,7 +794,7 @@ public class CrappyGame extends ApplicationAdapter {
 
         // sound2
         shapeRenderer.setColor(0, 0, 0, 0.3F);
-        shapeRenderer.rect(750 + shadowCreep, 2425 - shadowCreep, 3000, 750);
+        shapeRenderer.rect(800, 2375, 3000, 750);
         shapeRenderer.setColor(1, 1, 1, 1);
         if (track == 1) {
             shapeRenderer.setColor(0.8F, 1, 0.8F, 1);
@@ -825,7 +803,7 @@ public class CrappyGame extends ApplicationAdapter {
 
         // sound3
         shapeRenderer.setColor(0, 0, 0, 0.3F);
-        shapeRenderer.rect(750 + shadowCreep, 1600 - shadowCreep, 3000, 750);
+        shapeRenderer.rect(800, 1550, 3000, 750);
         shapeRenderer.setColor(1, 1, 1, 1);
         if (track == 2) {
             shapeRenderer.setColor(0.8F, 1, 0.8F, 1);
@@ -834,12 +812,11 @@ public class CrappyGame extends ApplicationAdapter {
 
         //main menu button
         shapeRenderer.setColor(0, 0, 0, 0.3F);
-        shapeRenderer.rect(750 + shadowCreep, 775 - shadowCreep, 3000, 750);
+        shapeRenderer.rect(800, 725, 3000, 750);
         shapeRenderer.setColor(1, 1, 1, 1);
         shapeRenderer.rect(750, 775, 3000, 750);
 
         shapeRenderer.end();
-        Gdx.gl.glDisable(GL30.GL_BLEND);
 
         batch.dispose();
         batch = new SpriteBatch();
@@ -852,11 +829,14 @@ public class CrappyGame extends ApplicationAdapter {
 
         largeFont.setScale(4, 4);
         largeFont.setColor(0, 0, 0, 0.3F);
-        largeFont.draw(batch, "Chroma", 595, 6975);
-        largeFont.draw(batch, "Dodge", 1560, 6025);
+        largeFont.draw(batch, "Chroma", 595, 6950);
+        largeFont.draw(batch, "Dodge", 1560, 6000);
         largeFont.setColor(1, 1, 1, 1);
-        largeFont.draw(batch, "Chroma", 545, 7025);
-        largeFont.draw(batch, "Dodge", 1510, 6100);
+        largeFont.draw(batch, "Chroma", 545, 7000);
+        largeFont.draw(batch, "Dodge", 1510, 6050);
+
+        batch.draw(shadow, 1080, 5480, 1, 1, 2, 2, 300, 300, rotator, 0, 0, 2, 2, false, false);
+        batch.draw(square, 1030, 5630, 1, 1, 2, 2, 300, 300, rotator, 0, 0, 2, 2, false, false);
 
         largeFont.setScale(2, 2);
         largeFont.setColor(0, 0, 0, 0.4F);
@@ -866,11 +846,7 @@ public class CrappyGame extends ApplicationAdapter {
         largeFont.draw(batch, "Track 3", 1550, 2200);
         largeFont.draw(batch, "Back", 1750, 1375);
 
-        batch.draw(shadow, 1020 + 50, 6975 - 1370 - 50, 2, 2, 4, 4, 150, 150, rotator, 0, 0, 4, 4, false, false);
-        batch.draw(square, 1020, 6975 - 1370, 2, 2, 4, 4, 150, 150, rotator, 0, 0, 4, 4, false, false);
-
         batch.end();
-        Gdx.gl.glDisable(GL30.GL_BLEND);
     }
 
     private void drawGameplay() {
@@ -881,7 +857,8 @@ public class CrappyGame extends ApplicationAdapter {
         shapeRenderer.setProjectionMatrix(camera.combined);
         shapeRenderer.begin(ShapeRenderer.ShapeType.Filled);
 
-        shapeRenderer.rect(0, 0, WORLD_WIDTH, WORLD_HEIGHT, topLeft.toColor(), topRight.toColor(), bottomLeft.toColor(), bottomRight.toColor());
+        shapeRenderer.rect(0, 0, WORLD_WIDTH, WORLD_HEIGHT, topLeft.toColor(), topRight.toColor(), bottomLeft.toColor(),
+                           bottomRight.toColor());
 
         shapeRenderer.end();
 
@@ -890,9 +867,6 @@ public class CrappyGame extends ApplicationAdapter {
 
         batch.setProjectionMatrix(camera.combined);
         batch.begin();
-
-        Gdx.gl.glEnable(GL30.GL_BLEND);
-        Gdx.gl.glBlendFunc(GL30.GL_SRC_ALPHA, GL30.GL_ONE_MINUS_SRC_ALPHA);
 
         // Draw background (includes text)
         for (Circlez circle : circles) {
@@ -904,24 +878,20 @@ public class CrappyGame extends ApplicationAdapter {
             if (faderShaderTimer < 1) {
                 largeFont.setScale(5, 5);
                 largeFont.setColor(0, 0, 0, 0.3F);
-                largeFont.drawMultiLine(batch, "" + score, 2250 + shadowCreep, 5950, 0, BitmapFont.HAlignment.CENTER);
+                largeFont.drawMultiLine(batch, "" + score, 2300, 5950, 0, BitmapFont.HAlignment.CENTER);
                 largeFont.setColor(1, 1, 1, 1);
                 largeFont.drawMultiLine(batch, "" + score, 2250, 6000, 0, BitmapFont.HAlignment.CENTER);
             }
         }
 
         // shadows
-        batch.draw(shadow, player_x + shadowCreep, player_y - 50, PLAYER_SCALE, PLAYER_SCALE);
+        batch.draw(shadow, player_x + 50, player_y - 50, PLAYER_SCALE, PLAYER_SCALE);
 
-        if (shadowCreep > 0) {
-            batch.draw(shadow, shadowCreep, 0, 430, WORLD_HEIGHT);
-        } else {
-            batch.draw(shadow, 4500 + shadowCreep, 0, -450, WORLD_HEIGHT);
-        }
+        batch.draw(shadow, 50, 0, 430, WORLD_HEIGHT);
 
         for (Barrier barrier : barriers) {
-            batch.draw(shadow, barrier.position.x + shadowCreep - 4659, barrier.position.y - 50, 3000, PLAYER_SCALE);
-            batch.draw(shadow, barrier.position.x + shadowCreep, barrier.position.y - 50, 3000, PLAYER_SCALE);
+            batch.draw(shadow, barrier.position.x - 4609, barrier.position.y - 50, 3000, PLAYER_SCALE);
+            batch.draw(shadow, barrier.position.x + 50, barrier.position.y - 50, 3000, PLAYER_SCALE);
         }
 
         //Main Shapes
@@ -936,7 +906,6 @@ public class CrappyGame extends ApplicationAdapter {
         }
         // End batch. Disable Blend.
         batch.end();
-        Gdx.gl.glDisable(GL30.GL_BLEND);
 
     }
 
@@ -946,9 +915,6 @@ public class CrappyGame extends ApplicationAdapter {
 
         batch.setProjectionMatrix(camera.combined);
         batch.begin();
-
-        Gdx.gl.glEnable(GL30.GL_BLEND);
-        Gdx.gl.glBlendFunc(GL30.GL_SRC_ALPHA, GL30.GL_ONE_MINUS_SRC_ALPHA);
 
         Color c = batch.getColor();
         batch.setColor(c.r, c.g, c.b, faderShaderTimer);
@@ -968,18 +934,18 @@ public class CrappyGame extends ApplicationAdapter {
         } else {
             largeFont.drawMultiLine(batch, "NEW HIGHSCORE!", 2250, 4490 - scroller, 0, BitmapFont.HAlignment.CENTER);
         }
-
         batch.end();
-        Gdx.gl.glDisable(GL30.GL_BLEND);
     }
 
     // Draw event for the renderer to use.
     private void mainDraw() {
+        Gdx.gl.glEnable(GL30.GL_BLEND);
+        Gdx.gl.glBlendFunc(GL30.GL_SRC_ALPHA, GL30.GL_ONE_MINUS_SRC_ALPHA);
+
         if (gameState != GameState.SPLASH) {
             drawGameplay();
         } else {
             drawSplash();
-            return;
         }
 
         if (!tutFinished) {
@@ -994,12 +960,12 @@ public class CrappyGame extends ApplicationAdapter {
 
         if (faderShaderTimer != 0.0F) {
             drawGameOver();
-            return;
         }
 
         if (gameState == GameState.OPTIONS) {
             drawOptions();
         }
+        Gdx.gl.glDisable(GL30.GL_BLEND);
     }
 
     @Override public void render() {
