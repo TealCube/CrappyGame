@@ -694,7 +694,6 @@ public class CrappyGame extends ApplicationAdapter {
         shapeRenderer.rect(0, 0, WORLD_WIDTH, WORLD_HEIGHT);
 
         shapeRenderer.flush();
-        shapeRenderer.end();
 
         batch.setProjectionMatrix(camera.combined);
         batch.begin();
@@ -707,7 +706,6 @@ public class CrappyGame extends ApplicationAdapter {
         batch.draw(tcLogo, 1500, 3250, 1500, 1500);
 
         batch.flush();
-        batch.end();
     }
 
     private void drawTutorial() {
@@ -722,7 +720,6 @@ public class CrappyGame extends ApplicationAdapter {
         smallFont.drawMultiLine(batch, tuttext, 1950 + tutCounter * 300, 2520, 0, BitmapFont.HAlignment.CENTER);
 
         batch.flush();
-        batch.end();
     }
 
     private void drawMainMenu() {
@@ -757,7 +754,6 @@ public class CrappyGame extends ApplicationAdapter {
         batch.draw(square, 1030, 4830, 1, 1, 2, 2, 300, 300, rotator, 0, 0, 2, 2, false, false);
 
         batch.flush();
-        batch.end();
     }
 
     private void drawOptions() {
@@ -810,7 +806,6 @@ public class CrappyGame extends ApplicationAdapter {
         shapeRenderer.rect(750, 775, 3000, 750);
 
         shapeRenderer.flush();
-        shapeRenderer.end();
 
         batch.setProjectionMatrix(camera.combined);
         batch.begin();
@@ -838,7 +833,6 @@ public class CrappyGame extends ApplicationAdapter {
         largeFont.draw(batch, "Back", 1750, 1375);
 
         batch.flush();
-        batch.end();
     }
 
     private void drawGameplay() {
@@ -850,7 +844,6 @@ public class CrappyGame extends ApplicationAdapter {
                            bottomRight.toColor());
 
         shapeRenderer.flush();
-        shapeRenderer.end();
 
         batch.dispose();
         batch = new SpriteBatch();
@@ -894,8 +887,6 @@ public class CrappyGame extends ApplicationAdapter {
         }
         // End batch. Disable Blend.
         batch.flush();
-        batch.end();
-
     }
 
     private void drawGameOver() {
@@ -922,7 +913,6 @@ public class CrappyGame extends ApplicationAdapter {
             largeFont.drawMultiLine(batch, "NEW HIGHSCORE!", 2250, 4490 - scroller, 0, BitmapFont.HAlignment.CENTER);
         }
         batch.flush();
-        batch.end();
     }
 
     @Override
