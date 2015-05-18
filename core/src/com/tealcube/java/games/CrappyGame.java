@@ -24,13 +24,13 @@ public class CrappyGame extends ApplicationAdapter {
 
     private static final Random RANDOM = new Random(System.currentTimeMillis());
 
-    private static final int BASE_PLAYER_SPEED = 21;
-    private static final int BASE_BARRIER_SPEED = 24;
-    private static final int WORLD_WIDTH = 4500;
-    private static final int WORLD_HEIGHT = 7500;
-    private static final int MAX_RIGHT_BOUNDS = 3400;
-    private static final int MAX_LEFT_BOUNDS = 410;
-    private static final int PLAYER_SCALE = 675;
+    private static final int BASE_PLAYER_SPEED = 4;
+    private static final int BASE_BARRIER_SPEED = 5;
+    private static final int WORLD_WIDTH = 900;
+    private static final int WORLD_HEIGHT = 1600;
+    private static final int MAX_RIGHT_BOUNDS = 680;
+    private static final int MAX_LEFT_BOUNDS = 82;
+    private static final int PLAYER_SCALE = 135;
     private static final int BACKGROUND_CHANGE_RATE = 2;
     private static final int BACKGROUND_CHANGE_INTERVAL = 10;
     private Preferences preferences;
@@ -56,7 +56,8 @@ public class CrappyGame extends ApplicationAdapter {
     private Music menuMusic;
     private Music gameOverMusic;
 
-    private String tuttext;
+    private String tutText;
+    private int tutTextCount;
     private float tutCounter;
     private float tutAlpha;
     private boolean tutFadeIn;
@@ -172,8 +173,8 @@ public class CrappyGame extends ApplicationAdapter {
         music3.setLooping(true);
 
         for (int i = 0; i < 6; i++) {
-            circles.add(new Circle(MathUtils.random(-750, 4200), MathUtils.random(0, 9000), MathUtils.random(4, 14)
-                    , MathUtils.random(1500, 4000)));
+            circles.add(new Circle(MathUtils.random(-150, 840), MathUtils.random(0, 1800), MathUtils.random(1, 3)
+                    , MathUtils.random(300, 800)));
         }
 
         preferences = Gdx.app.getPreferences("ChromaDodge");
@@ -200,7 +201,8 @@ public class CrappyGame extends ApplicationAdapter {
         tutCounter = 0;
         tutFadeIn = true;
         tutAlpha = 0;
-        tuttext = "Tap anywhere to start!";
+        tutTextCount = 0;
+        tutText = "Tap anywhere to start!";
 
         track = getMusic();
         highScore = getHighScore();
@@ -223,9 +225,9 @@ public class CrappyGame extends ApplicationAdapter {
         for (int i = 0; i < 3; i++) {
             tempRandom = 3;
             lastRandom = tempRandom;
-            barrierLoc = 4200 + tempRandom * -425;
-            barriers.add(new Barrier(barrierLoc, 9100 + i * 2950));
-            lastBarrier = 9100 + i * 2950;
+            barrierLoc = 840 + tempRandom * -85;
+            barriers.add(new Barrier(barrierLoc, 1820 + i * 590));
+            lastBarrier = 1820 + i * 590;
         }
     }
 
@@ -242,7 +244,7 @@ public class CrappyGame extends ApplicationAdapter {
 
     // World update. Makes stuff happen.
     private void updateWorld() {
-        scroller = 7150 * (1 - faderShaderTimer);
+        scroller = 1420 * (1 - faderShaderTimer);
         rotator++;
         if (rotator == 360) {
             rotator = 0;
@@ -294,7 +296,7 @@ public class CrappyGame extends ApplicationAdapter {
                 float y = grabY();
 
                 // Replay Button
-                if (x > 750 && x < 3750 && y > 2900 && y < 4000) {
+                if (x > 150 && x < 750 && y > 580 && y < 800) {
                     if (ads && adCount > 2) {
                         adCount = -2;
                         gameOverMusic.stop();
@@ -310,7 +312,7 @@ public class CrappyGame extends ApplicationAdapter {
                 }
 
                 // Main Menu Button
-                if (x > 750 && x < 3750 && y > 1650 && y < 2750) {
+                if (x > 150 && x < 750 && y > 330 && y < 550) {
                     if (track != 3) {
                         menuMusic.play();
                     }
@@ -324,7 +326,7 @@ public class CrappyGame extends ApplicationAdapter {
         }
 
         if (gameState == GameState.MAIN_MENU) {
-            player_y = -900;
+            player_y = -180;
             moveTowards(new RgbColor(102, 155, 245), new RgbColor(26, 145, 245), new RgbColor(87, 245, 190), new
                     RgbColor(125, 255, 170));
 
@@ -339,7 +341,7 @@ public class CrappyGame extends ApplicationAdapter {
                 float x = grabX();
                 float y = grabY();
                 // Play Button 1500, 5000, 6000, 2200
-                if (x > 750 && x < 3750 && y > 3050 && y < 3950) {
+                if (x > 150 && x < 750 && y > 610 && y < 790) {
                     if (ads && adCount > 2) {
                         adCount = -2;
                         menuMusic.stop();
@@ -355,13 +357,13 @@ public class CrappyGame extends ApplicationAdapter {
                     return;
                 }
                 // Options button 1500, 4750, 6000, 1800
-                if (x > 750 && x < 3750 && y > 1975 && y < 2875) {
+                if (x > 150 && x < 750 && y > 395 && y < 575) {
                     gameState = GameState.OPTIONS;
                     click.play();
                     return;
                 }
                 // Exit Button
-                if (x > 1250 && x < 3250 && y > 900 && y < 1800) {
+                if (x > 250 && x < 650 && y > 180 && y < 360) {
                     click.play();
                     Gdx.app.exit();
                 }
@@ -369,7 +371,7 @@ public class CrappyGame extends ApplicationAdapter {
         }
 
         if (gameState == GameState.OPTIONS) {
-            player_y = -900;
+            player_y = -180;
             moveCircles();
 
             moveTowards(new RgbColor(87, 225, 190), new RgbColor(135, 225, 190), new RgbColor(240, 240, 50), new
@@ -379,7 +381,7 @@ public class CrappyGame extends ApplicationAdapter {
                 float x = grabX();
                 float y = grabY();
                 // NO MUSIC *CLAP CLAPCLAPCLAPCLAP*
-                if (x > 750 && x < 3750 && y > 4075 && y < 4825) {
+                if (x > 150 && x < 750 && y > 815 && y < 965) {
                     track = 3;
                     setMusic(3);
                     menuMusic.stop();
@@ -390,7 +392,7 @@ public class CrappyGame extends ApplicationAdapter {
                     return;
                 }
                 // TRACK1
-                if (x > 750 && x < 3750 && y > 3250 && y < 4000) {
+                if (x > 150 && x < 750 && y > 650 && y < 800) {
                     track = 0;
                     setMusic(0);
                     menuMusic.stop();
@@ -402,7 +404,7 @@ public class CrappyGame extends ApplicationAdapter {
                     return;
                 }
                 // TRACK2
-                if (x > 750 && x < 3750 && y > 2425 && y < 3175) {
+                if (x > 150 && x < 750 && y > 485 && y < 635) {
                     track = 1;
                     setMusic(1);
                     menuMusic.stop();
@@ -414,7 +416,7 @@ public class CrappyGame extends ApplicationAdapter {
                     return;
                 }
                 // TRACK3
-                if (x > 750 && x < 3750 && y > 1500 && y < 2350) {
+                if (x > 150 && x < 750 && y > 300 && y < 470) {
                     track = 2;
                     setMusic(2);
                     menuMusic.stop();
@@ -426,7 +428,7 @@ public class CrappyGame extends ApplicationAdapter {
                     return;
                 }
                 // BACK1
-                if (x > 750 && x < 7500 && y > 775 && y < 1525) {
+                if (x > 150 && x < 750 && y > 155 && y < 305) {
                     gameState = GameState.MAIN_MENU;
                     music1.stop();
                     music2.stop();
@@ -515,15 +517,20 @@ public class CrappyGame extends ApplicationAdapter {
             tutCounter = tutCounter + 0.25F;
             tutAlpha = 2-tutCounter;
             if (tutCounter >= 2) {
-                if (tuttext.equals("Tap anywhere to start!")) {
-                    tuttext = "Tap again to move!";
-                } else if (tuttext.equals("Tap again to move!")) {
-                    tuttext = "Don't hit stuff!";
-                } else if (tuttext.equals("Don't hit stuff!")) {
-                    tutFinished = true;
+                switch (tutTextCount) {
+                    case 0:
+                        tutText = "Tap again to move!";
+                        break;
+                    case 1:
+                        tutText = "Don't hit stuff!";
+                        tutTextCount = 1;
+                        break;
+                    case 2:
+                        tutFinished = true;
+                        tutFadeIn = true;
+                        tutCounter = 0.005F;
+                        break;
                 }
-                tutFadeIn = true;
-                tutCounter = 0.005F;
             }
         }
     }
@@ -532,12 +539,13 @@ public class CrappyGame extends ApplicationAdapter {
     private void checkBarriers() {
         for (Barrier r : barriers) {
             if (!r.counted) {
-                if (!r.activated && r.position.y <= player_y + PLAYER_SCALE) {
-                    RIGHT_BOUNDS = r.position.x - 660;
-                    LEFT_BOUNDS = r.position.x - 1650;
-                    r.activated = true;
-                }
-                if (r.position.y <= (player_y - PLAYER_SCALE)) {
+                if (!r.activated) {
+                    if (r.position.y <= player_y + PLAYER_SCALE) {
+                        RIGHT_BOUNDS = r.position.x - 132;
+                        LEFT_BOUNDS = r.position.x - 330;
+                        r.activated = true;
+                    }
+                } else if (r.position.y <= player_y - PLAYER_SCALE) {
                     RIGHT_BOUNDS = MAX_RIGHT_BOUNDS;
                     LEFT_BOUNDS = MAX_LEFT_BOUNDS;
                     r.counted = true;
@@ -552,14 +560,14 @@ public class CrappyGame extends ApplicationAdapter {
         for (Barrier r : barriers) {
             r.position.y -= barrierSpeed;
             if (r.position.y <= -PLAYER_SCALE) {
-                r.position.y = lastBarrier + 2950;
-                lastBarrier += 2950;
+                r.position.y = lastBarrier + 590;
+                lastBarrier += 590;
                 int tempRandom = lastRandom + MathUtils.random(1, 5);
                 if (tempRandom > 5) {
                     tempRandom -= 6;
                 }
                 lastRandom = tempRandom;
-                r.position.x = 4150 + tempRandom * -425;
+                r.position.x = 166 + tempRandom * -17;
                 r.counted = false;
                 r.activated = false;
             }
@@ -571,8 +579,8 @@ public class CrappyGame extends ApplicationAdapter {
         for (Circle r : circles) {
             r.position.y = r.position.y - r.speed;
             if (r.position.y < -r.scale) {
-                r.scale = MathUtils.random(1500, 4000);
-                r.speed = MathUtils.random(4, 14);
+                r.scale = MathUtils.random(300, 800);
+                r.speed = MathUtils.random(1, 3);
                 r.position.y = WORLD_HEIGHT;
                 r.position.x = -(r.scale / 2) + MathUtils.random(0, WORLD_WIDTH - r.scale / 2);
             }
@@ -694,7 +702,7 @@ public class CrappyGame extends ApplicationAdapter {
         if (splashTimer < 10) {
             batch.setColor(c.r, c.g, c.b, splashTimer / 10);
         }
-        batch.draw(tcLogo, 1500, 3250, 1500, 1500);
+        batch.draw(tcLogo, 300, 650, 500, 300);
 
         batch.flush();
         batch.end();
@@ -707,9 +715,9 @@ public class CrappyGame extends ApplicationAdapter {
         smallFont.setScale(9, 9);
 
         smallFont.setColor(0, 0, 0, tutAlpha / 3);
-        smallFont.drawMultiLine(batch, tuttext, 1970 + tutCounter * 300, 2500, 0, BitmapFont.HAlignment.CENTER);
+        smallFont.drawMultiLine(batch, tutText, 394 + tutCounter * 60, 500, 0, BitmapFont.HAlignment.CENTER);
         smallFont.setColor(1, 1, 1, tutAlpha);
-        smallFont.drawMultiLine(batch, tuttext, 1950 + tutCounter * 300, 2520, 0, BitmapFont.HAlignment.CENTER);
+        smallFont.drawMultiLine(batch, tutText, 390 + tutCounter * 60, 504, 0, BitmapFont.HAlignment.CENTER);
 
         batch.flush();
         batch.end();
