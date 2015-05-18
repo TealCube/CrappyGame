@@ -122,6 +122,9 @@ public class CrappyGame extends ApplicationAdapter {
     }
 
     @Override public void create() {
+        shapeRenderer = new ShapeRenderer();
+        batch = new SpriteBatch();
+
         gameState = GameState.SPLASH;
         splashTimer = 1;
         camera = new OrthographicCamera();
@@ -678,16 +681,14 @@ public class CrappyGame extends ApplicationAdapter {
     }
 
     private void drawSplash() {
-        shapeRenderer = new ShapeRenderer();
-
         shapeRenderer.setProjectionMatrix(camera.combined);
         shapeRenderer.begin(ShapeRenderer.ShapeType.Filled);
 
         shapeRenderer.setColor(0, 0, 0, 1);
         shapeRenderer.rect(0, 0, WORLD_WIDTH, WORLD_HEIGHT);
-        shapeRenderer.end();
 
-        batch = new SpriteBatch();
+        shapeRenderer.flush();
+        shapeRenderer.end();
 
         batch.setProjectionMatrix(camera.combined);
         batch.begin();
@@ -698,13 +699,12 @@ public class CrappyGame extends ApplicationAdapter {
             batch.setColor(c.r, c.g, c.b, splashTimer / 10);
         }
         batch.draw(tcLogo, 1500, 3250, 1500, 1500);
+
+        batch.flush();
         batch.end();
     }
 
     private void drawTutorial() {
-        batch.dispose();
-        batch = new SpriteBatch();
-
         batch.setProjectionMatrix(camera.combined);
         batch.begin();
 
@@ -715,13 +715,11 @@ public class CrappyGame extends ApplicationAdapter {
         smallFont.setColor(1, 1, 1, 1);
         smallFont.drawMultiLine(batch, tuttext, 1950 + tutCounter * 300, 2520, 0, BitmapFont.HAlignment.CENTER);
 
+        batch.flush();
         batch.end();
     }
 
     private void drawMainMenu() {
-        batch.dispose();
-        batch = new SpriteBatch();
-
         batch.setProjectionMatrix(camera.combined);
         batch.begin();
 
@@ -752,15 +750,13 @@ public class CrappyGame extends ApplicationAdapter {
         batch.draw(shadow, 1080, 4780, 1, 1, 2, 2, 300, 300, rotator, 0, 0, 2, 2, false, false);
         batch.draw(square, 1030, 4830, 1, 1, 2, 2, 300, 300, rotator, 0, 0, 2, 2, false, false);
 
+        batch.flush();
         batch.end();
     }
 
     private void drawOptions() {
         Gdx.gl.glEnable(GL30.GL_BLEND);
         Gdx.gl.glBlendFunc(GL30.GL_SRC_ALPHA, GL30.GL_ONE_MINUS_SRC_ALPHA);
-
-        shapeRenderer.dispose();
-        shapeRenderer = new ShapeRenderer();
 
         shapeRenderer.setProjectionMatrix(camera.combined);
         shapeRenderer.begin(ShapeRenderer.ShapeType.Filled);
@@ -807,10 +803,8 @@ public class CrappyGame extends ApplicationAdapter {
         shapeRenderer.setColor(1, 1, 1, 1);
         shapeRenderer.rect(750, 775, 3000, 750);
 
+        shapeRenderer.flush();
         shapeRenderer.end();
-
-        batch.dispose();
-        batch = new SpriteBatch();
 
         batch.setProjectionMatrix(camera.combined);
         batch.begin();
@@ -837,20 +831,19 @@ public class CrappyGame extends ApplicationAdapter {
         largeFont.draw(batch, "Track 3", 1550, 2200);
         largeFont.draw(batch, "Back", 1750, 1375);
 
+        batch.flush();
         batch.end();
     }
 
     private void drawGameplay() {
         //Setup ShapeRenderer
-        shapeRenderer.dispose();
-        shapeRenderer = new ShapeRenderer();
-
         shapeRenderer.setProjectionMatrix(camera.combined);
         shapeRenderer.begin(ShapeRenderer.ShapeType.Filled);
 
         shapeRenderer.rect(0, 0, WORLD_WIDTH, WORLD_HEIGHT, topLeft.toColor(), topRight.toColor(), bottomLeft.toColor(),
                            bottomRight.toColor());
 
+        shapeRenderer.flush();
         shapeRenderer.end();
 
         batch.dispose();
@@ -894,14 +887,12 @@ public class CrappyGame extends ApplicationAdapter {
             batch.draw(square, barrier.position.x, barrier.position.y, 3000, PLAYER_SCALE);
         }
         // End batch. Disable Blend.
+        batch.flush();
         batch.end();
 
     }
 
     private void drawGameOver() {
-        batch.dispose();
-        batch = new SpriteBatch();
-
         batch.setProjectionMatrix(camera.combined);
         batch.begin();
 
@@ -923,14 +914,12 @@ public class CrappyGame extends ApplicationAdapter {
         } else {
             largeFont.drawMultiLine(batch, "NEW HIGHSCORE!", 2250, 4490 - scroller, 0, BitmapFont.HAlignment.CENTER);
         }
+        batch.flush();
         batch.end();
     }
 
     // Draw event for the renderer to use.
     private void mainDraw() {
-        Gdx.gl.glEnable(GL30.GL_BLEND);
-        Gdx.gl.glBlendFunc(GL30.GL_SRC_ALPHA, GL30.GL_ONE_MINUS_SRC_ALPHA);
-
         if (gameState != GameState.SPLASH) {
             drawGameplay();
         } else {
@@ -952,7 +941,6 @@ public class CrappyGame extends ApplicationAdapter {
         if (gameState == GameState.OPTIONS) {
             drawOptions();
         }
-        Gdx.gl.glDisable(GL30.GL_BLEND);
     }
 
     @Override public void render() {
