@@ -175,9 +175,9 @@ public class CrappyGame extends ApplicationAdapter {
         music2.setLooping(true);
         music3.setLooping(true);
 
-        for (int i = 0; i < 7; i++) {
+        for (int i = 0; i < 6; i++) {
             circles.add(new Circlez(MathUtils.random(-750, 4200), MathUtils.random(0, 9000), MathUtils.random(4, 14)
-                , MathUtils.random(1500, 3500)));
+                , MathUtils.random(1500, 4000)));
         }
 
         preferences = Gdx.app.getPreferences("ChromaDodge");
@@ -218,6 +218,7 @@ public class CrappyGame extends ApplicationAdapter {
 
         tutFinished = false;
         tutCounter = 0;
+        tutFadeIn = true;
         tuttext = "Tap anywhere to start!";
 
         track = getMusic();
@@ -248,8 +249,8 @@ public class CrappyGame extends ApplicationAdapter {
             }
             lastRandom = tempRandom;
             barrierLoc = 4200 + tempRandom * -425;
-            barriers.add(new Barrier(barrierLoc, 9100 + i * 2925));
-            lastBarrier = 9100 + i * 2925;
+            barriers.add(new Barrier(barrierLoc, 9100 + i * 2950));
+            lastBarrier = 9100 + i * 2950;
         }
     }
 
@@ -292,8 +293,8 @@ public class CrappyGame extends ApplicationAdapter {
         for (Barrier r : barriers) {
             r.position.y -= barrierSpeed;
             if (r.position.y <= -PLAYER_SCALE) {
-                r.position.y = lastBarrier + 2925;
-                lastBarrier += 2925;
+                r.position.y = lastBarrier + 2950;
+                lastBarrier += 2950;
                 int tempRandom = lastRandom + MathUtils.random(1, 5);
                 if (tempRandom > 5) {
                     tempRandom -= 6;
@@ -311,7 +312,7 @@ public class CrappyGame extends ApplicationAdapter {
         for (Circlez r : circles) {
             r.position.y = r.position.y - r.speed;
             if (r.position.y < -r.scale) {
-                r.scale = MathUtils.random(1500, 3500);
+                r.scale = MathUtils.random(1500, 4000);
                 r.speed = MathUtils.random(4, 14);
                 r.position.y = WORLD_HEIGHT;
                 r.position.x = -(r.scale/2) + MathUtils.random(0, (WORLD_WIDTH-(r.scale/2)));
@@ -323,7 +324,7 @@ public class CrappyGame extends ApplicationAdapter {
     private void checkTutorial() {
         if (tutFadeIn) {
             tutAlpha = tutCounter;
-            tutCounter = tutCounter + 0.01F + ((1 - tutCounter) / 100);
+            tutCounter = tutCounter + 0.0004F + ((1 - tutCounter) / 20);
             if (tutCounter >= 1) {
                 tutCounter = 1;
                 tutFadeIn = false;
@@ -435,7 +436,7 @@ public class CrappyGame extends ApplicationAdapter {
                     @Override public void run() {
                         System.out.println("Interstitial app closed");
                         resetWorld();
-                        click.play();
+                        faderShaderTimer = 0;
                         gameState = GameState.START;
                     }
                 });
@@ -454,39 +455,36 @@ public class CrappyGame extends ApplicationAdapter {
                 if (faderShaderTimer > 1.0F) {
                     faderShaderTimer = 1.0F;
                 }
-            } else {
-                if (Gdx.input.justTouched()) {
-                    float x = grabX();
-                    float y = grabY();
+            } else if (Gdx.input.justTouched()) {
+                float x = grabX();
+                float y = grabY();
 
-                    // Replay Button
-                    if (x > 750 && x < 3750 && y > 2900 && y < 4000) {
-                        if (ads && adCount > 2) {
-                            adCount = -2;
-                            gameOverMusic.stop();
-                            click.play();
-                            gameState = GameState.ADS;
-                        } else {
-                            adCount++;
-                            gameOverMusic.stop();
-                            resetWorld();
-                            click.play();
-                            gameState = GameState.START;
-                        }
-                        return;
-                    }
-
-                    // Main Menu Button
-                    if (x > 750 && x < 3750 && y > 1650 && y < 2750) {
-                        if (track != 3) {
-                            menuMusic.play();
-                        }
+                // Replay Button
+                if (x > 750 && x < 3750 && y > 2900 && y < 4000) {
+                    if (ads && adCount > 2) {
+                        adCount = -2;
+                        gameOverMusic.stop();
+                        gameState = GameState.ADS;
+                    } else {
+                        adCount++;
                         gameOverMusic.stop();
                         resetWorld();
                         click.play();
-                        gameState = GameState.MAIN_MENU;
-                        return;
+                        gameState = GameState.START;
                     }
+                    return;
+                }
+
+                // Main Menu Button
+                if (x > 750 && x < 3750 && y > 1650 && y < 2750) {
+                    if (track != 3) {
+                        menuMusic.play();
+                    }
+                    gameOverMusic.stop();
+                    resetWorld();
+                    click.play();
+                    gameState = GameState.MAIN_MENU;
+                    return;
                 }
             }
         }
@@ -504,39 +502,35 @@ public class CrappyGame extends ApplicationAdapter {
                 if (faderShaderTimer < 0.0F) {
                     faderShaderTimer = 0.0F;
                 }
-            } else {
-                if (Gdx.input.justTouched()) {
-                    float x = grabX();
-                    float y = grabY();
-                    // Play Button 1500, 5000, 6000, 2200
-                    if (x > 750 && x < 3750 && y > 3050 && y < 3950) {
-                        if (ads && adCount > 2) {
-                            adCount = -2;
-                            menuMusic.stop();
-                            click.play();
-                            gameState = GameState.ADS;
-                        } else {
-                            adCount++;
-                            menuMusic.stop();
-                            resetWorld();
-                            click.play();
-                            gameState = GameState.START;
-                        }
-                        return;
-                    }
-                    // Options button 1500, 4750, 6000, 1800
-                    if (x > 750 && x < 3750 && y > 1975 && y < 2875) {
-                        gameState = GameState.OPTIONS;
+            } else if (Gdx.input.justTouched()) {
+                float x = grabX();
+                float y = grabY();
+                // Play Button 1500, 5000, 6000, 2200
+                if (x > 750 && x < 3750 && y > 3050 && y < 3950) {
+                    if (ads && adCount > 2) {
+                        adCount = -2;
+                        menuMusic.stop();
                         click.play();
-                        return;
-                    }
-                    // Exit Button
-                    if (x > 1250 && x < 3250 && y > 900 && y < 1800) {
+                        gameState = GameState.ADS;
+                    } else {
+                        adCount++;
+                        menuMusic.stop();
+                        resetWorld();
                         click.play();
-                        Gdx.app.exit();
-                        return;
+                        gameState = GameState.START;
                     }
-
+                    return;
+                }
+                // Options button 1500, 4750, 6000, 1800
+                if (x > 750 && x < 3750 && y > 1975 && y < 2875) {
+                    gameState = GameState.OPTIONS;
+                    click.play();
+                    return;
+                }
+                // Exit Button
+                if (x > 1250 && x < 3250 && y > 900 && y < 1800) {
+                    click.play();
+                    Gdx.app.exit();
                 }
             }
         }
@@ -620,7 +614,7 @@ public class CrappyGame extends ApplicationAdapter {
                 checkTutorial();
             }
 
-            if (faderShaderTimer > 0.0F) {
+            if (faderShaderTimer != 0.0F) {
                 faderShaderTimer -= 0.1F;
                 if (faderShaderTimer < 0.0F) {
                     faderShaderTimer = 0.0F;
@@ -961,7 +955,7 @@ public class CrappyGame extends ApplicationAdapter {
         batch.draw(shadow, 0, 0, WORLD_WIDTH, WORLD_HEIGHT);
         batch.setColor(1, 1, 1, 1);
 
-        batch.draw(gameover, 750, 1650 - (7150 * (1 - faderShaderTimer)), 3000, 5000);
+        batch.draw(gameover, 750, 1650 - scroller, 3000, 5000);
 
         largeFont.setScale(6, 6);
         largeFont.setColor(1, 1, 1, 1);
@@ -970,12 +964,9 @@ public class CrappyGame extends ApplicationAdapter {
         largeFont.setScale(1F, 1F);
         largeFont.setColor(0.7F, 0.7F, 0.7F, 1);
         if (score <= highScore) {
-            largeFont.drawMultiLine(batch, "Highscore: " + highScore, 2250, 4490 - scroller, 0,
-                               BitmapFont
-                                   .HAlignment.CENTER);
+            largeFont.drawMultiLine(batch, "Highscore: " + highScore, 2250, 4490 - scroller, 0, BitmapFont.HAlignment.CENTER);
         } else {
-            largeFont.drawMultiLine(batch, "NEW HIGHSCORE!", 2250, 4490 - scroller, 0,
-                               BitmapFont.HAlignment.CENTER);
+            largeFont.drawMultiLine(batch, "NEW HIGHSCORE!", 2250, 4490 - scroller, 0, BitmapFont.HAlignment.CENTER);
         }
 
         batch.end();
@@ -997,13 +988,13 @@ public class CrappyGame extends ApplicationAdapter {
             }
         }
 
+        if (gameState == GameState.MAIN_MENU) {
+            drawMainMenu();
+        }
+
         if (faderShaderTimer != 0.0F) {
             drawGameOver();
             return;
-        }
-
-        if (gameState == GameState.MAIN_MENU) {
-            drawMainMenu();
         }
 
         if (gameState == GameState.OPTIONS) {
