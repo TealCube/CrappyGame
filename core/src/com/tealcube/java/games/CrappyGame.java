@@ -99,26 +99,19 @@ public class CrappyGame extends ApplicationAdapter {
         }
     }
 
-    @Override
-    public void create() {
-    // Gets the highscore, if you hadn't figured that out.
-    public static int getHighScore() {
-        return preferences.getInteger("highscore");
-    }
-
     // Changes the saved highscore.
-    public static void setHighScore(int val) {
+    public void setHighScore(int val) {
         preferences.putInteger("highscore", val);
         preferences.flush();
     }
 
     // Gets the music, if you hadn't figured that out.
-    public static int getMusic() {
+    public int getMusic() {
         return preferences.getInteger("music");
     }
 
     // Changes the saved track.
-    public static void setMusic(int val) {
+    public void setMusic(int val) {
         preferences.putInteger("music", val);
         preferences.flush();
     }
@@ -238,38 +231,10 @@ public class CrappyGame extends ApplicationAdapter {
         return preferences.getInteger("highscore");
     }
 
-    // Changes the saved highscore.
-    public void setHighScore(int val) {
-        preferences.putInteger("highscore", val);
-        preferences.flush();
-    }
-
-    // Gets the music, if you hadn't figured that out.
-    public int getMusic() {
-        return preferences.getInteger("music");
-    }
-
-    // Changes the saved track.
-    public void setMusic(int val) {
-        preferences.putInteger("music", val);
-        preferences.flush();
-    }
-
     @Override
     public void resize(int width, int height) {
         viewport.update(width, height);
         camera.position.set(camera.viewportWidth / 2, camera.viewportHeight / 2, 0);
-    }
-
-    @Override
-    public void render() {
-        camera.update();
-
-        Gdx.gl.glClearColor(0.273F, 0.602F, 0.906F, 0.91F);
-        Gdx.gl.glClear(GL30.GL_COLOR_BUFFER_BIT);
-
-        updateWorld();
-        mainDraw();
     }
 
     // World update. Makes stuff happen.
@@ -960,32 +925,8 @@ public class CrappyGame extends ApplicationAdapter {
         batch.end();
     }
 
-    // Draw event for the renderer to use.
-    private void mainDraw() {
-        if (gameState != GameState.SPLASH) {
-            drawGameplay();
-        } else {
-            drawSplash();
-        }
-
-        if (!tutFinished && (gameState == GameState.START || gameState == GameState.RUNNING)) {
-            drawTutorial();
-        }
-
-        if (gameState == GameState.MAIN_MENU) {
-            drawMainMenu();
-        }
-
-        if (faderShaderTimer != 0.0F) {
-            drawGameOver();
-        }
-
-        if (gameState == GameState.OPTIONS) {
-            drawOptions();
-        }
-    }
-
-    @Override public void render() {
+    @Override
+    public void render() {
         camera.update();
 
         Gdx.gl.glClearColor(0.273F, 0.602F, 0.906F, 0.91F);
@@ -995,7 +936,6 @@ public class CrappyGame extends ApplicationAdapter {
         mainDraw();
     }
 
-    @Override public void dispose() {
     @Override
     public void dispose() {
         tcLogo.dispose();
