@@ -240,10 +240,7 @@ public class CrappyGame extends ApplicationAdapter {
         }
 
         for (int i = 0; i < 3; i++) {
-            tempRandom = lastRandom + MathUtils.random(1, 5);
-            if (tempRandom > 5) {
-                tempRandom -= 6;
-            }
+            tempRandom = 3;
             lastRandom = tempRandom;
             barrierLoc = 4200 + tempRandom * -425;
             barriers.add(new Barrier(barrierLoc, 9100 + i * 2950));
