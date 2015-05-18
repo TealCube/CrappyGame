@@ -11,6 +11,8 @@ buildscript {
 allprojects {
     apply plugin: "eclipse"
     apply plugin: "idea"
+    apply plugin: "findbugs"
+    apply plugin: "pmd"
 
     version = '1.0'
     ext {
