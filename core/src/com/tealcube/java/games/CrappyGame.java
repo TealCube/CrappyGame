@@ -203,7 +203,7 @@ public class CrappyGame extends ApplicationAdapter {
     private float grabY() {
         int height = Gdx.graphics.getHeight();
         float y = Gdx.input.getY();
-        y = WORLD_HEIGHT - (WORLD_HEIGHT * (y / (float) height));
+        y = WORLD_HEIGHT - WORLD_HEIGHT * y / (float) height;
         return y;
     }
 
@@ -259,12 +259,10 @@ public class CrappyGame extends ApplicationAdapter {
     private void checkBarriers() {
         for (Barrier r : barriers) {
             if (!r.counted) {
-                if (!r.activated) {
-                    if (r.position.y <= player_y + PLAYER_SCALE) {
-                        RIGHT_BOUNDS = r.position.x - 660;
-                        LEFT_BOUNDS = r.position.x - 1650;
-                        r.activated = true;
-                    }
+                if (!r.activated && r.position.y <= player_y + PLAYER_SCALE) {
+                    RIGHT_BOUNDS = r.position.x - 660;
+                    LEFT_BOUNDS = r.position.x - 1650;
+                    r.activated = true;
                 }
                 if (r.position.y <= (player_y - PLAYER_SCALE)) {
                     RIGHT_BOUNDS = MAX_RIGHT_BOUNDS;
@@ -303,7 +301,7 @@ public class CrappyGame extends ApplicationAdapter {
                 r.scale = MathUtils.random(1500, 4000);
                 r.speed = MathUtils.random(4, 14);
                 r.position.y = WORLD_HEIGHT;
-                r.position.x = -(r.scale/2) + MathUtils.random(0, (WORLD_WIDTH-(r.scale/2)));
+                r.position.x = -(r.scale/2) + MathUtils.random(0, WORLD_WIDTH- r.scale/2);
             }
         }
 
@@ -716,9 +714,9 @@ public class CrappyGame extends ApplicationAdapter {
         smallFont.setScale(9, 9);
 
         smallFont.setColor(0, 0, 0, 1 / 3);
-        smallFont.drawMultiLine(batch, tuttext, 1950 + (tutCounter * 300), 2500, 0, BitmapFont.HAlignment.CENTER);
+        smallFont.drawMultiLine(batch, tuttext, 1950 + tutCounter * 300, 2500, 0, BitmapFont.HAlignment.CENTER);
         smallFont.setColor(1, 1, 1, 1);
-        smallFont.drawMultiLine(batch, tuttext, 1950 + (tutCounter * 300), 2520, 0, BitmapFont.HAlignment.CENTER);
+        smallFont.drawMultiLine(batch, tuttext, 1950 + tutCounter * 300, 2520, 0, BitmapFont.HAlignment.CENTER);
 
         batch.end();
     }
@@ -870,14 +868,12 @@ public class CrappyGame extends ApplicationAdapter {
         }
 
         // Draws score text that's part of the background
-        if (gameState != GameState.MAIN_MENU && gameState != GameState.OPTIONS) {
-            if (faderShaderTimer < 1) {
-                largeFont.setScale(5, 5);
-                largeFont.setColor(0, 0, 0, 0.3F);
-                largeFont.drawMultiLine(batch, "" + score, 2300, 5950, 0, BitmapFont.HAlignment.CENTER);
-                largeFont.setColor(1, 1, 1, 1);
-                largeFont.drawMultiLine(batch, "" + score, 2250, 6000, 0, BitmapFont.HAlignment.CENTER);
-            }
+        if (gameState != GameState.MAIN_MENU && gameState != GameState.OPTIONS && faderShaderTimer < 1) {
+            largeFont.setScale(5, 5);
+            largeFont.setColor(0, 0, 0, 0.3F);
+            largeFont.drawMultiLine(batch, "" + score, 2300, 5950, 0, BitmapFont.HAlignment.CENTER);
+            largeFont.setColor(1, 1, 1, 1);
+            largeFont.drawMultiLine(batch, "" + score, 2250, 6000, 0, BitmapFont.HAlignment.CENTER);
         }
 
         // shadows
@@ -944,10 +940,8 @@ public class CrappyGame extends ApplicationAdapter {
             drawSplash();
         }
 
-        if (!tutFinished) {
-            if (gameState == GameState.START || gameState == GameState.RUNNING) {
-                drawTutorial();
-            }
+        if (!tutFinished && (gameState == GameState.START || gameState == GameState.RUNNING)) {
+            drawTutorial();
         }
 
         if (gameState == GameState.MAIN_MENU) {
