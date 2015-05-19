@@ -282,12 +282,14 @@ public class CrappyGame extends ApplicationAdapter {
                     if (ads && adCount > 2) {
                         adCount = -2;
                         gameOverMusic.stop();
+                        offset = 0;
                         gameState = GameState.ADS;
                     } else {
                         adCount++;
                         gameOverMusic.stop();
                         resetWorld();
                         click.play();
+                        offset = 0;
                         gameState = GameState.START;
                     }
                     return;
@@ -403,6 +405,7 @@ public class CrappyGame extends ApplicationAdapter {
                 if (x > 150 && x < 750 && y > 395 && y < 575) {
                     gameState = GameState.OPTIONS;
                     click.play();
+                    player_y = -180;
                     offset = 3000;
                     return;
                 }
@@ -416,7 +419,10 @@ public class CrappyGame extends ApplicationAdapter {
         }
 
         if (gameState == GameState.OPTIONS) {
-            player_y = -180;
+            rotator++;
+            if (rotator > 359) {
+                rotator = 0;
+            }
             moveCircles();
 
             moveTowards(new RgbColor(87, 225, 190), new RgbColor(135, 225, 190), new RgbColor(240, 240, 50), new
@@ -838,7 +844,7 @@ public class CrappyGame extends ApplicationAdapter {
         largeFont.draw(batch, "Dodge", 302, 1210);
 
         largeFont.setScale(0.85F, 0.85F);
-        largeFont.setColor(0.6F, 0.6F, 0.6F, 1);
+        largeFont.setColor(0, 0, 0, 0.4F);
         largeFont.draw(batch, "No Music", 280, 935);
         largeFont.draw(batch, "Track 1", 310, 770);
         largeFont.draw(batch, "Track 2", 310, 605);
@@ -916,7 +922,7 @@ public class CrappyGame extends ApplicationAdapter {
         largeFont.setColor(1, 1, 1, 1);
         largeFont.drawMultiLine(batch, "" + score, 450, 1210 - scroller, 0, BitmapFont.HAlignment.CENTER);
 
-        largeFont.setScale(0.5F, 0.5F);
+        largeFont.setScale(0.4F, 0.4F);
         largeFont.setColor(0.7F, 0.7F, 0.7F, 1);
         if (score <= highScore) {
             largeFont.drawMultiLine(batch, "Highscore: " + highScore, 450, 898 - scroller, 0,
