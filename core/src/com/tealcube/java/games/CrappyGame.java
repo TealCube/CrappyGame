@@ -230,8 +230,8 @@ public class CrappyGame extends ApplicationAdapter {
             tempRandom = 3;
             lastRandom = tempRandom;
             barrierLoc = 840 + tempRandom * -85;
-            barriers.add(new Barrier(barrierLoc, 1900 + i * 600));
-            lastBarrier = 1900 + i * 600;
+            barriers.add(new Barrier(barrierLoc, 1900 + i * 630));
+            lastBarrier = 1900 + i * 630;
         }
     }
 
@@ -584,8 +584,8 @@ public class CrappyGame extends ApplicationAdapter {
         for (Barrier r : barriers) {
             r.position.y -= barrierSpeed;
             if (r.position.y <= -PLAYER_SCALE) {
-                r.position.y = lastBarrier + 600;
-                lastBarrier += 600;
+                r.position.y = lastBarrier + 630;
+                lastBarrier += 630;
                 int tempRandom = lastRandom + MathUtils.random(1, 5);
                 if (tempRandom > 5) {
                     tempRandom -= 6;
