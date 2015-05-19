@@ -88,7 +88,6 @@ public class CrappyGame extends ApplicationAdapter {
     private SpriteBatch batch;
     private Viewport viewport;
     private OrthographicCamera camera;
-    private BitmapFont smallFont;
     private BitmapFont largeFont;
 
     private Array<Barrier> barriers = new Array<Barrier>();
@@ -134,11 +133,8 @@ public class CrappyGame extends ApplicationAdapter {
         FreeTypeFontGenerator generator = new FreeTypeFontGenerator(Gdx.files.internal("Fjalla.ttf"));
         FreeTypeFontGenerator.FreeTypeFontParameter parameter = new FreeTypeFontGenerator.FreeTypeFontParameter();
         parameter.size = 128;
-        parameter.characters = "aBbcCdDEefGgHhIijklmMNnOoPpqrRSsTtWwuvxy1234567890:!";
+        parameter.characters = "aBbcCdDEefGgHhIijklmMNnOoPpqrRSsTtWwuvxy1234567890:!'";
         largeFont = generator.generateFont(parameter);
-        parameter.size = 12;
-        parameter.characters = "aBbcCdDEefGgHhIijklmMNnOoPpqrRSsTtWwuvxy1234567890:!";
-        smallFont = generator.generateFont(parameter);
 
         player_y = WORLD_HEIGHT / 6;
 
@@ -227,7 +223,7 @@ public class CrappyGame extends ApplicationAdapter {
         }
 
         for (int i = 0; i < 3; i++) {
-            tempRandom = 3;
+            tempRandom = 4 - i;
             lastRandom = tempRandom;
             barrierLoc = 840 + tempRandom * -85;
             barriers.add(new Barrier(barrierLoc, 1900 + i * 630));
@@ -955,6 +951,7 @@ public class CrappyGame extends ApplicationAdapter {
         tcLogo.dispose();
         effects.dispose();
         square.dispose();
+        select.dispose();
         shadow.dispose();
         gameover.dispose();
 
@@ -968,7 +965,6 @@ public class CrappyGame extends ApplicationAdapter {
         click.dispose();
 
         largeFont.dispose();
-        smallFont.dispose();
         batch.dispose();
         shapeRenderer.dispose();
     }
