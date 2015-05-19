@@ -275,7 +275,7 @@ public class CrappyGame extends ApplicationAdapter {
 
                 // Replay Button
                 if (x > 150 && x < 750 && y > 580 && y < 800) {
-                    if (adsController.isWifiConnected() && ads && adCount > 2) {
+                    if (ads && adCount > 2) {
                         adCount = -2;
                         gameOverMusic.stop();
                         offset = 0;
@@ -381,7 +381,7 @@ public class CrappyGame extends ApplicationAdapter {
                 float y = grabY();
                 // Play Button 1500, 5000, 6000, 2200
                 if (x > 150 && x < 750 && y > 610 && y < 790) {
-                    if (adsController.isWifiConnected() && ads && adCount > 2) {
+                    if (ads && adCount > 2) {
                         adCount = -2;
                         menuMusic.stop();
                         click.play();
