@@ -199,7 +199,7 @@ public class CrappyGame extends ApplicationAdapter {
     private void resetWorld() {
         int tempRandom;
         int barrierLoc;
-        offset = 3000;
+        offset = 0;
 
         tutFinished = false;
         tutCounter = 0;
@@ -624,6 +624,7 @@ public class CrappyGame extends ApplicationAdapter {
             tcLogo.dispose();
             tcLoad.dispose();
             track = getMusic();
+            offset = 3000;
             player_y = -180;
             if (track != 0) {
                 menuMusic.play();
@@ -780,22 +781,23 @@ public class CrappyGame extends ApplicationAdapter {
         batch.draw(shadow, 160, 600, 600, 180);
         batch.draw(shadow, 160, 385, 600, 180);
         batch.draw(shadow, 260, 170, 400, 180);
+        batch.draw(shadow, 216, 956, 1, 1, 2, 2, 60, 60, rotator, 0, 0, 2, 2, false, false);
 
+        batch.disableBlending();
         // whitethings
         batch.draw(square, 150, 610, 600, 180);
         batch.draw(square, 150, 395, 600, 180);
         batch.draw(square, 250, 180, 400, 180);
+        batch.draw(square, 206, 966, 1, 1, 2, 2, 60, 60, rotator, 0, 0, 2, 2, false, false);
 
+        batch.enableBlending();
         largeFont.setScale(1.6F, 1.6F);
         largeFont.setColor(0, 0, 0, 0.3F);
-        largeFont.draw(batch, "Chroma", 119, 1230);
-        largeFont.draw(batch, "Dodge", 312, 1040);
+        largeFont.draw(batch, "Chroma", 119, 1250);
+        largeFont.draw(batch, "Dodge", 312, 1060);
         largeFont.setColor(1, 1, 1, 1);
-        largeFont.draw(batch, "Chroma", 109, 1240);
-        largeFont.draw(batch, "Dodge", 302, 1050);
-
-        batch.draw(shadow, 216, 956, 1, 1, 2, 2, 60, 60, rotator, 0, 0, 2, 2, false, false);
-        batch.draw(square, 206, 966, 1, 1, 2, 2, 60, 60, rotator, 0, 0, 2, 2, false, false);
+        largeFont.draw(batch, "Chroma", 109, 1260);
+        largeFont.draw(batch, "Dodge", 302, 1070);
 
         largeFont.setScale(1F, 1F);
         largeFont.setColor(0.6F, 0.6F, 0.6F, 1);
