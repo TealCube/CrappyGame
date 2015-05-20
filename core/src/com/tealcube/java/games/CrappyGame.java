@@ -225,7 +225,7 @@ public class CrappyGame extends ApplicationAdapter {
         for (int i = 0; i < 3; i++) {
             tempRandom = 4 - i;
             lastRandom = tempRandom;
-            barrierLoc = 840 + tempRandom * -85;
+            barrierLoc = 834 + tempRandom * -85;
             barriers.add(new Barrier(barrierLoc, 1900 + i * 630));
             lastBarrier = 1900 + i * 630;
         }
@@ -275,20 +275,30 @@ public class CrappyGame extends ApplicationAdapter {
 
                 // Replay Button
                 if (x > 150 && x < 750 && y > 580 && y < 800) {
-                    if (ads && adCount > 2) {
-                        adCount = -2;
-                        gameOverMusic.stop();
-                        offset = 0;
-                        gameState = GameState.ADS;
+                    if (ads) {
+                        if (adCount > 2 && adsController.isWifiConnected()) {
+                            adCount = -1;
+                            gameOverMusic.stop();
+                            offset = 0;
+                            gameState = GameState.ADS;
+                            return;
+                        } else {
+                            adCount++;
+                            gameOverMusic.stop();
+                            resetWorld();
+                            click.play();
+                            offset = 0;
+                            gameState = GameState.START;
+                            return;
+                        }
                     } else {
-                        adCount++;
                         gameOverMusic.stop();
                         resetWorld();
                         click.play();
                         offset = 0;
                         gameState = GameState.START;
+                        return;
                     }
-                    return;
                 }
 
                 // Main Menu Button
@@ -381,21 +391,30 @@ public class CrappyGame extends ApplicationAdapter {
                 float y = grabY();
                 // Play Button 1500, 5000, 6000, 2200
                 if (x > 150 && x < 750 && y > 610 && y < 790) {
-                    if (ads && adCount > 2) {
-                        adCount = -2;
-                        menuMusic.stop();
-                        click.play();
-                        gameState = GameState.ADS;
-                        offset = 0;
+                    if (ads) {
+                        if (adCount > 2 && adsController.isWifiConnected()) {
+                            adCount = -1;
+                            gameOverMusic.stop();
+                            offset = 0;
+                            gameState = GameState.ADS;
+                            return;
+                        } else {
+                            adCount++;
+                            gameOverMusic.stop();
+                            resetWorld();
+                            click.play();
+                            offset = 0;
+                            gameState = GameState.START;
+                            return;
+                        }
                     } else {
-                        adCount++;
-                        menuMusic.stop();
+                        gameOverMusic.stop();
                         resetWorld();
                         click.play();
-                        gameState = GameState.START;
                         offset = 0;
+                        gameState = GameState.START;
+                        return;
                     }
-                    return;
                 }
                 // Options button 1500, 4750, 6000, 1800
                 if (x > 150 && x < 750 && y > 395 && y < 575) {
@@ -561,8 +580,8 @@ public class CrappyGame extends ApplicationAdapter {
             if (!r.counted) {
                 if (!r.activated) {
                     if (r.position.y <= player_y + PLAYER_SCALE) {
-                        RIGHT_BOUNDS = r.position.x - 132;
-                        LEFT_BOUNDS = r.position.x - 330;
+                        RIGHT_BOUNDS = r.position.x - 137;
+                        LEFT_BOUNDS = r.position.x - 331;
                         r.activated = true;
                     }
                 } else if (r.position.y <= player_y - PLAYER_SCALE) {
@@ -587,7 +606,7 @@ public class CrappyGame extends ApplicationAdapter {
                     tempRandom -= 6;
                 }
                 lastRandom = tempRandom;
-                r.position.x = 840 + tempRandom * -85;
+                r.position.x = 834 + tempRandom * -85;
                 r.counted = false;
                 r.activated = false;
             }
@@ -631,6 +650,9 @@ public class CrappyGame extends ApplicationAdapter {
     // Check to see if you lose/set highscore
     private void checkGameOver() {
         if (player_x < LEFT_BOUNDS || player_x > RIGHT_BOUNDS) {
+            adCount += score/30;
+            Gdx.app.log("[AdBonus]", "Additional Ad Points: " + (score / 30));
+            Gdx.app.log("[AdCount]", "Total Ad Count: " + adCount);
             if (score > highScore) {
                 setHighScore(score);
             }
