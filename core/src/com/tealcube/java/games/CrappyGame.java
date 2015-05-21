@@ -394,13 +394,13 @@ public class CrappyGame extends ApplicationAdapter {
                     if (ads) {
                         if (adCount > 2 && adsController.isWifiConnected()) {
                             adCount = -1;
-                            gameOverMusic.stop();
+                            menuMusic.stop();
                             offset = 0;
                             gameState = GameState.ADS;
                             return;
                         } else {
                             adCount++;
-                            gameOverMusic.stop();
+                            menuMusic.stop();
                             resetWorld();
                             click.play();
                             offset = 0;
@@ -408,7 +408,7 @@ public class CrappyGame extends ApplicationAdapter {
                             return;
                         }
                     } else {
-                        gameOverMusic.stop();
+                        menuMusic.stop();
                         resetWorld();
                         click.play();
                         offset = 0;
