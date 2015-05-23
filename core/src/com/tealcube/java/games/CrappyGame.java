@@ -714,48 +714,40 @@ public class CrappyGame extends ApplicationAdapter {
 
     // Draw event for the renderer to use.
     private void mainDraw() {
-        if (gameState == GameState.START) {
-            drawGameplay();
-            if (!tutFinished) {
-                drawTutorial();
-            }
-            if (faderShaderTimer != 0) {
+        switch (gameState) {
+            case START:
+                drawGameplay();
+                if (!tutFinished) {
+                    drawTutorial();
+                }
+                if (faderShaderTimer != 0) {
+                    drawGameOver();
+                }
+                break;
+            case GAME_OVER:
+                drawGameplay();
                 drawGameOver();
-            }
-            return;
-        }
-
-        if (gameState == GameState.GAME_OVER) {
-            drawGameplay();
-            drawGameOver();
-            return;
-        }
-
-        if (gameState == GameState.RUNNING) {
-            drawGameplay();
-            if (!tutFinished) {
-                drawTutorial();
-            }
-            return;
-        }
-
-        if (gameState == GameState.MAIN_MENU) {
-            drawGameplay();
-            drawMainMenu();
-            if (faderShaderTimer != 0) {
-                drawGameOver();
-            }
-            return;
-        }
-
-        if (gameState == GameState.OPTIONS) {
-            drawGameplay();
-            drawOptions();
-            return;
-        }
-
-        if (gameState == GameState.SPLASH) {
-            drawSplash();
+                break;
+            case RUNNING:
+                drawGameplay();
+                if (!tutFinished) {
+                    drawTutorial();
+                }
+                break;
+            case MAIN_MENU:
+                drawGameplay();
+                drawMainMenu();
+                if (faderShaderTimer != 0) {
+                    drawGameOver();
+                }
+                break;
+            case OPTIONS:
+                drawGameplay();
+                drawOptions();
+                break;
+            case SPLASH:
+                drawSplash();
+                break;
         }
     }
 
