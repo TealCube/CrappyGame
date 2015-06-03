@@ -15,7 +15,7 @@ import com.badlogic.gdx.graphics.g2d.freetype.FreeTypeFontGenerator;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.utils.Array;
-import com.badlogic.gdx.utils.viewport.StretchViewport;
+import com.badlogic.gdx.utils.viewport.ExtendViewport;
 import com.badlogic.gdx.utils.viewport.Viewport;
 
 import java.util.Random;
@@ -127,8 +127,13 @@ public class CrappyGame extends ApplicationAdapter {
         gameState = GameState.SPLASH;
         splashTimer = 1;
         camera = new OrthographicCamera();
-        viewport = new StretchViewport(WORLD_WIDTH, WORLD_HEIGHT, camera);
+        viewport = new ExtendViewport(WORLD_WIDTH, WORLD_HEIGHT, WORLD_WIDTH, WORLD_HEIGHT, camera);
+        viewport.getCamera().position.set(viewport.getCamera().position.x + WORLD_WIDTH * 0.5f,
+                                          viewport.getCamera().position.y + WORLD_HEIGHT * 0.5f, 0);
+        viewport.getCamera().update();
+        viewport.update(WORLD_WIDTH, WORLD_HEIGHT);
         viewport.apply();
+        camera.update();
 
         FreeTypeFontGenerator generator = new FreeTypeFontGenerator(Gdx.files.internal("Fjalla.ttf"));
         FreeTypeFontGenerator.FreeTypeFontParameter parameter = new FreeTypeFontGenerator.FreeTypeFontParameter();
@@ -752,6 +757,9 @@ public class CrappyGame extends ApplicationAdapter {
     }
 
     private void drawSplash() {
+        Gdx.gl.glClearColor(0, 0, 0, 1);
+        Gdx.gl.glClear(GL30.GL_COLOR_BUFFER_BIT);
+
         batch.setProjectionMatrix(camera.combined);
         batch.begin();
         batch.enableBlending();
@@ -928,7 +936,7 @@ public class CrappyGame extends ApplicationAdapter {
 
         Color c = batch.getColor();
         batch.setColor(c.r, c.g, c.b, faderShaderTimer);
-        batch.draw(shadow, 0, 0, WORLD_WIDTH, WORLD_HEIGHT);
+        batch.draw(shadow, -200, 0, WORLD_WIDTH+400, WORLD_HEIGHT);
         batch.setColor(1, 1, 1, 1);
 
         batch.draw(gameover, 150, 330 - scroller, 600, 1000);
@@ -952,11 +960,10 @@ public class CrappyGame extends ApplicationAdapter {
     @Override
     public void render() {
         camera.update();
-
-        Gdx.gl.glClearColor(0, 0, 0, 0);
-        Gdx.gl.glClear(GL30.GL_COLOR_BUFFER_BIT);
-
         updateWorld();
+
+        Gdx.gl.glClearColor(1 - (0.3F * faderShaderTimer), 1 - (0.3F * faderShaderTimer), 1 - (0.3F * faderShaderTimer), 1);
+        Gdx.gl.glClear(GL30.GL_COLOR_BUFFER_BIT);
         mainDraw();
     }
 
