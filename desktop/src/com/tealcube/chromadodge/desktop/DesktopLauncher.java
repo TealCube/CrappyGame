@@ -1,8 +1,8 @@
-package com.tealcube.java.games.desktop;
+package com.tealcube.chromadodge.desktop;
 
 import com.badlogic.gdx.backends.lwjgl.LwjglApplication;
 import com.badlogic.gdx.backends.lwjgl.LwjglApplicationConfiguration;
-import com.tealcube.java.games.CrappyGame;
+import com.tealcube.chromadodge.CrappyGame;
 
 public class DesktopLauncher {
 	public static void main (String[] arg) {

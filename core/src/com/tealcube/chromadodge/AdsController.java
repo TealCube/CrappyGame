@@ -1,4 +1,4 @@
-package com.tealcube.java.games;
+package com.tealcube.chromadodge;
 
 public interface AdsController {
     boolean isWifiConnected();

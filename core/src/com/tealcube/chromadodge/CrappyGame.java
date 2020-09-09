@@ -1,4 +1,4 @@
-package com.tealcube.java.games;
+package com.tealcube.chromadodge;
 
 import com.badlogic.gdx.ApplicationAdapter;
 import com.badlogic.gdx.Gdx;
