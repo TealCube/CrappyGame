@@ -14,6 +14,7 @@ import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.freetype.FreeTypeFontGenerator;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.math.MathUtils;
+import com.badlogic.gdx.utils.Align;
 import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.viewport.ExtendViewport;
 import com.badlogic.gdx.utils.viewport.Viewport;
@@ -27,7 +28,7 @@ public class CrappyGame extends ApplicationAdapter {
     private static final int BASE_PLAYER_SPEED = 4;
     private static final int BASE_BARRIER_SPEED = 5;
     private static final int WORLD_WIDTH = 900;
-    private static final int WORLD_HEIGHT = 1600;
+    private static final int WORLD_HEIGHT = 1800;
     private static final int MAX_RIGHT_BOUNDS = 680;
     private static final int MAX_LEFT_BOUNDS = 82;
     private static final int PLAYER_SCALE = 135;
@@ -79,7 +80,7 @@ public class CrappyGame extends ApplicationAdapter {
     private int adCount = 0;
     private int highScore = 0;
     private int score = 0;
-    private boolean ads = true;
+    private boolean ads = false;
     private int backgroundChangeTick = 0;
     private int moveTowardsTick = 0;
 
@@ -90,18 +91,8 @@ public class CrappyGame extends ApplicationAdapter {
     private OrthographicCamera camera;
     private BitmapFont largeFont;
 
-    private Array<Barrier> barriers = new Array<Barrier>();
-    private Array<Circle> circles = new Array<Circle>();
-
-    private AdsController adsController;
-
-    public CrappyGame(AdsController adsController) {
-        if (adsController != null) {
-            this.adsController = adsController;
-        } else {
-            ads = false;
-        }
-    }
+    private Array<Barrier> barriers = new Array<>();
+    private Array<Circle> circles = new Array<>();
 
     // Changes the saved highscore.
     public void setHighScore(int val) {
@@ -120,7 +111,8 @@ public class CrappyGame extends ApplicationAdapter {
         preferences.flush();
     }
 
-    @Override public void create() {
+    @Override
+    public void create() {
         shapeRenderer = new ShapeRenderer();
         batch = new SpriteBatch();
 
@@ -129,7 +121,7 @@ public class CrappyGame extends ApplicationAdapter {
         camera = new OrthographicCamera();
         viewport = new ExtendViewport(WORLD_WIDTH, WORLD_HEIGHT, WORLD_WIDTH, WORLD_HEIGHT, camera);
         viewport.getCamera().position.set(viewport.getCamera().position.x + WORLD_WIDTH * 0.5f,
-                                          viewport.getCamera().position.y + WORLD_HEIGHT * 0.5f, 0);
+                viewport.getCamera().position.y + WORLD_HEIGHT * 0.5f, 0);
         viewport.getCamera().update();
         viewport.update(WORLD_WIDTH, WORLD_HEIGHT);
         viewport.apply();
@@ -281,12 +273,11 @@ public class CrappyGame extends ApplicationAdapter {
                 // Replay Button
                 if (x > 150 && x < 750 && y > 580 && y < 800) {
                     if (ads) {
-                        if (adCount > 2 && adsController.isWifiConnected()) {
+                        if (adCount > 2) {
                             adCount = -1;
                             gameOverMusic.stop();
                             offset = 0;
                             gameState = GameState.ADS;
-                            return;
                         } else {
                             adCount++;
                             gameOverMusic.stop();
@@ -294,7 +285,6 @@ public class CrappyGame extends ApplicationAdapter {
                             click.play();
                             offset = 0;
                             gameState = GameState.START;
-                            return;
                         }
                     } else {
                         gameOverMusic.stop();
@@ -302,8 +292,8 @@ public class CrappyGame extends ApplicationAdapter {
                         click.play();
                         offset = 0;
                         gameState = GameState.START;
-                        return;
                     }
+                    return;
                 }
 
                 // Main Menu Button
@@ -360,20 +350,9 @@ public class CrappyGame extends ApplicationAdapter {
 
 
         if (gameState == GameState.ADS) {
-            if (adsController.isWifiConnected()) {
-                adsController.showInterstitialAd(new Runnable() {
-                    @Override
-                    public void run() {
-                        resetWorld();
-                        faderShaderTimer = 0;
-                        gameState = GameState.START;
-                    }
-                });
-            } else {
-                resetWorld();
-                faderShaderTimer = 0;
-                gameState = GameState.START;
-            }
+            resetWorld();
+            faderShaderTimer = 0;
+            gameState = GameState.START;
         }
 
         if (gameState == GameState.MAIN_MENU) {
@@ -382,7 +361,7 @@ public class CrappyGame extends ApplicationAdapter {
                 rotator = 0;
             }
             moveTowards(new RgbColor(102, 155, 245), new RgbColor(26, 145, 245), new RgbColor(87, 245, 190), new
-                RgbColor(125, 255, 170));
+                    RgbColor(125, 255, 170));
 
             moveCircles();
 
@@ -397,30 +376,28 @@ public class CrappyGame extends ApplicationAdapter {
                 // Play Button 1500, 5000, 6000, 2200
                 if (x > 150 && x < 750 && y > 610 && y < 790) {
                     if (ads) {
-                        if (adCount > 2 && adsController.isWifiConnected()) {
+                        if (adCount > 2) {
                             adCount = -1;
                             menuMusic.stop();
                             offset = 0;
                             gameState = GameState.ADS;
-                            return;
-                        } else {
+						} else {
                             adCount++;
                             menuMusic.stop();
                             resetWorld();
                             click.play();
                             offset = 0;
                             gameState = GameState.START;
-                            return;
-                        }
-                    } else {
+						}
+					} else {
                         menuMusic.stop();
                         resetWorld();
                         click.play();
                         offset = 0;
                         gameState = GameState.START;
-                        return;
-                    }
-                }
+					}
+					return;
+				}
                 // Options button 1500, 4750, 6000, 1800
                 if (x > 150 && x < 750 && y > 395 && y < 575) {
                     gameState = GameState.OPTIONS;
@@ -446,7 +423,7 @@ public class CrappyGame extends ApplicationAdapter {
             moveCircles();
 
             moveTowards(new RgbColor(87, 225, 190), new RgbColor(135, 225, 190), new RgbColor(240, 240, 50), new
-                RgbColor(230, 230, 120));
+                    RgbColor(230, 230, 120));
 
             if (Gdx.input.justTouched()) {
                 float x = grabX();
@@ -554,7 +531,7 @@ public class CrappyGame extends ApplicationAdapter {
             }
         } else {
             tutCounter = tutCounter + 0.25F;
-            tutAlpha = 2-tutCounter;
+            tutAlpha = 2 - tutCounter;
             if (tutCounter >= 2) {
                 switch (tutTextCount) {
                     case 0:
@@ -579,7 +556,7 @@ public class CrappyGame extends ApplicationAdapter {
         }
     }
 
-    // Moves Barriers and sets colision bounds
+    // Moves Barriers and sets collision bounds
     private void checkBarriers() {
         for (Barrier r : barriers) {
             if (!r.counted) {
@@ -655,7 +632,7 @@ public class CrappyGame extends ApplicationAdapter {
     // Check to see if you lose/set highscore
     private void checkGameOver() {
         if (player_x < LEFT_BOUNDS || player_x > RIGHT_BOUNDS) {
-            adCount += score/30;
+            adCount += score / 30;
             Gdx.app.log("[AdBonus]", "Additional Ad Points: " + (score / 30));
             Gdx.app.log("[AdCount]", "Total Ad Count: " + adCount);
             if (score > highScore) {
@@ -781,12 +758,13 @@ public class CrappyGame extends ApplicationAdapter {
         batch.begin();
         batch.enableBlending();
 
-        largeFont.setScale(0.4F, 0.4F);
+        largeFont.getData().setScale(0.4F, 0.4F);
+
 
         largeFont.setColor(0, 0, 0, tutAlpha / 3);
-        largeFont.drawMultiLine(batch, tutText, 394 + tutCounter * 60, 500, 0, BitmapFont.HAlignment.CENTER);
+        largeFont.draw(batch, tutText, 394 + tutCounter * 60, 500, 0, Align.center, true);
         largeFont.setColor(1, 1, 1, tutAlpha);
-        largeFont.drawMultiLine(batch, tutText, 390 + tutCounter * 60, 504, 0, BitmapFont.HAlignment.CENTER);
+        largeFont.draw(batch, tutText, 390 + tutCounter * 60, 504, 0, Align.center, true);
 
         batch.disableBlending();
         batch.flush();
@@ -812,7 +790,7 @@ public class CrappyGame extends ApplicationAdapter {
         batch.draw(square, 206, 966, 1, 1, 2, 2, 60, 60, rotator, 0, 0, 2, 2, false, false);
 
         batch.enableBlending();
-        largeFont.setScale(1.6F, 1.6F);
+        largeFont.getData().setScale(1.6F, 1.6F);
         largeFont.setColor(0, 0, 0, 0.3F);
         largeFont.draw(batch, "Chroma", 119, 1250);
         largeFont.draw(batch, "Dodge", 312, 1060);
@@ -820,7 +798,7 @@ public class CrappyGame extends ApplicationAdapter {
         largeFont.draw(batch, "Chroma", 109, 1260);
         largeFont.draw(batch, "Dodge", 302, 1070);
 
-        largeFont.setScale(1F, 1F);
+        largeFont.getData().setScale(1F, 1F);
         largeFont.setColor(0.6F, 0.6F, 0.6F, 1);
         largeFont.draw(batch, "Play", 353, 758);
         largeFont.draw(batch, "Options", 271, 545);
@@ -858,7 +836,7 @@ public class CrappyGame extends ApplicationAdapter {
 
         batch.enableBlending();
         // The rest of the stuff :O
-        largeFont.setScale(1.6F, 1.6F);
+        largeFont.getData().setScale(1.6F, 1.6F);
         largeFont.setColor(0, 0, 0, 0.3F);
         largeFont.draw(batch, "Chroma", 119, 1390);
         largeFont.draw(batch, "Dodge", 312, 1200);
@@ -866,7 +844,7 @@ public class CrappyGame extends ApplicationAdapter {
         largeFont.draw(batch, "Chroma", 109, 1400);
         largeFont.draw(batch, "Dodge", 302, 1210);
 
-        largeFont.setScale(0.85F, 0.85F);
+        largeFont.getData().setScale(0.85F, 0.85F);
         largeFont.setColor(0, 0, 0, 0.4F);
         largeFont.draw(batch, "No Music", 280, 935);
         largeFont.draw(batch, "Track 1", 310, 770);
@@ -884,7 +862,7 @@ public class CrappyGame extends ApplicationAdapter {
         shapeRenderer.begin(ShapeRenderer.ShapeType.Filled);
 
         shapeRenderer.rect(0, 0, WORLD_WIDTH, WORLD_HEIGHT, topLeft.toColor(), topRight.toColor(), bottomLeft.toColor(),
-                           bottomRight.toColor());
+                bottomRight.toColor());
 
         shapeRenderer.flush();
         shapeRenderer.end();
@@ -898,11 +876,11 @@ public class CrappyGame extends ApplicationAdapter {
         }
 
         // Draws score text that's part of the background
-        largeFont.setScale(2, 2);
+        largeFont.getData().setScale(2, 2);
         largeFont.setColor(0, 0, 0, 0.3F);
-        largeFont.drawMultiLine(batch, "" + score, 460, 1190 + offset, 0, BitmapFont.HAlignment.CENTER);
+        largeFont.draw(batch, "" + score, 460, 1190 + offset, 0, Align.center, true);
         largeFont.setColor(1, 1, 1, 1);
-        largeFont.drawMultiLine(batch, "" + score, 450, 1200 + offset, 0, BitmapFont.HAlignment.CENTER);
+        largeFont.draw(batch, "" + score, 450, 1200 + offset, 0, Align.center, true);
 
         batch.draw(shadow, player_x + 10, player_y - 10, PLAYER_SCALE, PLAYER_SCALE);
 
@@ -936,22 +914,21 @@ public class CrappyGame extends ApplicationAdapter {
 
         Color c = batch.getColor();
         batch.setColor(c.r, c.g, c.b, faderShaderTimer);
-        batch.draw(shadow, -200, 0, WORLD_WIDTH+400, WORLD_HEIGHT);
+        batch.draw(shadow, -200, 0, WORLD_WIDTH + 400, WORLD_HEIGHT);
         batch.setColor(1, 1, 1, 1);
 
         batch.draw(gameover, 150, 330 - scroller, 600, 1000);
 
-        largeFont.setScale(2.3F, 2.3F);
+        largeFont.getData().setScale(2.3F, 2.3F);
         largeFont.setColor(1, 1, 1, 1);
-        largeFont.drawMultiLine(batch, "" + score, 450, 1210 - scroller, 0, BitmapFont.HAlignment.CENTER);
+        largeFont.draw(batch, "" + score, 450, 1210 - scroller, 0, Align.center, true);
 
-        largeFont.setScale(0.4F, 0.4F);
+        largeFont.getData().setScale(0.4F, 0.4F);
         largeFont.setColor(0.7F, 0.7F, 0.7F, 1);
         if (score <= highScore) {
-            largeFont.drawMultiLine(batch, "Highscore: " + highScore, 450, 898 - scroller, 0,
-                                    BitmapFont.HAlignment.CENTER);
+            largeFont.draw(batch, "Highscore: " + highScore, 450, 898 - scroller, 0, Align.center, true);
         } else {
-            largeFont.drawMultiLine(batch, "NEW HIGHSCORE!", 450, 898 - scroller, 0, BitmapFont.HAlignment.CENTER);
+            largeFont.draw(batch, "NEW HIGHSCORE!", 450, 898 - scroller, 0, Align.center, true);
         }
         batch.flush();
         batch.end();

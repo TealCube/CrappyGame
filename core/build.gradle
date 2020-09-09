@@ -1,20 +1,8 @@
 apply plugin: "java"
 
-sourceCompatibility = JavaVersion.VERSION_1_7
-targetCompatibility = JavaVersion.VERSION_1_7
-
+sourceCompatibility = 1.7
 [compileJava, compileTestJava]*.options*.encoding = 'UTF-8'
 
-sourceSets.main.java.srcDirs = ["src/"]
+sourceSets.main.java.srcDirs = [ "src/" ]
 
-findbugs {
-    ignoreFailures = true
-}
-
-pmd {
-    ignoreFailures = true
-}
-
-eclipse.project {
-    name = appName + "-core"
-}
+eclipse.project.name = appName + "-core"
