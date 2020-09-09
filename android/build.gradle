@@ -17,11 +17,11 @@ android {
         exclude 'META-INF/robovm/ios/robovm.xml'
     }
     defaultConfig {
-        applicationId "com.tealcube.chromadodge"
+        applicationId "com.tealcube.chromadodge.android"
         minSdkVersion 14
         targetSdkVersion 30
-        versionCode buildVersionCode(version + appVersion + versionTag)
-        versionName(version + appVersion + versionTag)
+        versionCode buildVersionCode(version)
+        versionName(version)
     }
     buildTypes {
         release {

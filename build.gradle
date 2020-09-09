@@ -15,18 +15,17 @@ buildscript {
 allprojects {
     apply plugin: "eclipse"
 
-    version = '1.0'
+    version = '1.0.0'
     ext {
         appName = "crappygame"
-        versionTag = '-DEV'
-        appVersion = '.' + (System.getenv('BUILD_NUMBER') ?: '0')
         gdxVersion = '1.9.11'
         roboVMVersion = '2.3.10-SNAPSHOT'
         box2DLightsVersion = '1.4'
         ashleyVersion = '1.7.0'
         aiVersion = '1.8.0'
-        buildVersionCode = { version ->
-            def majorMinorBuild = version.substring(0, version.indexOf("-")).tokenize(".")
+        buildVersionCode = { String version ->
+            def indexOfDash = version.contains("-") ? version.lastIndexOf("-") : version.length() - 1
+            def majorMinorBuild = version.substring(0, indexOfDash).tokenize(".")
             def vCode = 0;
             def powerOfTen = 1;
             majorMinorBuild.reverse().eachWithIndex() { obj, i -> (vCode += (obj.toInteger() * powerOfTen)); powerOfTen *= 1000; }
